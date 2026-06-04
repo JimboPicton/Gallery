@@ -31,6 +31,7 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         /* 3D Room Box */
@@ -47,8 +48,6 @@
 
         .wall {
             position: absolute;
-            width: 100%;
-            height: 100%;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             border: 2px solid rgba(102, 126, 234, 0.3);
             box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
@@ -57,6 +56,7 @@
             justify-content: center;
             flex-direction: column;
             text-align: center;
+            transform-style: preserve-3d;
         }
 
         .wall::before {
@@ -78,25 +78,33 @@
             transform: translateX(-50%);
         }
 
-        /* Wall positions */
+        /* Wall positions - connected at corners */
         .back-wall {
+            width: 1000px;
+            height: 600px;
             transform: translateZ(-500px);
         }
 
         .front-wall {
+            width: 1000px;
+            height: 600px;
             transform: rotateY(180deg) translateZ(-500px);
         }
 
         .left-wall {
             width: 500px;
+            height: 600px;
             transform: rotateY(-90deg) translateZ(-500px);
             left: 0;
+            transform-origin: left center;
         }
 
         .right-wall {
             width: 500px;
+            height: 600px;
             transform: rotateY(90deg) translateZ(-500px);
             right: 0;
+            transform-origin: right center;
         }
 
         .floor {
@@ -408,6 +416,12 @@
             zoom: 1
         };
 
+        const targetView = {
+            rotX: 0,
+            rotY: 0,
+            zoom: 1
+        };
+
         const scene = document.getElementById('galleryScene');
         const modal = document.getElementById('artworkModal');
         const modalClose = document.querySelector('.close');
@@ -418,17 +432,19 @@
         let isDragging = false;
         let startX, startY;
         let isModalOpen = false;
+        let isAnimating = false;
+        let artworkFrames = {};
 
         // Mouse controls
         document.addEventListener('mousedown', (e) => {
-            if (isModalOpen) return;
+            if (isModalOpen || isAnimating) return;
             isDragging = true;
             startX = e.clientX;
             startY = e.clientY;
         });
 
         document.addEventListener('mousemove', (e) => {
-            if (!isDragging || isModalOpen) return;
+            if (!isDragging || isModalOpen || isAnimating) return;
             
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
@@ -448,7 +464,7 @@
 
         // Scroll zoom
         document.addEventListener('wheel', (e) => {
-            if (isModalOpen) return;
+            if (isModalOpen || isAnimating) return;
             e.preventDefault();
             view.zoom *= (1 - e.deltaY * 0.001);
             view.zoom = Math.max(0.5, Math.min(2, view.zoom));
@@ -457,7 +473,7 @@
 
         // Click to teleport
         document.addEventListener('click', (e) => {
-            if (isDragging || isModalOpen) return;
+            if (isDragging || isModalOpen || isAnimating) return;
             if (e.target.closest('.artwork-frame') || e.target.closest('.controls-hud') || e.target.closest('.info-panel')) return;
             
             const rect = document.getElementById('gallery-container').getBoundingClientRect();
@@ -466,10 +482,10 @@
             
             // Teleport animation
             const angle = Math.atan2(y, x);
-            const distance = 100;
             
             view.rotY = angle;
             view.rotX = -y / rect.height * 0.5;
+            updateView();
         });
 
         // Modal controls
@@ -495,8 +511,70 @@
             isModalOpen = false;
         }
 
-        function openModal(artwork) {
+        function animateViewTo(targetRotX, targetRotY) {
+            isAnimating = true;
+            const startRotX = view.rotX;
+            const startRotY = view.rotY;
+            const startTime = performance.now();
+            const duration = 600; // milliseconds
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function: cubic-bezier(0.25, 0.46, 0.45, 0.94)
+                const easeProgress = easeInOutCubic(progress);
+
+                view.rotX = startRotX + (targetRotX - startRotX) * easeProgress;
+                view.rotY = startRotY + (targetRotY - startRotY) * easeProgress;
+                
+                updateView();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isAnimating = false;
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function easeInOutCubic(t) {
+            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        }
+
+        function openModal(artwork, frameElement) {
             isModalOpen = true;
+            
+            // Calculate the position of the artwork frame to face it
+            if (frameElement) {
+                const rect = frameElement.getBoundingClientRect();
+                const containerRect = document.getElementById('gallery-container').getBoundingClientRect();
+                
+                // Get which wall the artwork is on and calculate proper rotation
+                const wallClass = frameElement.closest('.wall')?.className || '';
+                let targetRotX = 0;
+                let targetRotY = 0;
+
+                if (wallClass.includes('back-wall')) {
+                    targetRotX = 0;
+                    targetRotY = 0;
+                } else if (wallClass.includes('front-wall')) {
+                    targetRotX = 0;
+                    targetRotY = Math.PI;
+                } else if (wallClass.includes('left-wall')) {
+                    targetRotX = 0;
+                    targetRotY = Math.PI / 2;
+                } else if (wallClass.includes('right-wall')) {
+                    targetRotX = 0;
+                    targetRotY = -Math.PI / 2;
+                }
+
+                // Animate camera to face the artwork
+                animateViewTo(targetRotX, targetRotY);
+            }
+
             let content = `
                 <div class="modal-title">${artwork.title}</div>
                 <div class="modal-artist">by ${artwork.artist}</div>
@@ -566,27 +644,29 @@
             // Position artwork frames on walls
             const positions = [
                 // Back wall
-                { wall: backWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0 },
-                { wall: backWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, transform: 'translateX(220px)' },
+                { wall: backWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, wallType: 'back' },
+                { wall: backWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, transform: 'translateX(220px)', wallType: 'back' },
                 
                 // Front wall
-                { wall: frontWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0 },
-                { wall: frontWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, transform: 'translateX(220px)' },
+                { wall: frontWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, wallType: 'front' },
+                { wall: frontWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, transform: 'translateX(220px)', wallType: 'front' },
                 
                 // Left wall
-                { wall: leftWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0 },
-                { wall: leftWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, transform: 'translateY(220px)' },
+                { wall: leftWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, wallType: 'left' },
+                { wall: leftWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, transform: 'translateY(220px)', wallType: 'left' },
                 
                 // Right wall
-                { wall: rightWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0 },
-                { wall: rightWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, transform: 'translateY(220px)' },
+                { wall: rightWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, wallType: 'right' },
+                { wall: rightWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, transform: 'translateY(220px)', wallType: 'right' },
             ];
 
+            artworkFrames = {};
             artworks.forEach((artwork, index) => {
                 if (index < positions.length) {
                     const pos = positions[index];
-                    const frame = createArtworkFrame(artwork, pos);
+                    const frame = createArtworkFrame(artwork, pos, index);
                     pos.wall.appendChild(frame);
+                    artworkFrames[index] = { frame, wallType: pos.wallType };
                 }
             });
 
@@ -594,9 +674,11 @@
             scene.appendChild(galleryScene);
         }
 
-        function createArtworkFrame(artwork, position) {
+        function createArtworkFrame(artwork, position, index) {
             const frame = document.createElement('div');
             frame.className = 'artwork-frame';
+            frame.dataset.artworkIndex = index;
+            frame.dataset.wallType = position.wallType;
             
             frame.style.width = position.w + 'px';
             frame.style.height = position.h + 'px';
@@ -616,10 +698,10 @@
                         ? artwork.media.split('/').pop().split('?')[0]
                         : new URLSearchParams(artwork.media.split('?')[1] || '').get('v') || artwork.media.split('v=')[1];
                     if (videoId) {
-                        content = `<div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center;"><svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="28" stroke="#667eea" stroke-width="2"/><polygon points="22,16 22,44 45,30" fill="#667eea"/></svg></div>`;
+                        content = `<div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center;"><svg width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#667eea" stroke-width="2"><circle cx="30" cy="30" r="28"/><polygon points="24,18 24,42 42,30" fill="#667eea"/></svg></div>`;
                     }
                 } else {
-                    content = `<div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center;"><svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="28" stroke="#667eea" stroke-width="2"/><polygon points="22,16 22,44 45,30" fill="#667eea"/></svg></div>`;
+                    content = `<div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center;"><svg width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#667eea" stroke-width="2"><circle cx="30" cy="30" r="28"/><polygon points="24,18 24,42 42,30" fill="#667eea"/></svg></div>`;
                 }
             }
 
@@ -627,7 +709,7 @@
             
             frame.addEventListener('click', (e) => {
                 e.stopPropagation();
-                openModal(artwork);
+                openModal(artwork, frame);
             });
 
             return frame;
