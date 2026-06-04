@@ -227,3 +227,9 @@ This gallery is free to use and modify for educational purposes.
 **Two ways to explore:**
 1. 📊 Grid View - Traditional gallery browsing
 2. 🎮 3D Gallery - Immersive spatial experience
+
+## Layout editor update: numbered hallway nodes
+
+The layout editor now shows numbered hallway connection nodes on every room. Use **Add Hallway by Selecting Nodes**, click the starting node, then click the destination node. The first selected node turns yellow. Hovering over a node shows the room and wall location.
+
+You can still select an existing hallway and manually adjust its start/end rooms, numbered connection nodes, width, height, and colour from the Hallway tab.
