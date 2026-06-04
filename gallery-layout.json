@@ -15,18 +15,29 @@
     {
       "id": "games",
       "title": "Games & Interactive Media",
-      "x": 28,
+      "x": 30,
       "z": 0,
       "width": 20,
       "depth": 14,
       "height": 6,
-      "wallColor": "#24303a",
+      "wallColor": "#2a2a33",
       "wallTexture": "",
       "label": { "text": "Games & Interactive Media", "wall": "front", "x": 0, "y": 4.8 }
     }
   ],
   "hallways": [
-    { "id": "animation-to-games", "from": "animation", "to": "games", "width": 4, "height": 4, "wallColor": "#22222a" }
+    {
+      "id": "hall1",
+      "from": "animation",
+      "to": "games",
+      "fromWall": "right",
+      "fromSlot": "center",
+      "toWall": "left",
+      "toSlot": "center",
+      "width": 4,
+      "height": 4,
+      "wallColor": "#22222a"
+    }
   ],
   "settings": {
     "floorColor": "#151515",
@@ -34,8 +45,7 @@
     "ambientLight": 1.1,
     "directionalLight": 1.4,
     "additionalLights": [
-      { "x": 0, "y": 5.5, "z": 0, "intensity": 1.8, "color": "#ffffff" },
-      { "x": 28, "y": 5.5, "z": 0, "intensity": 1.8, "color": "#ffffff" }
+      { "x": 0, "y": 5.5, "z": 0, "intensity": 1.8, "color": "#ffffff" }
     ]
   }
 }
