@@ -1,266 +1,358 @@
-# ✨ Digital Media Student Gallery
+# Digital Media Student Gallery
 
-An elegant, zero-maintenance online gallery platform for showcasing student artwork, videos, and 3D models. Features both a **grid view** and an **immersive 3D gallery space** inspired by Spatial galleries. Built with pure HTML/CSS/JavaScript, hosted on GitHub Pages.
+A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork editor, and a visual layout editor for rooms, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Features
+## Current Version
 
-- 🎨 **Beautiful, Modern Design** - Gradient backgrounds, smooth animations, responsive layout
-- 🎮 **Immersive 3D Gallery Space** - Walk through a simulated building with frames on walls (using Three.js)
-- 📸 **Multi-Media Support** - Images, videos, and 3D models
-- 🔍 **Smart Filtering** - Filter by media type instantly
-- 📱 **Fully Responsive** - Perfect on desktop, tablet, and mobile
-- 🚀 **No Maintenance** - Static site, zero backend required
-- 📝 **Simple Admin Panel** - Easy submission management
-- 🎯 **Free Hosting** - Deploy on GitHub Pages at no cost
+**v4.5 — Teleport, hallway collision, and palette UX fixes**
 
-## Quick Start
+### Latest changes
 
-### 1. Enable GitHub Pages
+- Fixed hallway movement after the previous doorway alignment update. Doorway openings now remain visually aligned while the walkable bounds allow the viewer to pass through them.
+- Added a **Teleport** tool to the layout editor.
+- Teleport tokens appear on the 3D gallery floor with a visual icon.
+- Hovering over a teleport token shows its destination label.
+- Clicking a teleport token moves the viewer directly to its configured destination.
+- Added visible selection highlighting to colour palette swatches.
+- Updated `gallery-layout.json` schema to support `settings.teleports`.
 
-1. Go to your repository settings
-2. Scroll to "GitHub Pages"
-3. Select `main` branch as source
-4. Your gallery will be live at: `https://yourusername.github.io/Gallery/`
+## Files
 
-### 2. Choose Your Gallery View
-
-**Grid View** (index.html)
-- Traditional gallery layout
-- Filter by media type
-- Click items for details
-
-**3D Gallery Space** (gallery-3d.html)
-- First-person immersive experience
-- Walk through a virtual building
-- Artworks displayed in frames on walls
-- Click frames to see details
-
-### 3. Add Artworks
-
-**Using the Admin Panel (Easiest)**
-1. Open `admin.html` locally in your browser
-2. Click "Add New Work"
-3. Fill in the form with student info and media URL
-4. Click "Add to Gallery"
-5. Download the updated `gallery-data.json`
-6. Upload the JSON file to your repo
-
-## 3D Gallery Controls
-
-When viewing the 3D gallery space:
-
-- **🖱️ Mouse** - Click and drag to look around
-- **W/A/S/D** - Move forward/left/backward/right
-- **Space** - Move up
-- **Shift** - Move down
-- **Click on frames** - View artwork details
-
-## Adding Media
-
-### Images
-- Upload to: Imgur, Cloudinary, Google Photos (shared link)
-- Paste the direct image URL
-
-### Videos
-- Upload to: YouTube, Vimeo
-- Paste the video URL (not embed code)
-
-### 3D Models
-- Upload to: Sketchfab, Thingiverse
-- Get the embed URL and paste it
-
-## File Structure
-
-```
+```text
 Gallery/
-├── index.html              # Main gallery page (grid view)
-├── gallery-3d.html         # 3D immersive gallery space
-├── admin.html              # Admin panel for managing submissions
-├── gallery-data.json       # Artwork data (edit this to add submissions)
-└── README.md              # This file
+├── index.html              # Main navigation and gallery landing page
+├── gallery-3d.html         # Three.js walkthrough gallery
+├── admin.html              # Artwork management page
+├── layout-editor.html      # Visual room, hallway, lighting, colour and teleport editor
+├── artwork-editor.html     # Artwork wall placement and sizing editor
+├── gallery-data.json       # Artwork/media data
+├── gallery-layout.json     # Room, hallway, lighting, colour and teleport data
+└── README.md               # Project documentation
 ```
 
-## Gallery Data Format
+## Running on GitHub Pages
 
-Each artwork entry in `gallery-data.json`:
+The project is designed to run directly from GitHub Pages.
+
+For a project repository named `Gallery`, the public site will usually be:
+
+```text
+https://<username>.github.io/Gallery/
+```
+
+Use relative paths such as:
+
+```text
+./gallery-layout.json
+./gallery-data.json
+./gallery-3d.html
+```
+
+Avoid root-relative paths such as `/gallery-layout.json`, because those can break on GitHub Pages project sites.
+
+## Running Locally
+
+Do not double-click the HTML files directly when testing Three.js modules or JSON loading. Run a simple local web server from the project folder:
+
+```bash
+python -m http.server
+```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+## Main Workflow
+
+### 1. Design the gallery layout
+
+Open:
+
+```text
+layout-editor.html
+```
+
+Use this editor to:
+
+- Add and drag rooms.
+- Create hallways by selecting numbered room connection nodes.
+- Edit wall colours and wall textures.
+- Set global default wall colours.
+- Add and position light nodes.
+- Add and position teleport tokens.
+- Export, copy, locally save, restore, or optionally save `gallery-layout.json` to GitHub.
+
+### 2. Place artworks
+
+Open:
+
+```text
+artwork-editor.html
+```
+
+Use this editor to:
+
+- Assign artworks to rooms.
+- Choose the wall for each artwork.
+- Adjust artwork X/Y placement.
+- Adjust artwork width and height.
+- Duplicate artwork placement entries.
+- Choose whether artist statements appear as wall text, popups, both, or neither.
+
+### 3. View the 3D gallery
+
+Open:
+
+```text
+gallery-3d.html
+```
+
+Controls:
+
+- Click to enter pointer-lock mode.
+- `W/A/S/D` to move.
+- Mouse to look.
+- Click artworks to view media and statements.
+- Hover/click teleport tokens to move to another location.
+- `ESC` releases the cursor so the top-left menu can be used.
+
+## Layout Data: `gallery-layout.json`
+
+The layout file controls rooms, hallway connections, wall colours, lighting, and teleport tokens.
+
+### Room example
+
+```json
+{
+  "id": "animation",
+  "title": "Animation",
+  "x": 0,
+  "z": 0,
+  "width": 20,
+  "depth": 14,
+  "height": 6,
+  "wallColor": "#2a2a33",
+  "wallColors": {
+    "front": "#2a2a33",
+    "back": "#334155",
+    "left": "#2a2a33",
+    "right": "#2a2a33"
+  },
+  "wallTexture": "",
+  "wallTextures": {},
+  "label": {
+    "text": "Animation",
+    "wall": "front",
+    "x": 0,
+    "y": 4.8
+  }
+}
+```
+
+### Hallway example
+
+```json
+{
+  "id": "hall1",
+  "from": "animation",
+  "to": "games",
+  "fromWall": "right",
+  "fromSlot": "center",
+  "toWall": "left",
+  "toSlot": "center",
+  "width": 4,
+  "height": 4,
+  "wallColor": "#22222a"
+}
+```
+
+Hallways are created from numbered nodes in the layout editor. The 3D gallery uses those nodes to cut wall openings and create walkable hallway bounds.
+
+### Lighting example
+
+```json
+{
+  "id": "light1",
+  "x": 0,
+  "y": 5.5,
+  "z": 0,
+  "intensity": 1.8,
+  "color": "#ffffff",
+  "distance": 18
+}
+```
+
+Lights are stored under:
+
+```json
+"settings": {
+  "additionalLights": []
+}
+```
+
+### Teleport example
+
+```json
+{
+  "id": "teleport1",
+  "label": "Jump to Games",
+  "x": 0,
+  "z": 3,
+  "size": 1.4,
+  "toX": 30,
+  "toZ": 0,
+  "destinationLabel": "Games & Interactive Media"
+}
+```
+
+Teleports are stored under:
+
+```json
+"settings": {
+  "teleports": []
+}
+```
+
+In the 3D gallery, teleport tokens are shown as floor icons. Hovering over one displays the destination. Clicking one moves the viewer to `toX` / `toZ`.
+
+## Colour Palette System
+
+The layout editor supports:
+
+- A global default wall colour.
+- A reusable colour palette.
+- Per-room wall colour.
+- Per-wall overrides for front, back, left, and right walls.
+- Visual highlighting of selected palette swatches.
+
+The palette lives in:
+
+```json
+"settings": {
+  "defaultWallColor": "#2a2a33",
+  "palette": ["#2a2a33", "#f5f0e8", "#334155"]
+}
+```
+
+## Artwork Data: `gallery-data.json`
+
+Artwork placement can include room, wall, size, media type, and statement display settings.
 
 ```json
 {
   "title": "Artwork Title",
   "artist": "Student Name",
-  "description": "Description of the work and techniques used",
-  "media": "https://url-to-image-video-or-3d-model",
-  "type": "image|video|model",
-  "tags": ["tag1", "tag2", "tag3"]
+  "description": "Artist statement or project description.",
+  "media": "https://example.com/media.mp4",
+  "mediaType": "video",
+  "room": "animation",
+  "wall": "back",
+  "x": 0,
+  "y": 3.1,
+  "width": 3,
+  "height": 1.7,
+  "statementDisplay": "both",
+  "statementSide": "right",
+  "statementWidth": 2.2,
+  "statementHeight": 1.1
 }
 ```
 
-## Styling
+Supported `statementDisplay` values:
 
-The gallery features:
-- Dark theme with purple/pink gradients
-- Smooth hover animations
-- Glass-morphism effects with backdrop blur
-- Mobile-responsive grid layout
-- Professional 3D rendering with lighting and shadows
-
-Customize colors by editing the CSS gradient values in `index.html` and `gallery-3d.html`:
-```css
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+```text
+popup
+wall
+both
+none
 ```
 
-## 3D Gallery Technical Details
+## Media Support
 
-The 3D gallery uses:
-- **Three.js** - 3D rendering library
-- **First-person controls** - Smooth camera movement
-- **Raycasting** - Click detection for frame interaction
-- **Dynamic lighting** - Realistic scene illumination
-- **Responsive rendering** - Adapts to window size
+The gallery supports:
 
-Frames are automatically positioned on the left and right walls based on the number of submissions. The scene is optimized for smooth performance even with many artworks.
+- Images via direct image URLs.
+- Direct video files such as `.mp4`, `.webm`, and `.ogg` with browser controls/playhead.
+- YouTube embeds.
+- Echo360/EchoVideo embeds, provided the institution allows public or authenticated sharing links.
+- External links for media that cannot be embedded.
 
-## Tips for Best Results
+## Saving and Publishing
 
-✅ **Do**
-- Use high-quality images (compress before uploading to save space)
-- Write detailed descriptions of the work
-- Use descriptive tags for filtering
-- Test both grid and 3D views on various devices
-- Upload images with good aspect ratios for the 3D frames
+GitHub Pages is static hosting, so the editor cannot write to your repo unless you use the optional GitHub API save tool.
 
-❌ **Don't**
-- Upload large files directly to GitHub (use external services)
-- Leave required fields blank
-- Use overly long titles
-- Use images that are too small (min 400x400px recommended)
+The layout editor supports:
 
-## Hosting Media
+- Local autosave in the browser.
+- Restore local draft.
+- Export `gallery-layout.json`.
+- Copy JSON to clipboard.
+- Optional Save to GitHub using a token with repository contents write access.
 
-To keep your GitHub repo lightweight, use free hosting services:
-
-| Platform | Best For | Free Tier |
-|----------|----------|-----------|
-| Imgur | Images | Yes, unlimited |
-| Cloudinary | Images/Video | Yes, 25GB/month |
-| YouTube | Videos | Yes |
-| Sketchfab | 3D Models | Yes, 100MB each |
+If using export manually, replace the repo’s `gallery-layout.json` with the downloaded file and wait for GitHub Pages to refresh.
 
 ## Troubleshooting
 
-**Gallery not showing up?**
-- Ensure GitHub Pages is enabled
-- Wait 2-3 minutes for deployment
-- Check your Settings → Pages configuration
+### I cannot walk through a hallway opening
 
-**Images not loading?**
-- Verify the URL is correct and publicly accessible
-- Try a different image hosting service
-- Check your browser's console for errors
+Use this version or later. Earlier v4 hallway fixes could visually align the doorway but leave a small gap in the walkable bounds. v4.5 fixes the walkable bounds so room and hallway spaces meet at the doorway.
 
-**3D gallery not rendering?**
-- Ensure your browser supports WebGL
-- Try a different browser (Chrome, Firefox, Safari, Edge)
-- Check that gallery-data.json exists in the repo
+### Wall colour did not change
 
-**Admin panel not working?**
-- Open admin.html in a modern browser (Chrome, Firefox, Safari)
-- Check that gallery-data.json exists in the repo
-- Download the JSON file after making changes and upload it
+Check whether a per-wall override is set. The priority order is:
 
-## Customization
+1. Per-wall colour override.
+2. Room default wall colour.
+3. Global default wall colour.
 
-### Change the Title
-Edit line 27 in `index.html`:
-```html
-<h1>✨ Student Gallery</h1>
-```
+### The editor reset wiped my work
 
-### Change Colors
-Search for `#667eea` (purple) and `#764ba2` (pink) and replace with your colors in both index.html and gallery-3d.html.
+Use **Restore** to recover the browser-local draft if autosave had captured it. Export major layout changes regularly.
 
-### Adjust 3D Gallery Space Size
-In `gallery-3d.html`, modify these constants (line ~93):
-```javascript
-const ROOM_WIDTH = 80;
-const ROOM_DEPTH = 100;
-const ROOM_HEIGHT = 15;
-```
+### JSON changed but GitHub Pages still shows the old layout
 
-### Change Frame Size
-Modify the frame dimensions in `loadAndCreateGallery()` (line ~334):
-```javascript
-const frameWidth = 8;
-const frameHeight = 6;
-```
+Open `gallery-layout.json` directly in the browser and hard refresh. GitHub Pages can take a short time to update after commits.
+
+## Changelog
+
+### v4.5
+
+- Fixed hallway walk-through collision after doorway alignment changes.
+- Added teleport token editor and 3D teleport behaviour.
+- Added hover labels for teleport destinations.
+- Added selected-state highlighting for palette swatches.
+- Updated README documentation.
+
+### v4.4
+
+- Fixed layout editor reset issue.
+- Reorganised layout editor toolbar.
+- Improved safe fallback behaviour when repo JSON fails to load.
+
+### v4.3
+
+- Added wall colour palette tools.
+- Added global default wall colour.
+- Added per-wall colour overrides.
+
+### v4.2
+
+- Fixed hallway doorway alignment.
+- Improved 2D/3D hallway geometry consistency.
+
+### v4.1
+
+- Added draggable light nodes.
+- Added artwork duplication and sizing.
+- Added artist statement wall/popup options.
+- Improved video display handling.
 
 ## Browser Compatibility
 
-- ✅ Chrome/Chromium (recommended)
-- ✅ Firefox
-- ✅ Safari
-- ✅ Edge
-- ⚠️ 3D gallery requires WebGL support
-
-## Need Help?
-
-1. Check the admin panel's "Help" tab for detailed instructions
-2. Review the sample entries in `gallery-data.json`
-3. Refer to the documentation for your media hosting service
-4. Check the browser console for error messages
-
-## Performance Tips
-
-- Optimize images before uploading (use TinyPNG or similar)
-- Use JPG for photographs, PNG for graphics
-- For 3D models, use Sketchfab's embed feature (optimized)
-- Test gallery load times with browser DevTools
-
-## License
-
-This gallery is free to use and modify for educational purposes.
-
----
-
-**Created for showcasing student creativity** 🎨✨
-
-**Two ways to explore:**
-1. 📊 Grid View - Traditional gallery browsing
-2. 🎮 3D Gallery - Immersive spatial experience
-
-## Layout editor update: numbered hallway nodes
-
-The layout editor now shows numbered hallway connection nodes on every room. Use **Add Hallway by Selecting Nodes**, click the starting node, then click the destination node. The first selected node turns yellow. Hovering over a node shows the room and wall location.
-
-You can still select an existing hallway and manually adjust its start/end rooms, numbered connection nodes, width, height, and colour from the Hallway tab.
-
-## v4 editor upgrades
-
-This version adds safer editing and richer gallery controls:
-
-- `layout-editor.html`
-  - Autosaves drafts to browser localStorage.
-  - Restores local drafts when available.
-  - Can export, copy, or save `gallery-layout.json` directly to GitHub using a token.
-  - Adds draggable light nodes for manual light placement in rooms and hallways.
-  - Each light supports X/Z position, Y height, colour, intensity, and distance.
-
-- `artwork-editor.html`
-  - Autosaves drafts to browser localStorage.
-  - Can export, copy, or save `gallery-data.json` directly to GitHub using a token.
-  - Allows manual artwork width/height adjustment.
-  - Allows duplicate artwork placement.
-  - Adds artist statement display options: popup only, wall only, both, or none.
-  - Allows statement position and dimensions to be adjusted.
-
-- `gallery-3d.html`
-  - Reads the new light settings and statement display options.
-  - Shows wall-mounted artist statements when enabled.
-  - Supports popup statements when artworks are clicked.
-  - Direct video files such as `.mp4`, `.webm`, and `.ogg` open with browser video controls and a playhead in the popup.
-  - YouTube and Echo360 links open in embedded iframes where allowed by the source platform.
-
-### Direct GitHub save
-
-The direct save buttons require a GitHub token with repository contents read/write access. This is intended for admin use only. The token is entered in the browser and is not stored by the editor.
+- Chrome / Chromium recommended.
+- Firefox supported.
+- Edge supported.
+- Safari supported where WebGL and pointer lock are available.
 
