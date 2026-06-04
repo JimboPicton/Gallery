@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding-bottom: 20px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid transparent;
+            color: #a0a0a0;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #b71c1c;
+        }
+
+        .tag-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tag-input input {
+            flex: 1;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.2em;
+        }
+
+        .submissions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .submission-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .submission-info h3 {
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .submission-info p {
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+
+        .submission-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4CAF50;
+        }
+
+        .alert-info {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            color: #667eea;
+        }
+
+        .instructions {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #c0c0c0;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .submission-item {
+                flex-direction: column;
+            }
+
+            .submission-actions {
+                width: 100%;
+                margin-top: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Gallery Admin Panel</h1>
+            <p>Manage student submissions</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('add-work')">Add New Work</button>
+            <button class="nav-tab" onclick="switchTab('manage')">Manage Submissions</button>
+            <button class="nav-tab" onclick="switchTab('help')">Help</button>
+        </div>
+
+        <!-- Add Work Tab -->
+        <div id="add-work" class="tab-content active">
+            <h2>Add New Artwork to Gallery</h2>
+            <form id="addWorkForm" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label>Student Name *</label>
+                    <input type="text" id="artistName" required placeholder="e.g., Alex Chen">
+                </div>
+
+                <div class="form-group">
+                    <label>Artwork Title *</label>
+                    <input type="text" id="workTitle" required placeholder="e.g., Digital Landscape">
+                </div>
+
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="workDescription" required placeholder="Describe the artwork, techniques used, inspiration..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Media Type *</label>
+                    <select id="mediaType" required onchange="updateMediaPlaceholder()">
+                        <option value="">Select type...</option>
+                        <option value="image">Image (JPG, PNG, etc.)</option>
+                        <option value="video">Video (MP4, WebM, etc.)</option>
+                        <option value="model">3D Model (Sketchfab embed, etc.)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="mediaLabel">Media URL *</label>
+                    <input type="url" id="mediaUrl" required placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label>Tags (separate with Enter)</label>
+                    <div class="tag-input">
+                        <input type="text" id="tagInput" placeholder="e.g., digital, landscape, color">
+                        <button type="button" class="btn-secondary" onclick="addTag()">Add Tag</button>
+                    </div>
+                    <div class="tag-list" id="tagList"></div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Add to Gallery</button>
+                    <button type="reset" class="btn-secondary">Clear Form</button>
+                </div>
+            </form>
+            <div id="successMessage" class="alert alert-success" style="display: none; margin-top: 20px;">
+                ✓ Artwork added successfully! View it in the <a href="index.html" style="color: #4CAF50; text-decoration: underline;">gallery</a>.
+            </div>
+        </div>
+
+        <!-- Manage Tab -->
+        <div id="manage" class="tab-content">
+            <h2>Current Submissions</h2>
+            <div id="submissionsList" class="submissions-list" style="margin-top: 20px;">
+                <p style="color: #a0a0a0;">Loading submissions...</p>
+            </div>
+        </div>
+
+        <!-- Help Tab -->
+        <div id="help" class="tab-content">
+            <h2>How to Use This Gallery</h2>
+            
+            <div class="instructions" style="margin-top: 20px; margin-bottom: 20px;">
+                <h3>📸 Adding Images</h3>
+                <ol>
+                    <li>Use the "Add New Work" tab</li>
+                    <li>Fill in student name, title, and description</li>
+                    <li>Select "Image" as media type</li>
+                    <li>Paste the URL of the image (from Imgur, Cloudinary, etc.)</li>
+                    <li>Add relevant tags and submit</li>
+                </ol>
+            </div>
+
+            <div class="instructions" style="margin-bottom: 20px;">
+                <h3>🎬 Adding Videos</h3>
+                <ol>
+                    <li>Upload video to YouTube, Vimeo, or similar platform</li>
+                    <li>Select "Video" as media type</li>
+                    <li>Paste the direct video URL (not the embed code)</li>
+                    <li>Submit with description and tags</li>
+                </ol>
+            </div>
+
+            <div class="instructions" style="margin-bottom: 20px;">
+                <h3>🎨 Adding 3D Models</h3>
+                <ol>
+                    <li>Upload 3D model to Sketchfab or similar platform</li>
+                    <li>Select "3D Model" as media type</li>
+                    <li>Paste the embed URL (right-click → Copy embed link on Sketchfab)</li>
+                    <li>Submit with details and tags</li>
+                </ol>
+            </div>
+
+            <div class="instructions">
+                <h3>💾 Saving Your Gallery</h3>
+                <ol>
+                    <li>All submissions are saved in <code>gallery-data.json</code></li>
+                    <li>After adding works, commit and push to GitHub</li>
+                    <li>Enable GitHub Pages in repository settings</li>
+                    <li>Gallery will be live at: <code>https://yourusername.github.io/Gallery/</code></li>
+                </ol>
+            </div>
+
+            <div class="alert alert-info" style="margin-top: 20px;">
+                <strong>💡 Pro Tip:</strong> Use free services like Imgur, Cloudinary, or Sketchfab to host media. This keeps your GitHub repo lightweight!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tags = [];
+        let galleryData = [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'manage') {
+                loadSubmissions();
+            }
+        }
+
+        function updateMediaPlaceholder() {
+            const type = document.getElementById('mediaType').value;
+            const input = document.getElementById('mediaUrl');
+            const label = document.getElementById('mediaLabel');
+
+            const placeholders = {
+                'image': 'https://imgur.com/...',
+                'video': 'https://youtube.com/watch?v=...',
+                'model': 'https://sketchfab.com/models/.../embed'
+            };
+
+            input.placeholder = placeholders[type] || 'https://...';
+            label.textContent = type === 'model' ? 'Embed URL *' : 'Media URL *';
+        }
+
+        function addTag() {
+            const input = document.getElementById('tagInput');
+            const tag = input.value.trim();
+            
+            if (tag && !tags.includes(tag)) {
+                tags.push(tag);
+                renderTags();
+                input.value = '';
+            }
+        }
+
+        function removeTag(tag) {
+            tags = tags.filter(t => t !== tag);
+            renderTags();
+        }
+
+        function renderTags() {
+            const tagList = document.getElementById('tagList');
+            tagList.innerHTML = tags.map(tag => `
+                <div class="tag">
+                    ${tag}
+                    <button type="button" onclick="removeTag('${tag}')">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('addWorkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const newWork = {
+                title: document.getElementById('workTitle').value,
+                artist: document.getElementById('artistName').value,
+                description: document.getElementById('workDescription').value,
+                media: document.getElementById('mediaUrl').value,
+                type: document.getElementById('mediaType').value,
+                tags: tags
+            };
+
+            loadGalleryData().then(() => {
+                galleryData.push(newWork);
+                saveGalleryData();
+                
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 4000);
+
+                // Reset form
+                document.getElementById('addWorkForm').reset();
+                tags = [];
+                renderTags();
+            });
+        });
+
+        async function loadGalleryData() {
+            try {
+                const response = await fetch('gallery-data.json');
+                galleryData = await response.json();
+            } catch (error) {
+                galleryData = [];
+            }
+        }
+
+        function saveGalleryData() {
+            const dataStr = JSON.stringify(galleryData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gallery-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Gallery data downloaded! Please replace gallery-data.json in your repo with this file.');
+        }
+
+        async function loadSubmissions() {
+            await loadGalleryData();
+            const list = document.getElementById('submissionsList');
+
+            if (galleryData.length === 0) {
+                list.innerHTML = '<p style="color: #a0a0a0; text-align: center; padding: 40px;">No submissions yet</p>';
+                return;
+            }
+
+            list.innerHTML = galleryData.map((item, index) => `
+                <div class="submission-item">
+                    <div class="submission-info">
+                        <h3>${item.title}</h3>
+                        <p>by ${item.artist}</p>
+                        <p>Type: ${item.type} | Tags: ${item.tags.join(', ')}</p>
+                    </div>
+                    <div class="submission-actions">
+                        <button class="btn-delete" onclick="deleteSubmission(${index})">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSubmission(index) {
+            if (confirm('Are you sure you want to remove this submission?')) {
+                loadGalleryData().then(() => {
+                    galleryData.splice(index, 1);
+                    saveGalleryData();
+                    loadSubmissions();
+                });
+            }
+        }
+
+        // Allow Enter key to add tags
+        document.addEventListener('keypress', function(e) {
+            if (e.target.id === 'tagInput' && e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+
+        // Load submissions on page load
+        loadGalleryData();
+    </script>
+</body>
+</html>
