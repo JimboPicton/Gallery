@@ -244,6 +244,13 @@ YouTube, SoundCloud and Echo360 URLs are not direct audio streams and should be 
 
 ## Changelog
 
+### v5.8
+
+- Added centre-screen viewer reticle/crosshair in the 3D gallery.
+- Reticle changes state when looking at artworks, media, models and teleport pads.
+- Pointer-lock click handling now uses the centre gaze ray for more VR-like interaction behaviour.
+- Kept the feature viewer-facing only so the editor UI remains uncluttered.
+
 ### v5.7
 
 - Shared wall colour/texture resolver added to editor and 3D renderer.
