@@ -233,3 +233,34 @@ This gallery is free to use and modify for educational purposes.
 The layout editor now shows numbered hallway connection nodes on every room. Use **Add Hallway by Selecting Nodes**, click the starting node, then click the destination node. The first selected node turns yellow. Hovering over a node shows the room and wall location.
 
 You can still select an existing hallway and manually adjust its start/end rooms, numbered connection nodes, width, height, and colour from the Hallway tab.
+
+## v4 editor upgrades
+
+This version adds safer editing and richer gallery controls:
+
+- `layout-editor.html`
+  - Autosaves drafts to browser localStorage.
+  - Restores local drafts when available.
+  - Can export, copy, or save `gallery-layout.json` directly to GitHub using a token.
+  - Adds draggable light nodes for manual light placement in rooms and hallways.
+  - Each light supports X/Z position, Y height, colour, intensity, and distance.
+
+- `artwork-editor.html`
+  - Autosaves drafts to browser localStorage.
+  - Can export, copy, or save `gallery-data.json` directly to GitHub using a token.
+  - Allows manual artwork width/height adjustment.
+  - Allows duplicate artwork placement.
+  - Adds artist statement display options: popup only, wall only, both, or none.
+  - Allows statement position and dimensions to be adjusted.
+
+- `gallery-3d.html`
+  - Reads the new light settings and statement display options.
+  - Shows wall-mounted artist statements when enabled.
+  - Supports popup statements when artworks are clicked.
+  - Direct video files such as `.mp4`, `.webm`, and `.ogg` open with browser video controls and a playhead in the popup.
+  - YouTube and Echo360 links open in embedded iframes where allowed by the source platform.
+
+### Direct GitHub save
+
+The direct save buttons require a GitHub token with repository contents read/write access. This is intended for admin use only. The token is entered in the browser and is not stored by the editor.
+
