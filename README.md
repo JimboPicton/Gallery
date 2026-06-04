@@ -356,3 +356,100 @@ Open `gallery-layout.json` directly in the browser and hard refresh. GitHub Page
 - Edge supported.
 - Safari supported where WebGL and pointer lock are available.
 
+
+---
+
+## Changelog: v5 UX, Teleport Pairing, and Spatial Audio
+
+### Layout Editor UX cleanup
+
+The colour and customisation controls have been reorganised into a clearer hierarchy:
+
+1. **Gallery Theme Defaults**
+   - Global default wall colour
+   - Global floor and ceiling colours
+   - Default hallway colour
+   - Ambient and directional light levels
+   - Editable colour palette swatches
+
+2. **Selected Room Overrides**
+   - Room-specific wall colour
+   - Room-specific wall texture URL
+   - Room label settings
+
+3. **Per-Wall Overrides**
+   - Front, back, left, and right wall colour overrides
+   - Per-wall texture URL fields
+
+The renderer applies these in this order:
+
+```text
+Per-wall override → Selected room override → Gallery theme default
+```
+
+### Colour palette indicators
+
+Palette swatches now visibly highlight the selected colour, making it clearer which palette colour is currently applied to a field.
+
+### Teleport pairing
+
+Teleports are now intended to work visually rather than by manually entering destination coordinates.
+
+Workflow:
+
+1. Open `layout-editor.html`.
+2. Click **Teleport** to create teleport tokens.
+3. Drag each token onto the gallery floorplan.
+4. Click **Pair Teleports**.
+5. Click the first teleport token.
+6. Click the second teleport token.
+
+The editor displays a styled double-headed arrow between paired teleport tokens. In the 3D gallery, hovering over a teleport displays its destination label, and clicking it moves the viewer to the paired teleport.
+
+Manual destination coordinates are still available as a fallback.
+
+### Teleport visual cleanup
+
+The previous floating blue destination label above teleport tokens has been removed from the 3D gallery. Teleport information now appears as a hover label so it is less visually distracting.
+
+### Spatial audio sources
+
+The layout editor now supports draggable audio source nodes.
+
+Supported source types:
+
+- Direct MP3 / OGG / WAV / M4A file URL
+- YouTube link
+- SoundCloud link
+- Echo360 link
+
+Important limitation: browser security means that only direct audio files can reliably support distance-based fading inside the 3D space. YouTube, SoundCloud, and Echo360 links are documented as external/embed-style media sources rather than true spatial audio sources.
+
+Direct audio source settings include:
+
+- label
+- kind: ambient or narration
+- source URL
+- X/Z position
+- height
+- fade radius
+- volume
+- loop on/off
+
+### Viewer audio controls
+
+The 3D gallery now includes viewer-facing sound controls:
+
+- Enable sound
+- Mute
+- Master volume
+- Audio status indicator
+
+Audio does not autoplay. The viewer must click **Enable sound**, which is required by modern browser autoplay policies.
+
+### Files updated
+
+- `layout-editor.html`
+- `gallery-3d.html`
+- `gallery-layout.json`
+- `README.md`

@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>3D Student Gallery</title>
 <style>
-html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:Arial,sans-serif;color:#fff}canvas{display:block}.hud{position:fixed;top:14px;left:14px;z-index:30;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;max-width:350px;font-size:14px}.hud a{color:#b8c4ff}.overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;text-align:center}.overlay div{pointer-events:auto;cursor:pointer;padding:26px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:rgba(0,0,0,.84);box-shadow:0 12px 60px rgba(0,0,0,.45)}.panel{position:fixed;top:14px;right:14px;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;z-index:35;display:none;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px}.panel h2{margin:.1rem 0 .3rem}.panel iframe,.panel img,.panel video{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}.statement3d{font-family:Arial}.panel button{float:right;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}.error{position:fixed;bottom:14px;left:14px;right:14px;background:#4c1515;border:1px solid #a94444;border-radius:12px;padding:12px;z-index:40}.teleportHint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:36;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;color:#fff;display:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:Arial,sans-serif;color:#fff}canvas{display:block}.hud{position:fixed;top:14px;left:14px;z-index:30;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;max-width:350px;font-size:14px}.hud a{color:#b8c4ff}.overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;text-align:center}.overlay div{pointer-events:auto;cursor:pointer;padding:26px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:rgba(0,0,0,.84);box-shadow:0 12px 60px rgba(0,0,0,.45)}.panel{position:fixed;top:14px;right:14px;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;z-index:35;display:none;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px}.panel h2{margin:.1rem 0 .3rem}.panel iframe,.panel img,.panel video{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}.statement3d{font-family:Arial}.panel button{float:right;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}.error{position:fixed;bottom:14px;left:14px;right:14px;background:#4c1515;border:1px solid #a94444;border-radius:12px;padding:12px;z-index:40}.teleportHint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:36;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;color:#fff;display:none}.audioHud{position:fixed;left:14px;bottom:14px;z-index:38;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.audioHud button{border:0;border-radius:8px;padding:6px 9px;cursor:pointer}.audioHud input[type=range]{width:100px}.audioHint{font-size:12px;color:#bbb}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.179.1/build/three.module.js","three/addons/":"https://unpkg.com/three@0.179.1/examples/jsm/"}}</script>
 </head>
 <body>
 <div class="hud"><strong>3D Student Gallery</strong><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Layout editor</a></div>
 <div id="overlay" class="overlay"><div><h1>Click to Enter Gallery</h1><p>Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
-<div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div>
+<div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioEnable">Enable sound</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
 <script type="module">
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
@@ -87,24 +87,53 @@ function teleportCanvas(label){
   ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=22;ctx.stroke();ctx.fillStyle='white';ctx.font='bold 160px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('⇄',256,225);
   ctx.font='bold 34px Arial';ctx.fillText(label||'Teleport',256,382);return new THREE.CanvasTexture(c)
 }
+function destinationForTeleport(layout,t){
+  if(t.linkedTo){const o=(layout.settings?.teleports||[]).find(x=>x.id===t.linkedTo);if(o)return {x:Number(o.x||0),z:Number(o.z||0),label:o.label||o.id};}
+  return {x:Number(t.toX||0),z:Number(t.toZ||0),label:t.destinationLabel||t.to||'destination'};
+}
 function addTeleports(layout){
-  const hint=document.getElementById('teleportHint');
   (layout.settings?.teleports||[]).forEach((t,i)=>{
+    const dest=destinationForTeleport(layout,t);
     const tex=teleportCanvas(t.label||('Teleport '+(i+1)));
     const mesh=addPlane(Number(t.size||1.4),Number(t.size||1.4),{x:Number(t.x||0),y:.025,z:Number(t.z||0)},{x:-Math.PI/2},new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));
-    mesh.userData={...t,type:'teleport'};teleportMeshes.push(mesh);
-    const dest=addPlane(2.8,.5,{x:Number(t.x||0),y:1.15,z:Number(t.z||0)},{y:0},new THREE.MeshBasicMaterial({map:teleportCanvas('To: '+(t.destinationLabel||t.to||'destination')),transparent:true,side:THREE.DoubleSide}));
-    dest.scale.y=.28;dest.userData={billboard:true};
+    mesh.userData={...t,type:'teleport',destX:dest.x,destZ:dest.z,destLabel:dest.label};teleportMeshes.push(mesh);
   });
 }
 
 function addLights(layout){scene.add(new THREE.AmbientLight(0xffffff,Number(layout.settings?.ambientLight??1.1)));const d=new THREE.DirectionalLight(0xffffff,Number(layout.settings?.directionalLight??1.4));d.position.set(5,10,5);scene.add(d);(layout.settings?.additionalLights||[]).forEach(l=>{const p=new THREE.PointLight(new THREE.Color(l.color||'#fff'),Number(l.intensity||1.5),Number(l.distance||28));p.position.set(Number(l.x||0),Number(l.y||5),Number(l.z||0));scene.add(p)})}
 function insideAny(pos){return bounds.some(b=>pos.x>=b.minX&&pos.x<=b.maxX&&pos.z>=b.minZ&&pos.z<=b.maxZ)}
 function tryMove(delta){if(!controls.isLocked)return;const old=camera.position.clone();const speed=6*delta;if(keys.KeyW)controls.moveForward(speed);if(keys.KeyS)controls.moveForward(-speed);if(keys.KeyA)controls.moveRight(-speed);if(keys.KeyD)controls.moveRight(speed);camera.position.y=1.7;if(!insideAny(camera.position))camera.position.copy(old)}
-const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2(),teleportHint=document.getElementById('teleportHint');function setMouse(e){mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera)}renderer.domElement.addEventListener('mousemove',e=>{if(!controls.isLocked)return;setMouse(e);const hit=raycaster.intersectObjects(teleportMeshes)[0];if(hit){const d=hit.object.userData;teleportHint.style.display='block';teleportHint.textContent=(d.label||'Teleport')+' → '+(d.destinationLabel||d.to||'destination')+' (click to travel)'}else teleportHint.style.display='none'});renderer.domElement.addEventListener('click',e=>{if(!controls.isLocked)return;setMouse(e);const tp=raycaster.intersectObjects(teleportMeshes)[0];if(tp){const d=tp.object.userData;camera.position.set(Number(d.toX||0),1.7,Number(d.toZ||0));return}const hit=raycaster.intersectObjects(artMeshes)[0];if(hit){const d=hit.object.userData;panel.style.display='block';panelContent.innerHTML=`<h2>${d.title||'Untitled'}</h2><p><em>${d.artist||''}</em></p>${mediaEmbed(d.media||d.image,d.mediaType||d.type)}${d.statementDisplay!=='none'?`<h3>Artist Statement</h3><p>${d.description||''}</p>`:''}`}});
+const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2(),teleportHint=document.getElementById('teleportHint');function setMouse(e){mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera)}renderer.domElement.addEventListener('mousemove',e=>{if(!controls.isLocked)return;setMouse(e);const hit=raycaster.intersectObjects(teleportMeshes)[0];if(hit){const d=hit.object.userData;teleportHint.style.display='block';teleportHint.textContent=(d.label||'Teleport')+' → '+(d.destLabel||d.destinationLabel||'destination')+' (click to travel)'}else teleportHint.style.display='none'});renderer.domElement.addEventListener('click',e=>{if(!controls.isLocked)return;setMouse(e);const tp=raycaster.intersectObjects(teleportMeshes)[0];if(tp){const d=tp.object.userData;camera.position.set(Number(d.destX??d.toX??0),1.7,Number(d.destZ??d.toZ??0));return}const hit=raycaster.intersectObjects(artMeshes)[0];if(hit){const d=hit.object.userData;panel.style.display='block';panelContent.innerHTML=`<h2>${d.title||'Untitled'}</h2><p><em>${d.artist||''}</em></p>${mediaEmbed(d.media||d.image,d.mediaType||d.type)}${d.statementDisplay!=='none'?`<h3>Artist Statement</h3><p>${d.description||''}</p>`:''}`}});
+const audioState={enabled:false,muted:false,master:.75,sources:[]};
+function addAudioIcons(layout){
+  (layout.settings?.audio?.sources||[]).forEach((a,i)=>{
+    const c=document.createElement('canvas');c.width=256;c.height=256;const ctx=c.getContext('2d');
+    ctx.fillStyle='rgba(139,92,246,.9)';ctx.beginPath();ctx.arc(128,128,104,0,Math.PI*2);ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=10;ctx.stroke();ctx.fillStyle='white';ctx.font='bold 92px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(a.kind==='narration'?'🎙':'♪',128,124);
+    const tex=new THREE.CanvasTexture(c);addPlane(1.1,1.1,{x:Number(a.x||0),y:.035,z:Number(a.z||0)},{x:-Math.PI/2},new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));
+  });
+}
+function setupAudio(layout){
+  const cfg=layout.settings?.audio||{};audioState.master=Number(cfg.masterVolume??.75);document.getElementById('audioVolume').value=audioState.master;
+  audioState.sources=(cfg.sources||[]).map(a=>{
+    const direct=(a.type==='direct'||String(a.url||'').match(/\.(mp3|ogg|wav|m4a)(\?|$)/i));
+    const obj={cfg:a,el:null,direct};
+    if(direct&&a.url){const el=new Audio(a.url);el.loop=a.loop!==false;el.preload='auto';el.crossOrigin='anonymous';obj.el=el;}
+    return obj;
+  });
+  document.getElementById('audioEnable').onclick=()=>{audioState.enabled=true;audioState.sources.forEach(s=>{if(s.el)s.el.play().catch(()=>{})});document.getElementById('audioStatus').textContent='Audio on'};
+  document.getElementById('audioMute').onchange=e=>{audioState.muted=e.target.checked;updateAudioVolumes()};
+  document.getElementById('audioVolume').oninput=e=>{audioState.master=Number(e.target.value);updateAudioVolumes()};
+}
+function updateAudioVolumes(){
+  if(!audioState.enabled)return;
+  let active=0;
+  audioState.sources.forEach(s=>{if(!s.el)return;const a=s.cfg;const dx=camera.position.x-Number(a.x||0),dz=camera.position.z-Number(a.z||0);const dist=Math.hypot(dx,dz);const radius=Number(a.radius||18);const falloff=Math.max(0,1-dist/radius);s.el.volume=audioState.muted?0:Math.min(1,audioState.master*Number(a.volume??.5)*falloff);if(s.el.volume>.01)active++;});
+  document.getElementById('audioStatus').textContent=audioState.muted?'Muted':active?'Audio nearby':'Audio on';
+}
+
 const fallback={rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games'}]}};
-const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.hallways||[]).forEach(h=>makeHall(h,layout.rooms||[],layout));camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i));
-const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);tryMove(clock.getDelta());renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);addAudioIcons(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.hallways||[]).forEach(h=>makeHall(h,layout.rooms||[],layout));camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i));
+const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);tryMove(clock.getDelta());updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 </script>
 </body>
 </html>
