@@ -15,11 +15,13 @@
         "wall": "front",
         "x": 0,
         "y": 4.8
-      }
+      },
+      "wallColors": {},
+      "wallTextures": {}
     },
     {
       "id": "games",
-      "title": "Game Design",
+      "title": "Games & Interactive Media",
       "x": 30,
       "z": 0,
       "width": 20,
@@ -28,45 +30,13 @@
       "wallColor": "#2a2a33",
       "wallTexture": "",
       "label": {
-        "text": "Game Design",
+        "text": "Games & Interactive Media",
         "wall": "front",
         "x": 0,
         "y": 4.8
-      }
-    },
-    {
-      "id": "room3",
-      "title": "Graphic Design",
-      "x": 0,
-      "z": 26,
-      "width": 20,
-      "depth": 14,
-      "height": 6,
-      "wallColor": "#2a2a33",
-      "wallTexture": "",
-      "label": {
-        "text": "Graphic Design",
-        "wall": "front",
-        "x": 0,
-        "y": 4.8
-      }
-    },
-    {
-      "id": "room4",
-      "title": "Screen Production",
-      "x": 30,
-      "z": 26,
-      "width": 20,
-      "depth": 20,
-      "height": 6,
-      "wallColor": "#2a2a33",
-      "wallTexture": "",
-      "label": {
-        "text": "Screen Production",
-        "wall": "front",
-        "x": 0,
-        "y": 4.8
-      }
+      },
+      "wallColors": {},
+      "wallTextures": {}
     }
   ],
   "hallways": [
@@ -81,42 +51,6 @@
       "width": 4,
       "height": 4,
       "wallColor": "#22222a"
-    },
-    {
-      "id": "hall2",
-      "from": "animation",
-      "to": "room3",
-      "fromWall": "front",
-      "fromSlot": "right",
-      "toWall": "back",
-      "toSlot": "right",
-      "width": 4,
-      "height": 4,
-      "wallColor": "#22222a"
-    },
-    {
-      "id": "hall3",
-      "from": "games",
-      "to": "room4",
-      "fromWall": "front",
-      "fromSlot": "left",
-      "toWall": "back",
-      "toSlot": "left",
-      "width": 4,
-      "height": 4,
-      "wallColor": "#22222a"
-    },
-    {
-      "id": "hall4",
-      "from": "room4",
-      "to": "room3",
-      "fromWall": "left",
-      "fromSlot": "center",
-      "toWall": "right",
-      "toSlot": "center",
-      "width": 4,
-      "height": 4,
-      "wallColor": "#22222a"
     }
   ],
   "settings": {
@@ -126,41 +60,23 @@
     "directionalLight": 1.4,
     "additionalLights": [
       {
-        "id": "light1",
-        "x": 0.2,
+        "x": 0,
         "y": 5.5,
         "z": 0,
         "intensity": 1.8,
-        "color": "#ffffff",
-        "distance": 18
-      },
-      {
-        "id": "light2",
-        "x": 31.1,
-        "z": -0.1,
-        "y": 5.5,
-        "intensity": 1.5,
-        "color": "#ffffff",
-        "distance": 18
-      },
-      {
-        "id": "light3",
-        "x": -0.2,
-        "z": 26,
-        "y": 5.5,
-        "intensity": 1.5,
-        "color": "#ffffff",
-        "distance": 18
-      },
-      {
-        "id": "light4",
-        "x": 30,
-        "z": 26.3,
-        "y": 5.5,
-        "intensity": 1.5,
-        "color": "#ffffff",
-        "distance": 18
+        "color": "#ffffff"
       }
+    ],
+    "defaultWallColor": "#2a2a33",
+    "palette": [
+      "#2a2a33",
+      "#f5f0e8",
+      "#e8dcc2",
+      "#334155",
+      "#4338ca",
+      "#6b3f2a",
+      "#1f2937",
+      "#ffffff"
     ]
   }
 }
