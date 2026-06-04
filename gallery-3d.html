@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: #000;
             color: #fff;
             overflow: hidden;
             height: 100vh;
@@ -22,141 +22,199 @@
         #gallery-container {
             width: 100%;
             height: 100vh;
+            perspective: 1200px;
+            position: relative;
+        }
+
+        .gallery-scene {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.05s ease-out;
+        }
+
+        /* 3D Room walls */
+        .wall {
+            position: absolute;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .wall::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+            pointer-events: none;
+        }
+
+        /* Room backdrop */
+        .back-wall {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            transform: translateZ(-600px);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            perspective: 1000px;
+            text-align: center;
+            font-size: 3em;
+            color: rgba(102, 126, 234, 0.3);
         }
 
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            padding: 40px;
-            max-width: 1400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            backdrop-filter: blur(10px);
+        .back-wall h1 {
+            font-size: 0.8em;
+            margin-bottom: 0.3em;
         }
 
-        .artwork-card {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(102, 126, 234, 0.5);
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            transform: translateZ(0);
-        }
-
-        .artwork-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: #667eea;
-            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
-        }
-
-        .artwork-image {
-            width: 100%;
-            aspect-ratio: 4/3;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Artwork frames on walls */
+        .artwork-frame {
+            position: absolute;
+            background: #000;
+            border: 3px solid #667eea;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
-            color: rgba(255, 255, 255, 0.2);
             overflow: hidden;
-            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
         }
 
-        .artwork-image img {
+        .artwork-frame:hover {
+            box-shadow: 0 0 50px rgba(102, 126, 234, 0.8), inset 0 0 20px rgba(0, 0, 0, 0.8);
+            transform: scale(1.05);
+        }
+
+        .artwork-content {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
-        .artwork-image video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .artwork-image iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .artwork-info {
-            padding: 20px;
-        }
-
-        .artwork-title {
+        .artwork-overlay {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
             color: #667eea;
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 5px;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.3s ease;
         }
 
-        .artwork-artist {
-            color: #a0a0a0;
-            font-size: 0.9em;
-            margin-bottom: 10px;
+        .artwork-frame:hover .artwork-overlay {
+            bottom: 0;
         }
 
-        .artwork-description {
-            color: #c0c0c0;
-            font-size: 0.85em;
-            line-height: 1.4;
-            margin-bottom: 10px;
-        }
-
-        .artwork-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-
-        .tag {
-            background: rgba(102, 126, 234, 0.3);
-            color: #667eea;
-            padding: 3px 8px;
+        /* Controls HUD */
+        .controls-hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.5);
             border-radius: 10px;
-            font-size: 0.75em;
+            padding: 15px;
+            color: #667eea;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
+        .controls-hud h3 {
             margin-bottom: 10px;
             color: #667eea;
+            font-size: 14px;
         }
 
-        .header p {
+        .control-item {
+            margin: 5px 0;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .control-item:last-child {
+            border-bottom: none;
+        }
+
+        .key {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            border-radius: 10px;
+            padding: 15px;
             color: #a0a0a0;
-            font-size: 1.1em;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #a0a0a0;
-        }
-
-        .empty-state h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
+        .info-panel h3 {
             color: #667eea;
+            margin-bottom: 8px;
+            font-size: 12px;
         }
 
+        .crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .crosshair::before,
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(102, 126, 234, 0.5);
+        }
+
+        .crosshair::before {
+            width: 20px;
+            height: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        .crosshair::after {
+            width: 2px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        /* Modal for enlarged view */
         .modal {
             display: none;
             position: fixed;
@@ -165,7 +223,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(5px);
         }
 
@@ -189,22 +247,14 @@
             cursor: pointer;
         }
 
-        .close:hover,
-        .close:focus {
+        .close:hover {
             color: #667eea;
         }
 
-        .modal-image {
+        .modal-media {
             width: 100%;
-            max-height: 400px;
+            max-height: 500px;
             object-fit: contain;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        .modal-video {
-            width: 100%;
-            max-height: 400px;
             margin-bottom: 20px;
             border-radius: 8px;
         }
@@ -227,24 +277,73 @@
             margin-bottom: 15px;
         }
 
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+        .artwork-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #667eea;
+            font-size: 20px;
+            text-align: center;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
+    <div class="crosshair"></div>
+
     <div id="gallery-container">
-        <div class="header">
-            <h1>✨ Student Gallery</h1>
-            <p>Showcase of student artwork, videos & 3D models</p>
+        <div class="gallery-scene" id="galleryScene"></div>
+    </div>
+
+    <div class="controls-hud">
+        <h3>🎮 Navigation Controls</h3>
+        <div class="control-item">
+            <span class="key">W</span> / <span class="key">↑</span> = Move Forward
         </div>
-        
-        <div class="gallery-grid" id="galleryGrid">
-            <div class="empty-state">
-                <h2>Loading gallery...</h2>
-                <p>Fetching artwork data...</p>
-            </div>
+        <div class="control-item">
+            <span class="key">A</span> / <span class="key">←</span> = Move Left
         </div>
+        <div class="control-item">
+            <span class="key">S</span> / <span class="key">↓</span> = Move Backward
+        </div>
+        <div class="control-item">
+            <span class="key">D</span> / <span class="key">→</span> = Move Right
+        </div>
+        <div class="control-item">
+            <span class="key">SPACE</span> = Move Up
+        </div>
+        <div class="control-item">
+            <span class="key">CTRL</span> = Move Down
+        </div>
+        <div class="control-item">
+            <span class="key">🖱️ Mouse</span> = Look Around
+        </div>
+        <div class="control-item">
+            <span class="key">Click</span> = View Details
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h3>📍 Current View</h3>
+        <div id="positionInfo">X: 0 | Y: 0 | Z: 0</div>
+        <h3>🎨 Gallery Info</h3>
+        <div id="galleryInfo">Loading artworks...</div>
     </div>
 
     <!-- Modal for enlarged view -->
@@ -256,10 +355,39 @@
     </div>
 
     <script>
-        const galleryGrid = document.getElementById('galleryGrid');
+        // Camera position
+        const camera = {
+            x: 0,
+            y: 100,
+            z: 200,
+            rotX: 0,
+            rotY: 0
+        };
+
+        const keys = {};
+        const scene = document.getElementById('galleryScene');
         const modal = document.getElementById('artworkModal');
         const modalClose = document.querySelector('.close');
         const modalBody = document.getElementById('modalBody');
+        let artworks = [];
+
+        // Input handling
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        // Mouse look
+        document.addEventListener('mousemove', (e) => {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            camera.rotY = (e.clientX - centerX) / window.innerWidth * 1.5;
+            camera.rotX = (e.clientY - centerY) / window.innerHeight * 1.5;
+        });
 
         // Close modal
         modalClose.onclick = () => {
@@ -272,73 +400,109 @@
             }
         };
 
-        // Load and display gallery
-        async function loadGallery() {
-            try {
-                const response = await fetch('gallery-data.json');
-                const artworks = await response.json();
+        // Update camera position based on input
+        function updateCamera() {
+            const moveSpeed = 5;
+            
+            if (keys['w'] || keys['arrowup']) camera.z -= moveSpeed;
+            if (keys['s'] || keys['arrowdown']) camera.z += moveSpeed;
+            if (keys['a'] || keys['arrowleft']) camera.x -= moveSpeed;
+            if (keys['d'] || keys['arrowright']) camera.x += moveSpeed;
+            if (keys[' ']) camera.y += moveSpeed;
+            if (keys['control']) camera.y -= moveSpeed;
 
-                if (!artworks || artworks.length === 0) {
-                    galleryGrid.innerHTML = `
-                        <div class="empty-state" style="grid-column: 1/-1;">
-                            <h2>Gallery is empty</h2>
-                            <p>Upload your first artwork to get started!</p>
-                        </div>
-                    `;
-                    return;
-                }
+            // Clamp camera within reasonable bounds
+            camera.y = Math.max(50, Math.min(300, camera.y));
+            camera.x = Math.max(-400, Math.min(400, camera.x));
+            camera.z = Math.max(-500, Math.min(500, camera.z));
 
-                galleryGrid.innerHTML = '';
-
-                artworks.forEach((artwork, index) => {
-                    const card = createArtworkCard(artwork, index);
-                    galleryGrid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error('Error loading gallery:', error);
-                galleryGrid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <h2>Error loading gallery</h2>
-                        <p>Make sure gallery-data.json exists in the same directory.</p>
-                    </div>
-                `;
-            }
+            updatePositionInfo();
         }
 
-        function createArtworkCard(artwork, index) {
-            const card = document.createElement('div');
-            card.className = 'artwork-card';
+        function updatePositionInfo() {
+            document.getElementById('positionInfo').textContent = 
+                `X: ${Math.round(camera.x)} | Y: ${Math.round(camera.y)} | Z: ${Math.round(camera.z)}`;
+        }
 
-            // Create image preview
-            let imageHTML = '';
-            if (artwork.type === 'image') {
-                imageHTML = `<img src="${artwork.media}" alt="${artwork.title}" onerror="this.style.display='none'">
-                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 50px;">📸</div>`;
-            } else if (artwork.type === 'video') {
-                imageHTML = `<div style="display: flex; align-items: center; justify-content: center; font-size: 50px; width: 100%; height: 100%;">🎬</div>`;
-            } else if (artwork.type === 'model') {
-                imageHTML = `<div style="display: flex; align-items: center; justify-content: center; font-size: 50px; width: 100%; height: 100%;">🎨</div>`;
-            } else {
-                imageHTML = `<div style="display: flex; align-items: center; justify-content: center; font-size: 50px; width: 100%; height: 100%;">📷</div>`;
-            }
+        // Create 3D scene
+        function createScene() {
+            scene.innerHTML = '';
+            
+            const galleryScene = document.createElement('div');
+            galleryScene.className = 'gallery-scene';
+            
+            // Back wall
+            const backWall = document.createElement('div');
+            backWall.className = 'wall back-wall';
+            backWall.innerHTML = '<h1>✨ Student Gallery ✨</h1>';
+            galleryScene.appendChild(backWall);
 
-            const tagsHTML = (artwork.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('');
+            // Create artwork frames
+            const positions = [
+                // Front wall (center)
+                { x: -150, y: 100, z: -550, rotX: 0, rotY: 0, w: 200, h: 200 },
+                { x: 150, y: 100, z: -550, rotX: 0, rotY: 0, w: 200, h: 200 },
+                
+                // Left wall
+                { x: -450, y: 150, z: -100, rotX: 0, rotY: 45, w: 200, h: 150 },
+                { x: -450, y: 150, z: 200, rotX: 0, rotY: 45, w: 200, h: 150 },
+                
+                // Right wall
+                { x: 450, y: 150, z: -100, rotX: 0, rotY: -45, w: 200, h: 150 },
+                { x: 450, y: 150, z: 200, rotX: 0, rotY: -45, w: 200, h: 150 },
+            ];
 
-            card.innerHTML = `
-                <div class="artwork-image" style="position: relative;">
-                    ${imageHTML}
-                </div>
-                <div class="artwork-info">
-                    <div class="artwork-title">${artwork.title}</div>
-                    <div class="artwork-artist">by ${artwork.artist}</div>
-                    <div class="artwork-description">${artwork.description}</div>
-                    <div class="artwork-tags">${tagsHTML}</div>
-                </div>
+            artworks.forEach((artwork, index) => {
+                if (index < positions.length) {
+                    const pos = positions[index];
+                    const frame = createArtworkFrame(artwork, pos, index);
+                    galleryScene.appendChild(frame);
+                }
+            });
+
+            scene.appendChild(galleryScene);
+        }
+
+        function createArtworkFrame(artwork, position, index) {
+            const frame = document.createElement('div');
+            frame.className = 'artwork-frame';
+            
+            frame.style.width = position.w + 'px';
+            frame.style.height = position.h + 'px';
+            frame.style.left = '50%';
+            frame.style.top = '50%';
+            frame.style.transform = `
+                translateX(calc(-50% + ${position.x}px))
+                translateY(calc(-50% + ${position.y}px))
+                translateZ(${position.z}px)
+                rotateY(${position.rotY}deg)
             `;
 
-            card.onclick = () => openModal(artwork);
-            return card;
+            // Create content based on type
+            let content = '';
+            if (artwork.type === 'image') {
+                content = `<img src="${artwork.media}" alt="${artwork.title}" class="artwork-content" onerror="this.style.display='none'">`;
+            } else if (artwork.type === 'video') {
+                // Extract YouTube video ID
+                if (artwork.media.includes('youtu')) {
+                    const videoId = artwork.media.includes('youtu.be') 
+                        ? artwork.media.split('/').pop().split('?')[0]
+                        : new URLSearchParams(artwork.media.split('?')[1] || '').get('v') || artwork.media.split('v=')[1];
+                    if (videoId) {
+                        content = `<iframe src="https://www.youtube.com/embed/${videoId}" class="artwork-content" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    }
+                } else {
+                    content = `<video class="artwork-content" controls><source src="${artwork.media}"></video>`;
+                }
+            }
+
+            frame.innerHTML = content + `<div class="artwork-overlay">${artwork.title}</div>`;
+            frame.onclick = (e) => {
+                e.stopPropagation();
+                openModal(artwork);
+            };
+
+            return frame;
         }
 
         function openModal(artwork) {
@@ -348,22 +512,18 @@
             `;
 
             if (artwork.type === 'image') {
-                content += `<img src="${artwork.media}" alt="${artwork.title}" class="modal-image" onerror="this.style.display='none'">`;
+                content += `<img src="${artwork.media}" alt="${artwork.title}" class="modal-media" onerror="this.style.display='none'">`;
             } else if (artwork.type === 'video') {
-                // Handle YouTube or other video embeds
                 if (artwork.media.includes('youtu')) {
                     const videoId = artwork.media.includes('youtu.be') 
                         ? artwork.media.split('/').pop().split('?')[0]
-                        : new URLSearchParams(artwork.media.split('?')[1]).get('v') || artwork.media.split('v=')[1];
-                    content += `<iframe class="modal-video" src="https://www.youtube.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                        : new URLSearchParams(artwork.media.split('?')[1] || '').get('v') || artwork.media.split('v=')[1];
+                    if (videoId) {
+                        content += `<iframe src="https://www.youtube.com/embed/${videoId}" class="modal-media" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    }
                 } else {
-                    content += `<video class="modal-video" controls><source src="${artwork.media}"></video>`;
+                    content += `<video class="modal-media" controls><source src="${artwork.media}"></video>`;
                 }
-            } else if (artwork.type === 'model') {
-                content += `<div style="background: #333; padding: 20px; border-radius: 8px; text-align: center; color: #a0a0a0;">
-                    3D Model: ${artwork.title}<br>
-                    <a href="${artwork.media}" target="_blank" style="color: #667eea; text-decoration: underline; margin-top: 10px; display: inline-block;">View Model</a>
-                </div>`;
             }
 
             content += `
@@ -375,8 +535,49 @@
             modal.style.display = 'block';
         }
 
-        // Load gallery on page load
+        // Update scene transform based on camera
+        function render() {
+            const galleryScene = scene.querySelector('.gallery-scene');
+            if (galleryScene) {
+                galleryScene.style.transform = `
+                    rotateX(${camera.rotX}rad)
+                    rotateY(${camera.rotY}rad)
+                    translateX(${-camera.x}px)
+                    translateY(${-camera.y}px)
+                    translateZ(${-camera.z}px)
+                `;
+            }
+        }
+
+        // Load gallery data
+        async function loadGallery() {
+            try {
+                const response = await fetch('gallery-data.json');
+                artworks = await response.json();
+                
+                if (!artworks || artworks.length === 0) {
+                    document.getElementById('galleryInfo').textContent = 'No artworks loaded';
+                    return;
+                }
+
+                document.getElementById('galleryInfo').textContent = `${artworks.length} artwork(s) displayed`;
+                createScene();
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                document.getElementById('galleryInfo').textContent = 'Error loading gallery';
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            updateCamera();
+            render();
+            requestAnimationFrame(animate);
+        }
+
+        // Start
         loadGallery();
+        animate();
 
         // Reload gallery every 30 seconds for live updates
         setInterval(loadGallery, 30000);
