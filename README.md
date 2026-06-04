@@ -317,6 +317,20 @@ Open `gallery-layout.json` directly in the browser and hard refresh. GitHub Page
 
 ## Changelog
 
+### v5.2 - Layout Editor Context Menu
+- Added right-click context menus in `layout-editor.html`.
+- Right-click rooms, hallways, lights, teleports, or audio nodes to edit, duplicate, copy JSON, or delete.
+- Right-click empty layout space to add a room, light, teleport, or audio source at that exact map location.
+- This improves visual editing and reduces reliance on the top toolbar.
+
+
+### v5.1 — Teleport Pairing UX + Favicon Fix
+- Fixed teleport pairing mode so clicking the first teleport no longer cancels pairing mode.
+- Added clearer pairing instructions: click the start teleport, then click the destination teleport.
+- Added a highlighted visual state for the first selected teleport token.
+- Added a small `favicon.svg` and linked it from the main HTML pages to remove the browser `/favicon.ico` 404 warning.
+
+
 ### v4.5
 
 - Fixed hallway walk-through collision after doorway alignment changes.
@@ -453,3 +467,8 @@ Audio does not autoplay. The viewer must click **Enable sound**, which is requir
 - `gallery-3d.html`
 - `gallery-layout.json`
 - `README.md`
+
+### v5.3 Audio UI Fix
+- Fixed the 3D gallery audio toggle so **Enable sound** becomes **Disable sound** and actually pauses/resets direct audio sources.
+- The mute checkbox and master volume slider now update the active audio state reliably.
+- Removed visible audio floor icons from the 3D walkthrough; audio source markers remain an editor-only layout tool.

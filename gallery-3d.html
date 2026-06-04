@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>3D Student Gallery</title>
+<title>3D Student Gallery</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:Arial,sans-serif;color:#fff}canvas{display:block}.hud{position:fixed;top:14px;left:14px;z-index:30;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;max-width:350px;font-size:14px}.hud a{color:#b8c4ff}.overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;text-align:center}.overlay div{pointer-events:auto;cursor:pointer;padding:26px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:rgba(0,0,0,.84);box-shadow:0 12px 60px rgba(0,0,0,.45)}.panel{position:fixed;top:14px;right:14px;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;z-index:35;display:none;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px}.panel h2{margin:.1rem 0 .3rem}.panel iframe,.panel img,.panel video{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}.statement3d{font-family:Arial}.panel button{float:right;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}.error{position:fixed;bottom:14px;left:14px;right:14px;background:#4c1515;border:1px solid #a94444;border-radius:12px;padding:12px;z-index:40}.teleportHint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:36;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;color:#fff;display:none}.audioHud{position:fixed;left:14px;bottom:14px;z-index:38;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.audioHud button{border:0;border-radius:8px;padding:6px 9px;cursor:pointer}.audioHud input[type=range]{width:100px}.audioHint{font-size:12px;color:#bbb}
 </style>
@@ -12,7 +12,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:Ar
 <body>
 <div class="hud"><strong>3D Student Gallery</strong><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Layout editor</a></div>
 <div id="overlay" class="overlay"><div><h1>Click to Enter Gallery</h1><p>Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
-<div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioEnable">Enable sound</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
+<div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioToggle">Enable sound</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
 <script type="module">
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
@@ -113,26 +113,70 @@ function addAudioIcons(layout){
   });
 }
 function setupAudio(layout){
-  const cfg=layout.settings?.audio||{};audioState.master=Number(cfg.masterVolume??.75);document.getElementById('audioVolume').value=audioState.master;
+  const cfg=layout.settings?.audio||{};
+  audioState.master=Number(cfg.masterVolume??.75);
+  const volume=document.getElementById('audioVolume');
+  const mute=document.getElementById('audioMute');
+  const toggle=document.getElementById('audioToggle');
+  const status=document.getElementById('audioStatus');
+  volume.value=audioState.master;
   audioState.sources=(cfg.sources||[]).map(a=>{
     const direct=(a.type==='direct'||String(a.url||'').match(/\.(mp3|ogg|wav|m4a)(\?|$)/i));
     const obj={cfg:a,el:null,direct};
-    if(direct&&a.url){const el=new Audio(a.url);el.loop=a.loop!==false;el.preload='auto';el.crossOrigin='anonymous';obj.el=el;}
+    if(direct&&a.url){
+      const el=new Audio(a.url);
+      el.loop=a.loop!==false;
+      el.preload='auto';
+      el.crossOrigin='anonymous';
+      el.volume=0;
+      obj.el=el;
+    }
     return obj;
   });
-  document.getElementById('audioEnable').onclick=()=>{audioState.enabled=true;audioState.sources.forEach(s=>{if(s.el)s.el.play().catch(()=>{})});document.getElementById('audioStatus').textContent='Audio on'};
-  document.getElementById('audioMute').onchange=e=>{audioState.muted=e.target.checked;updateAudioVolumes()};
-  document.getElementById('audioVolume').oninput=e=>{audioState.master=Number(e.target.value);updateAudioVolumes()};
+  function stopAll(){
+    audioState.sources.forEach(s=>{if(s.el){s.el.pause();s.el.currentTime=0;s.el.volume=0;}});
+  }
+  function refreshButton(){
+    toggle.textContent=audioState.enabled?'Disable sound':'Enable sound';
+    status.textContent=audioState.enabled?(audioState.muted?'Muted':'Audio on'):'Audio off';
+  }
+  toggle.onclick=()=>{
+    audioState.enabled=!audioState.enabled;
+    if(audioState.enabled){
+      audioState.sources.forEach(s=>{if(s.el)s.el.play().catch(()=>{status.textContent='Click again or check audio URL';});});
+      updateAudioVolumes();
+    }else{
+      stopAll();
+    }
+    refreshButton();
+  };
+  mute.onchange=e=>{audioState.muted=e.target.checked;updateAudioVolumes();refreshButton();};
+  volume.oninput=e=>{audioState.master=Number(e.target.value);updateAudioVolumes();};
+  refreshButton();
 }
 function updateAudioVolumes(){
-  if(!audioState.enabled)return;
+  const status=document.getElementById('audioStatus');
+  if(!audioState.enabled){
+    audioState.sources.forEach(s=>{if(s.el)s.el.volume=0;});
+    status.textContent='Audio off';
+    return;
+  }
   let active=0;
-  audioState.sources.forEach(s=>{if(!s.el)return;const a=s.cfg;const dx=camera.position.x-Number(a.x||0),dz=camera.position.z-Number(a.z||0);const dist=Math.hypot(dx,dz);const radius=Number(a.radius||18);const falloff=Math.max(0,1-dist/radius);s.el.volume=audioState.muted?0:Math.min(1,audioState.master*Number(a.volume??.5)*falloff);if(s.el.volume>.01)active++;});
-  document.getElementById('audioStatus').textContent=audioState.muted?'Muted':active?'Audio nearby':'Audio on';
+  audioState.sources.forEach(s=>{
+    if(!s.el)return;
+    const a=s.cfg;
+    const dx=camera.position.x-Number(a.x||0),dz=camera.position.z-Number(a.z||0);
+    const dist=Math.hypot(dx,dz);
+    const radius=Number(a.radius||18);
+    const falloff=Math.max(0,1-dist/radius);
+    s.el.volume=audioState.muted?0:Math.min(1,audioState.master*Number(a.volume??.5)*falloff);
+    if(s.el.volume>.01)active++;
+  });
+  status.textContent=audioState.muted?'Muted':active?'Audio nearby':'Audio on';
 }
 
 const fallback={rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games'}]}};
-const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);addAudioIcons(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.hallways||[]).forEach(h=>makeHall(h,layout.rooms||[],layout));camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i));
+const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.hallways||[]).forEach(h=>makeHall(h,layout.rooms||[],layout));camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i));
 const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);tryMove(clock.getDelta());updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 </script>
 </body>
