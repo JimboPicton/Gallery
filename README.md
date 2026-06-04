@@ -472,3 +472,35 @@ Audio does not autoplay. The viewer must click **Enable sound**, which is requir
 - Fixed the 3D gallery audio toggle so **Enable sound** becomes **Disable sound** and actually pauses/resets direct audio sources.
 - The mute checkbox and master volume slider now update the active audio state reliably.
 - Removed visible audio floor icons from the 3D walkthrough; audio source markers remain an editor-only layout tool.
+
+## Changelog
+
+### v5.4 – Palette selection fix
+- Fixed colour palette swatches in the Layout Editor so selecting a swatch updates the active colour field without immediately rebuilding the form.
+- Added clear selected-state highlighting for the currently selected swatch.
+- Added status feedback reminding users to click Apply to save colour changes into `gallery-layout.json`.
+
+
+## v5.5 Teleport Activation Update
+
+- Teleports now use a clearer default interaction: look at or stand near a teleport pad, then press **E** to travel.
+- Teleports can optionally use automatic walk-over activation by setting `interaction` to `auto` or `walkover` in `gallery-layout.json`.
+- Each teleport supports a configurable trigger radius using `radius`, for example `"radius": 2.2`.
+- The 3D gallery now displays a clear prompt such as `Press E to travel` when a teleport is available.
+- Click-to-teleport was removed from the main interaction path to avoid accidental teleporting while inspecting artworks.
+
+### Teleport JSON Example
+
+```json
+{
+  "id": "teleport-animation-to-games",
+  "label": "Games Room",
+  "x": 0,
+  "z": 3,
+  "linkedTo": "teleport-games-to-animation",
+  "interaction": "press",
+  "radius": 2.2
+}
+```
+
+Use `interaction: "press"` for deliberate **E key** activation. Use `interaction: "auto"` only where walk-over teleporting is preferred.

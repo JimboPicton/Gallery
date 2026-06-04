@@ -87,7 +87,9 @@
         "size": 1.4,
         "toX": 30,
         "toZ": 0,
-        "destinationLabel": "Games & Interactive Media"
+        "destinationLabel": "Games & Interactive Media",
+        "interaction": "press",
+        "radius": 2.2
       }
     ],
     "audio": {
