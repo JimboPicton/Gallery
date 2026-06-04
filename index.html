@@ -39,11 +39,57 @@
             color: #a0a0a0;
         }
 
+        .site-nav {
+            max-width: 980px;
+            margin: -20px auto 34px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            padding: 0 20px;
+        }
+
+        .nav-card {
+            display: block;
+            padding: 18px 20px;
+            border-radius: 18px;
+            text-decoration: none;
+            color: #e9e9ff;
+            background: rgba(255, 255, 255, 0.055);
+            border: 1px solid rgba(102, 126, 234, 0.28);
+            backdrop-filter: blur(10px);
+            transition: all 0.25s ease;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-4px);
+            border-color: #667eea;
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.25);
+        }
+
+        .nav-card.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.35), rgba(118, 75, 162, 0.35));
+            border-color: #667eea;
+        }
+
+        .nav-card strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1.05em;
+            color: #ffffff;
+        }
+
+        .nav-card span {
+            display: block;
+            color: #b8b8c8;
+            font-size: 0.9em;
+            line-height: 1.35;
+        }
+
         .view-options {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 40px;
+            margin-bottom: 24px;
         }
 
         .view-btn {
@@ -313,7 +359,8 @@
                 max-height: 95vh;
             }
 
-            .view-options {
+            .site-nav, .view-options {
+                grid-template-columns: 1fr;
                 flex-direction: column;
             }
         }
@@ -325,9 +372,23 @@
         <p>A showcase of digital media creativity</p>
     </header>
 
-    <div class="view-options">
-        <button class="view-btn active" onclick="switchView('grid')">Grid View</button>
-        <a href="gallery-3d.html" class="view-btn">🎮 3D Gallery Space</a>
+    <nav class="site-nav" aria-label="Main gallery navigation">
+        <a class="nav-card active" href="index.html">
+            <strong>🖼️ Grid Gallery</strong>
+            <span>Browse all student works in a filterable card layout.</span>
+        </a>
+        <a class="nav-card" href="gallery-3d.html">
+            <strong>🎮 3D Walkthrough</strong>
+            <span>Enter a first-person virtual gallery with wall-mounted works only.</span>
+        </a>
+        <a class="nav-card" href="admin.html">
+            <strong>⚙️ Manage Gallery</strong>
+            <span>Add, edit, or export artwork records for gallery-data.json.</span>
+        </a>
+    </nav>
+
+    <div class="view-options" aria-label="Current view">
+        <button class="view-btn active" onclick="switchView('grid')">Current View: Grid Gallery</button>
     </div>
 
     <div id="gridView">
@@ -405,7 +466,8 @@
 
         function renderGallery(filter) {
             const gallery = document.getElementById('gallery');
-            const filtered = filter === 'all' ? galleryData : galleryData.filter(item => item.type === filter);
+            const filtered = (filter === 'all' ? galleryData : galleryData.filter(item => item.type === filter))
+                .map(item => ({ item, originalIndex: galleryData.indexOf(item) }));
 
             if (filtered.length === 0) {
                 gallery.innerHTML = `
@@ -418,18 +480,18 @@
                 return;
             }
 
-            gallery.innerHTML = filtered.map((item, index) => `
-                <div class="gallery-item" onclick="openModal(${index}, '${filter === 'all' ? item.type : filter}')">
+            gallery.innerHTML = filtered.map(({ item, originalIndex }) => `
+                <div class="gallery-item" onclick="openModal(${originalIndex})">
                     <div class="media-container">
                         ${getMediaPreview(item)}
-                        <span class="media-type-badge">${item.type.toUpperCase()}</span>
+                        <span class="media-type-badge">${(item.type || 'media').toUpperCase()}</span>
                     </div>
                     <div class="item-info">
-                        <div class="item-title">${item.title}</div>
-                        <div class="item-artist">by ${item.artist}</div>
-                        <div class="item-description">${item.description}</div>
+                        <div class="item-title">${item.title || 'Untitled'}</div>
+                        <div class="item-artist">by ${item.artist || 'Unknown artist'}</div>
+                        <div class="item-description">${item.description || ''}</div>
                         <div class="item-tags">
-                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            ${(item.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
                         </div>
                     </div>
                 </div>
@@ -450,7 +512,7 @@
             }
         }
 
-        function openModal(index, type) {
+        function openModal(index) {
             const item = galleryData[index];
             const modal = document.getElementById('imageModal');
             
@@ -484,7 +546,7 @@
 
         function filterGallery(type) {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
             renderGallery(type);
         }
 

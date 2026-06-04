@@ -1,762 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Gallery Space</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Gallery | 3D Walkthrough</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.179.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.179.1/examples/jsm/"
+        }
+    }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #000;
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        #gallery-container {
-            width: 100%;
-            height: 100vh;
-            perspective: 1200px;
-            position: relative;
-        }
-
-        .gallery-scene {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        /* 3D Room Box */
-        .room {
-            position: absolute;
-            width: 1000px;
-            height: 600px;
-            left: 50%;
-            top: 50%;
-            margin-left: -500px;
-            margin-top: -300px;
-            transform-style: preserve-3d;
-        }
-
-        .wall {
-            position: absolute;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            border: 2px solid rgba(102, 126, 234, 0.3);
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            transform-style: preserve-3d;
-        }
-
-        .wall::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
-            pointer-events: none;
-        }
-
-        .wall-label {
-            position: absolute;
-            color: rgba(102, 126, 234, 0.5);
-            font-size: 1.5em;
-            pointer-events: none;
-            z-index: 2;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* Wall positions - connected at corners */
-        .back-wall {
-            width: 1000px;
-            height: 600px;
-            transform: translateZ(-500px);
-        }
-
-        .front-wall {
-            width: 1000px;
-            height: 600px;
-            transform: rotateY(180deg) translateZ(-500px);
-        }
-
-        .left-wall {
-            width: 500px;
-            height: 600px;
-            transform: rotateY(-90deg) translateZ(-500px);
-            left: 0;
-            transform-origin: left center;
-        }
-
-        .right-wall {
-            width: 500px;
-            height: 600px;
-            transform: rotateY(90deg) translateZ(-500px);
-            right: 0;
-            transform-origin: right center;
-        }
-
-        .floor {
-            position: absolute;
-            width: 1000px;
-            height: 500px;
-            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
-            border: 2px solid rgba(102, 126, 234, 0.2);
-            transform: rotateX(90deg) translateZ(-300px);
-            bottom: 0;
-            left: 0;
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7);
-        }
-
-        /* Artwork frames */
-        .artwork-frame {
-            position: absolute;
-            background: #000;
-            border: 3px solid #667eea;
-            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
-        }
-
-        .artwork-frame:hover {
-            box-shadow: 0 0 50px rgba(102, 126, 234, 0.8), inset 0 0 20px rgba(0, 0, 0, 0.8);
-            transform: scale(1.05) !important;
-        }
-
-        .artwork-content {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            pointer-events: auto;
-        }
-
-        .artwork-overlay {
-            position: absolute;
-            bottom: -50px;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.8);
-            color: #667eea;
-            padding: 10px;
-            text-align: center;
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-
-        .artwork-frame:hover .artwork-overlay {
-            bottom: 0;
-        }
-
-        /* Teleport indicator */
-        .teleport-marker {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border: 2px solid rgba(102, 126, 234, 0.6);
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 40;
-            animation: pulse 1s infinite;
-        }
-
-        .teleport-marker::after {
-            content: '⟱';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(102, 126, 234, 0.6);
-            font-size: 24px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-        }
-
-        /* Controls HUD */
-        .controls-hud {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid rgba(102, 126, 234, 0.5);
-            border-radius: 10px;
-            padding: 15px;
-            color: #667eea;
-            font-size: 12px;
-            max-width: 300px;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .controls-hud h3 {
-            margin-bottom: 10px;
-            color: #667eea;
-            font-size: 14px;
-        }
-
-        .control-item {
-            margin: 5px 0;
-            padding: 3px 0;
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-        }
-
-        .control-item:last-child {
-            border-bottom: none;
-        }
-
-        .key {
-            display: inline-block;
-            background: rgba(102, 126, 234, 0.3);
-            padding: 2px 6px;
-            border-radius: 3px;
-            margin-right: 5px;
-            font-weight: bold;
-        }
-
-        .info-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid rgba(102, 126, 234, 0.5);
-            border-radius: 10px;
-            padding: 15px;
-            color: #a0a0a0;
-            font-size: 12px;
-            max-width: 300px;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .info-panel h3 {
-            color: #667eea;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-
-        /* Modal for enlarged view */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(5px);
-            cursor: pointer;
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: #1a1a2e;
-            border: 2px solid rgba(102, 126, 234, 0.5);
-            border-radius: 10px;
-            max-width: 900px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 30px;
-            cursor: auto;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        .close:hover {
-            color: #667eea;
-        }
-
-        .modal-media {
-            width: 100%;
-            max-height: 400px;
-            object-fit: contain;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            display: block;
-        }
-
-        .modal-title {
-            color: #667eea;
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            margin-top: 15px;
-        }
-
-        .modal-artist {
-            color: #a0a0a0;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-        }
-
-        .modal-description {
-            color: #c0c0c0;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .artwork-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .tag {
-            background: rgba(102, 126, 234, 0.3);
-            color: #667eea;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.85em;
-        }
-
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #667eea;
-            font-size: 20px;
-            text-align: center;
-            z-index: 10;
-        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; height: 100%; overflow: hidden; background: #090910; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #fff; }
+        canvas { display: block; }
+        .hud { position: fixed; z-index: 10; left: 16px; top: 16px; max-width: 330px; padding: 14px 16px; border: 1px solid rgba(125,146,255,.35); border-radius: 14px; background: rgba(10,10,20,.74); backdrop-filter: blur(12px); box-shadow: 0 15px 40px rgba(0,0,0,.35); }
+        .hud h1 { margin: 0 0 6px; font-size: 1rem; color: #fff; }
+        .hud p { margin: 0; color: #c8c9df; font-size: .86rem; line-height: 1.45; }
+        .hud a { color: #9caaff; text-decoration: none; font-weight: 700; }
+        .crosshair { position: fixed; left: 50%; top: 50%; width: 16px; height: 16px; margin-left: -8px; margin-top: -8px; z-index: 9; pointer-events: none; opacity: .8; }
+        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,.75); border-radius: 999px; }
+        .crosshair::before { width: 16px; height: 2px; top: 7px; left: 0; }
+        .crosshair::after { width: 2px; height: 16px; left: 7px; top: 0; }
+        .enter-screen { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at center, rgba(102,126,234,.2), rgba(3,3,8,.96)); }
+        .enter-card { max-width: 560px; padding: 34px; text-align: center; border-radius: 24px; border: 1px solid rgba(125,146,255,.35); background: rgba(16,16,31,.86); box-shadow: 0 25px 80px rgba(0,0,0,.55); }
+        .enter-card h2 { margin: 0 0 12px; font-size: 2rem; }
+        .enter-card p { margin: 0 0 22px; color: #c7c8da; line-height: 1.55; }
+        .primary-btn, .secondary-btn { display: inline-block; border: 0; border-radius: 999px; padding: 12px 22px; font-size: .95rem; font-weight: 800; cursor: pointer; text-decoration: none; }
+        .primary-btn { color: #fff; background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 12px 30px rgba(102,126,234,.32); }
+        .secondary-btn { color: #cfd4ff; background: rgba(255,255,255,.08); border: 1px solid rgba(125,146,255,.25); margin-left: 8px; }
+        .panel { position: fixed; z-index: 25; right: 16px; top: 16px; width: min(360px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto; display: none; padding: 18px; border-radius: 18px; border: 1px solid rgba(125,146,255,.32); background: rgba(12,12,25,.88); backdrop-filter: blur(14px); box-shadow: 0 20px 70px rgba(0,0,0,.52); }
+        .panel h2 { margin: 0 0 6px; font-size: 1.25rem; }
+        .panel .artist { color: #aeb6ff; margin-bottom: 12px; }
+        .panel p { color: #d6d6e6; line-height: 1.5; }
+        .panel .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+        .tag { background: rgba(102,126,234,.18); color: #aeb6ff; border: 1px solid rgba(102,126,234,.25); border-radius: 999px; padding: 4px 9px; font-size: .78rem; }
+        .panel-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+        .close-panel { float: right; cursor: pointer; color: #fff; border: 0; background: transparent; font-size: 1.4rem; line-height: 1; }
+        .message { position: fixed; z-index: 12; left: 50%; bottom: 24px; transform: translateX(-50%); padding: 10px 14px; border-radius: 999px; background: rgba(10,10,20,.74); color: #dfe2ff; border: 1px solid rgba(125,146,255,.28); font-size: .9rem; opacity: 0; transition: opacity .25s; pointer-events: none; }
+        .message.show { opacity: 1; }
+        @media (max-width: 700px) { .hud { right: 16px; max-width: none; } .panel { left: 16px; right: 16px; width: auto; } .enter-card { padding: 24px; } .secondary-btn { margin-left: 0; margin-top: 10px; } }
     </style>
 </head>
 <body>
-    <div class="teleport-marker"></div>
-
-    <div id="gallery-container">
-        <div class="gallery-scene" id="galleryScene"></div>
+    <div class="hud">
+        <h1>3D Gallery Walkthrough</h1>
+        <p>Click <strong>Enter</strong>, then use <strong>WASD</strong> to move and the mouse to look. Aim at an artwork and click to inspect. Press <strong>ESC</strong> to release the cursor. <a href="index.html">Back to Grid Gallery</a></p>
     </div>
-
-    <div class="controls-hud">
-        <h3>🎮 Navigation</h3>
-        <div class="control-item">
-            <span class="key">CLICK</span> = Teleport to location
-        </div>
-        <div class="control-item">
-            <span class="key">🖱️ SCROLL</span> = Zoom in/out
-        </div>
-        <div class="control-item">
-            <span class="key">🖱️ DRAG</span> = Look around
-        </div>
-        <div class="control-item">
-            <span class="key">ESC</span> = Close modal
-        </div>
-        <h3 style="margin-top: 15px;">🎨 Artworks</h3>
-        <div class="control-item">
-            <span class="key">CLICK FRAME</span> = View details
+    <div class="crosshair" aria-hidden="true"></div>
+    <div class="enter-screen" id="enterScreen">
+        <div class="enter-card">
+            <h2>Enter the 3D Gallery</h2>
+            <p>This version creates a true enclosed rectangular room, starts the visitor inside, places artwork on walls only, and prevents walking through the walls.</p>
+            <button class="primary-btn" id="enterBtn">Click to Enter Gallery</button>
+            <a class="secondary-btn" href="index.html">Return to Grid View</a>
         </div>
     </div>
+    <aside class="panel" id="artPanel" aria-live="polite"></aside>
+    <div class="message" id="message">Aim at an artwork and click to inspect it.</div>
 
-    <div class="info-panel">
-        <h3>📍 Current View</h3>
-        <div id="rotationInfo">Rotation: X:0° Y:0°</div>
-        <h3 style="margin-top: 10px;">🎨 Gallery</h3>
-        <div id="galleryInfo">Loading artworks...</div>
-    </div>
+    <script type="module">
+        import * as THREE from 'three';
+        import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
-    <!-- Modal for enlarged view -->
-    <div id="artworkModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modalBody"></div>
-        </div>
-    </div>
+        const ROOM = { width: 22, depth: 14, height: 6 };
+        const PLAYER = { eyeHeight: 1.7, radius: 0.55, speed: 5.2 };
+        const WALL_OFFSET = 0.035;
 
-    <script>
-        // Camera/View control
-        const view = {
-            rotX: 0,
-            rotY: 0,
-            zoom: 1
-        };
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0b0b13);
+        scene.fog = new THREE.Fog(0x0b0b13, 22, 60);
 
-        const targetView = {
-            rotX: 0,
-            rotY: 0,
-            zoom: 1
-        };
+        const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, PLAYER.eyeHeight, 0);
 
-        const scene = document.getElementById('galleryScene');
-        const modal = document.getElementById('artworkModal');
-        const modalClose = document.querySelector('.close');
-        const modalBody = document.getElementById('modalBody');
-        const galleryScene = document.createElement('div');
-        
-        let artworks = [];
-        let isDragging = false;
-        let startX, startY;
-        let isModalOpen = false;
-        let isAnimating = false;
-        let artworkFrames = {};
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        document.body.appendChild(renderer.domElement);
 
-        // Mouse controls
-        document.addEventListener('mousedown', (e) => {
-            if (isModalOpen || isAnimating) return;
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-        });
+        const controls = new PointerLockControls(camera, document.body);
+        const enterScreen = document.getElementById('enterScreen');
+        const enterBtn = document.getElementById('enterBtn');
+        const panel = document.getElementById('artPanel');
+        const message = document.getElementById('message');
 
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging || isModalOpen || isAnimating) return;
-            
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
-            
-            view.rotY += deltaX * 0.003;
-            view.rotX -= deltaY * 0.003;
-            
-            // Clamp rotation
-            view.rotX = Math.max(-Math.PI / 2.5, Math.min(Math.PI / 2.5, view.rotX));
-            
-            updateView();
-        });
+        enterBtn.addEventListener('click', () => controls.lock());
+        controls.addEventListener('lock', () => enterScreen.style.display = 'none');
+        controls.addEventListener('unlock', () => enterScreen.style.display = 'flex');
 
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        // Scroll zoom
-        document.addEventListener('wheel', (e) => {
-            if (isModalOpen || isAnimating) return;
-            e.preventDefault();
-            view.zoom *= (1 - e.deltaY * 0.001);
-            view.zoom = Math.max(0.5, Math.min(2, view.zoom));
-            updateView();
-        }, { passive: false });
-
-        // Click to teleport
-        document.addEventListener('click', (e) => {
-            if (isDragging || isModalOpen || isAnimating) return;
-            if (e.target.closest('.artwork-frame') || e.target.closest('.controls-hud') || e.target.closest('.info-panel')) return;
-            
-            const rect = document.getElementById('gallery-container').getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            // Teleport animation
-            const angle = Math.atan2(y, x);
-            
-            view.rotY = angle;
-            view.rotX = -y / rect.height * 0.5;
-            updateView();
-        });
-
-        // Modal controls
-        modalClose.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeModal();
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        function closeModal() {
-            modal.classList.remove('active');
-            isModalOpen = false;
+        function showMessage(text) {
+            message.textContent = text;
+            message.classList.add('show');
+            clearTimeout(showMessage.timer);
+            showMessage.timer = setTimeout(() => message.classList.remove('show'), 2200);
         }
 
-        function animateViewTo(targetRotX, targetRotY) {
-            isAnimating = true;
-            const startRotX = view.rotX;
-            const startRotY = view.rotY;
-            const startTime = performance.now();
-            const duration = 600; // milliseconds
+        const ambient = new THREE.AmbientLight(0xffffff, 0.95);
+        scene.add(ambient);
 
-            function animate(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // Easing function: cubic-bezier(0.25, 0.46, 0.45, 0.94)
-                const easeProgress = easeInOutCubic(progress);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.8);
+        mainLight.position.set(3, 8, 4);
+        scene.add(mainLight);
 
-                view.rotX = startRotX + (targetRotX - startRotX) * easeProgress;
-                view.rotY = startRotY + (targetRotY - startRotY) * easeProgress;
-                
-                updateView();
+        const ceilingLights = [
+            [-6, ROOM.height - 0.25, -3], [0, ROOM.height - 0.25, -3], [6, ROOM.height - 0.25, -3],
+            [-6, ROOM.height - 0.25, 3], [0, ROOM.height - 0.25, 3], [6, ROOM.height - 0.25, 3]
+        ];
+        ceilingLights.forEach(([x, y, z]) => {
+            const point = new THREE.PointLight(0xffffff, 1.1, 11, 1.8);
+            point.position.set(x, y, z);
+            scene.add(point);
+            const lamp = new THREE.Mesh(new THREE.CircleGeometry(0.28, 32), new THREE.MeshBasicMaterial({ color: 0xffffee }));
+            lamp.position.set(x, y + 0.01, z);
+            lamp.rotation.x = Math.PI / 2;
+            scene.add(lamp);
+        });
 
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    isAnimating = false;
-                }
-            }
+        const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x252736, roughness: 0.82, metalness: 0.04, side: THREE.DoubleSide });
+        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x15151c, roughness: 0.9, metalness: 0.02 });
+        const ceilingMaterial = new THREE.MeshStandardMaterial({ color: 0x1d1d27, roughness: 0.9, metalness: 0.02, side: THREE.DoubleSide });
 
-            requestAnimationFrame(animate);
-        }
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM.width, ROOM.depth), floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
 
-        function easeInOutCubic(t) {
-            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-        }
+        const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(ROOM.width, ROOM.depth), ceilingMaterial);
+        ceiling.position.y = ROOM.height;
+        ceiling.rotation.x = Math.PI / 2;
+        scene.add(ceiling);
 
-        function openModal(artwork, frameElement) {
-            isModalOpen = true;
-            
-            // Calculate the position of the artwork frame to face it
-            if (frameElement) {
-                const rect = frameElement.getBoundingClientRect();
-                const containerRect = document.getElementById('gallery-container').getBoundingClientRect();
-                
-                // Get which wall the artwork is on and calculate proper rotation
-                const wallClass = frameElement.closest('.wall')?.className || '';
-                let targetRotX = 0;
-                let targetRotY = 0;
+        const wallGroup = new THREE.Group();
+        scene.add(wallGroup);
 
-                if (wallClass.includes('back-wall')) {
-                    targetRotX = 0;
-                    targetRotY = 0;
-                } else if (wallClass.includes('front-wall')) {
-                    targetRotX = 0;
-                    targetRotY = Math.PI;
-                } else if (wallClass.includes('left-wall')) {
-                    targetRotX = 0;
-                    targetRotY = Math.PI / 2;
-                } else if (wallClass.includes('right-wall')) {
-                    targetRotX = 0;
-                    targetRotY = -Math.PI / 2;
-                }
+        const wallDefinitions = [
+            { id: 'back', width: ROOM.width, height: ROOM.height, position: [0, ROOM.height / 2, -ROOM.depth / 2], rotationY: 0, normal: new THREE.Vector3(0, 0, 1), axis: 'x', span: ROOM.width },
+            { id: 'front', width: ROOM.width, height: ROOM.height, position: [0, ROOM.height / 2, ROOM.depth / 2], rotationY: Math.PI, normal: new THREE.Vector3(0, 0, -1), axis: 'x', span: ROOM.width },
+            { id: 'left', width: ROOM.depth, height: ROOM.height, position: [-ROOM.width / 2, ROOM.height / 2, 0], rotationY: Math.PI / 2, normal: new THREE.Vector3(1, 0, 0), axis: 'z', span: ROOM.depth },
+            { id: 'right', width: ROOM.depth, height: ROOM.height, position: [ROOM.width / 2, ROOM.height / 2, 0], rotationY: -Math.PI / 2, normal: new THREE.Vector3(-1, 0, 0), axis: 'z', span: ROOM.depth }
+        ];
 
-                // Animate camera to face the artwork
-                animateViewTo(targetRotX, targetRotY);
-            }
+        wallDefinitions.forEach(def => {
+            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(def.width, def.height), wallMaterial);
+            mesh.position.set(...def.position);
+            mesh.rotation.y = def.rotationY;
+            wallGroup.add(mesh);
+            def.mesh = mesh;
+        });
 
-            let content = `
-                <div class="modal-title">${artwork.title}</div>
-                <div class="modal-artist">by ${artwork.artist}</div>
-            `;
-
-            if (artwork.type === 'image') {
-                content += `<img src="${artwork.media}" alt="${artwork.title}" class="modal-media" onerror="this.style.display='none'">`;
-            } else if (artwork.type === 'video') {
-                if (artwork.media.includes('youtu')) {
-                    const videoId = artwork.media.includes('youtu.be') 
-                        ? artwork.media.split('/').pop().split('?')[0]
-                        : new URLSearchParams(artwork.media.split('?')[1] || '').get('v') || artwork.media.split('v=')[1];
-                    if (videoId) {
-                        content += `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" class="modal-media" style="height: 400px; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                    }
-                } else {
-                    content += `<video class="modal-media" controls style="height: 400px;"><source src="${artwork.media}"></video>`;
-                }
-            }
-
-            content += `
-                <div class="modal-description">${artwork.description}</div>
-                ${artwork.tags ? `<div class="artwork-tags">${artwork.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>` : ''}
-            `;
-
-            modalBody.innerHTML = content;
-            modal.classList.add('active');
-        }
-
-        // Create 3D room with 4 walls
-        function createScene() {
-            galleryScene.className = 'gallery-scene';
-            
-            const room = document.createElement('div');
-            room.className = 'room';
-            room.style.transformStyle = 'preserve-3d';
-
-            // Back wall
-            const backWall = document.createElement('div');
-            backWall.className = 'wall back-wall';
-            backWall.innerHTML = '<div class="wall-label">Back Wall</div>';
-            room.appendChild(backWall);
-
-            // Front wall
-            const frontWall = document.createElement('div');
-            frontWall.className = 'wall front-wall';
-            frontWall.innerHTML = '<div class="wall-label">Front Wall</div>';
-            room.appendChild(frontWall);
-
-            // Left wall
-            const leftWall = document.createElement('div');
-            leftWall.className = 'wall left-wall';
-            leftWall.innerHTML = '<div class="wall-label">Left Wall</div>';
-            room.appendChild(leftWall);
-
-            // Right wall
-            const rightWall = document.createElement('div');
-            rightWall.className = 'wall right-wall';
-            rightWall.innerHTML = '<div class="wall-label">Right Wall</div>';
-            room.appendChild(rightWall);
-
-            // Floor
-            const floor = document.createElement('div');
-            floor.className = 'floor';
-            room.appendChild(floor);
-
-            // Position artwork frames on walls
-            const positions = [
-                // Back wall
-                { wall: backWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, wallType: 'back' },
-                { wall: backWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, transform: 'translateX(220px)', wallType: 'back' },
-                
-                // Front wall
-                { wall: frontWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, wallType: 'front' },
-                { wall: frontWall, x: 50, y: 30, z: 0, w: 180, h: 200, rotX: 0, rotY: 0, transform: 'translateX(220px)', wallType: 'front' },
-                
-                // Left wall
-                { wall: leftWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, wallType: 'left' },
-                { wall: leftWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, transform: 'translateY(220px)', wallType: 'left' },
-                
-                // Right wall
-                { wall: rightWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, wallType: 'right' },
-                { wall: rightWall, x: 50, y: 30, z: 0, w: 150, h: 200, rotX: 0, rotY: 0, transform: 'translateY(220px)', wallType: 'right' },
+        const borderMaterial = new THREE.MeshBasicMaterial({ color: 0x667eea });
+        function addTrim() {
+            const trimHeight = 0.04;
+            const trimDepth = 0.05;
+            const baseY = 0.08;
+            const topY = ROOM.height - 0.08;
+            const pieces = [
+                [ROOM.width, trimHeight, trimDepth, 0, baseY, -ROOM.depth/2 + 0.025],
+                [ROOM.width, trimHeight, trimDepth, 0, baseY, ROOM.depth/2 - 0.025],
+                [trimDepth, trimHeight, ROOM.depth, -ROOM.width/2 + 0.025, baseY, 0],
+                [trimDepth, trimHeight, ROOM.depth, ROOM.width/2 - 0.025, baseY, 0],
+                [ROOM.width, trimHeight, trimDepth, 0, topY, -ROOM.depth/2 + 0.025],
+                [ROOM.width, trimHeight, trimDepth, 0, topY, ROOM.depth/2 - 0.025],
+                [trimDepth, trimHeight, ROOM.depth, -ROOM.width/2 + 0.025, topY, 0],
+                [trimDepth, trimHeight, ROOM.depth, ROOM.width/2 - 0.025, topY, 0]
             ];
-
-            artworkFrames = {};
-            artworks.forEach((artwork, index) => {
-                if (index < positions.length) {
-                    const pos = positions[index];
-                    const frame = createArtworkFrame(artwork, pos, index);
-                    pos.wall.appendChild(frame);
-                    artworkFrames[index] = { frame, wallType: pos.wallType };
-                }
+            pieces.forEach(([w,h,d,x,y,z]) => {
+                const trim = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), borderMaterial);
+                trim.position.set(x,y,z);
+                scene.add(trim);
             });
+        }
+        addTrim();
 
-            galleryScene.appendChild(room);
-            scene.appendChild(galleryScene);
+        const artworks = [];
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.crossOrigin = 'anonymous';
+
+        function escapeHtml(value = '') {
+            return String(value).replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
         }
 
-        function createArtworkFrame(artwork, position, index) {
-            const frame = document.createElement('div');
-            frame.className = 'artwork-frame';
-            frame.dataset.artworkIndex = index;
-            frame.dataset.wallType = position.wallType;
-            
-            frame.style.width = position.w + 'px';
-            frame.style.height = position.h + 'px';
-            frame.style.position = 'absolute';
-            frame.style.left = position.x + '%';
-            frame.style.top = position.y + '%';
-            if (position.transform) {
-                frame.style.transform = position.transform;
+        function getYouTubeId(url = '') {
+            const patterns = [ /youtube\.com\/watch\?v=([^&]+)/, /youtu\.be\/([^?&]+)/, /youtube\.com\/embed\/([^?&]+)/ ];
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
             }
+            return null;
+        }
 
-            let content = '';
-            if (artwork.type === 'image') {
-                content = `<img src="${artwork.media}" alt="${artwork.title}" class="artwork-content" onerror="this.style.display='none'">`;
-            } else if (artwork.type === 'video') {
-                if (artwork.media.includes('youtu')) {
-                    const videoId = artwork.media.includes('youtu.be') 
-                        ? artwork.media.split('/').pop().split('?')[0]
-                        : new URLSearchParams(artwork.media.split('?')[1] || '').get('v') || artwork.media.split('v=')[1];
-                    if (videoId) {
-                        content = `<div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center;"><svg width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#667eea" stroke-width="2"><circle cx="30" cy="30" r="28"/><polygon points="24,18 24,42 42,30" fill="#667eea"/></svg></div>`;
-                    }
+        function createLabelTexture(art) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 720;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 1024, 720);
+            gradient.addColorStop(0, '#f7f7ff');
+            gradient.addColorStop(1, '#cfd4ff');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1024, 720);
+            ctx.fillStyle = '#171722';
+            ctx.font = 'bold 58px Arial';
+            wrapText(ctx, art.title || 'Untitled', 70, 150, 884, 68, 2);
+            ctx.fillStyle = '#4b4e75';
+            ctx.font = '38px Arial';
+            wrapText(ctx, art.artist ? `by ${art.artist}` : '', 70, 310, 884, 48, 2);
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 34px Arial';
+            const mediaType = (art.type || 'media').toUpperCase();
+            ctx.fillText(mediaType, 70, 610);
+            const yt = getYouTubeId(art.media || '');
+            if (yt) {
+                ctx.fillStyle = '#e85d75';
+                ctx.beginPath();
+                ctx.roundRect(790, 540, 130, 90, 18);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.moveTo(842, 565); ctx.lineTo(842, 605); ctx.lineTo(880, 585); ctx.closePath();
+                ctx.fill();
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            return texture;
+        }
+
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+            const words = String(text).split(' ');
+            let line = '';
+            let lines = 0;
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+                    ctx.fillText(line.trim(), x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
+                    lines++;
+                    if (lines >= maxLines - 1) break;
                 } else {
-                    content = `<div style="width:100%; height:100%; background:#000; display:flex; align-items:center; justify-content:center;"><svg width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#667eea" stroke-width="2"><circle cx="30" cy="30" r="28"/><polygon points="24,18 24,42 42,30" fill="#667eea"/></svg></div>`;
+                    line = testLine;
                 }
             }
-
-            frame.innerHTML = content + `<div class="artwork-overlay">${artwork.title}</div>`;
-            
-            frame.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openModal(artwork, frame);
-            });
-
-            return frame;
+            if (line) ctx.fillText(line.trim(), x, y);
         }
 
-        function updateView() {
-            if (galleryScene) {
-                galleryScene.style.transform = `
-                    rotateX(${view.rotX}rad)
-                    rotateY(${view.rotY}rad)
-                    scale(${view.zoom})
-                `;
+        function addArtwork(art, wallDef, local, size) {
+            const frame = new THREE.Group();
+            const frameBack = new THREE.Mesh(new THREE.PlaneGeometry(size.w + 0.22, size.h + 0.22), new THREE.MeshStandardMaterial({ color: 0x08080d, roughness: 0.5, metalness: 0.25 }));
+            frame.add(frameBack);
+
+            const texture = createLabelTexture(art);
+            const imageMat = new THREE.MeshBasicMaterial({ map: texture });
+            const image = new THREE.Mesh(new THREE.PlaneGeometry(size.w, size.h), imageMat);
+            image.position.z = 0.012;
+            frame.add(image);
+
+            const label = new THREE.Mesh(new THREE.PlaneGeometry(size.w, 0.25), new THREE.MeshBasicMaterial({ color: 0x11111a, transparent: true, opacity: 0.9 }));
+            label.position.set(0, -(size.h / 2 + 0.26), 0.016);
+            frame.add(label);
+
+            if (art.type === 'image' && art.media) {
+                textureLoader.load(art.media, tex => {
+                    tex.colorSpace = THREE.SRGBColorSpace;
+                    image.material.map = tex;
+                    image.material.needsUpdate = true;
+                }, undefined, () => {});
             }
-            
-            document.getElementById('rotationInfo').textContent = 
-                `Rotation: X:${(view.rotX * 180 / Math.PI).toFixed(0)}° Y:${(view.rotY * 180 / Math.PI).toFixed(0)}°`;
+
+            const normalOffset = wallDef.normal.clone().multiplyScalar(WALL_OFFSET);
+            if (wallDef.axis === 'x') frame.position.set(local, ROOM.height / 2, wallDef.position[2]);
+            if (wallDef.axis === 'z') frame.position.set(wallDef.position[0], ROOM.height / 2, local);
+            frame.position.add(normalOffset);
+            frame.rotation.y = wallDef.rotationY;
+            frame.userData = { artwork: art };
+            image.userData = { artwork: art };
+            frameBack.userData = { artwork: art };
+            artworks.push(frame, image, frameBack);
+            scene.add(frame);
         }
 
-        // Load gallery data
+        function layoutArtworks(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                showMessage('No artworks found in gallery-data.json yet.');
+                return;
+            }
+            const perWall = wallDefinitions.map(() => []);
+            data.forEach((art, i) => perWall[i % wallDefinitions.length].push(art));
+            const artSize = { w: 2.5, h: 1.75 };
+            perWall.forEach((items, wallIndex) => {
+                const wallDef = wallDefinitions[wallIndex];
+                const columns = Math.max(1, Math.floor(wallDef.span / 3.25));
+                const rows = Math.max(1, Math.ceil(items.length / columns));
+                const usableSpan = wallDef.span - 3;
+                items.forEach((art, i) => {
+                    const col = i % columns;
+                    const row = Math.floor(i / columns);
+                    const xNorm = columns === 1 ? 0 : (col / (columns - 1)) * 2 - 1;
+                    const yNorm = rows === 1 ? 0 : (row / (rows - 1)) * 2 - 1;
+                    const local = xNorm * usableSpan / 2;
+                    const y = ROOM.height * 0.56 - yNorm * 1.35;
+                    addArtwork(art, wallDef, local, artSize);
+                    const newest = scene.children[scene.children.length - 1];
+                    newest.position.y = THREE.MathUtils.clamp(y, 1.6, ROOM.height - 1.2);
+                });
+            });
+        }
+
         async function loadGallery() {
             try {
-                const response = await fetch('gallery-data.json');
-                artworks = await response.json();
-                
-                if (!artworks || artworks.length === 0) {
-                    document.getElementById('galleryInfo').textContent = 'No artworks loaded';
-                    return;
-                }
-
-                document.getElementById('galleryInfo').textContent = `${artworks.length} artwork(s) on display`;
-                
-                if (scene.children.length > 0) {
-                    scene.removeChild(scene.children[0]);
-                }
-                createScene();
-                updateView();
+                const response = await fetch('gallery-data.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                layoutArtworks(data);
             } catch (error) {
-                console.error('Error loading gallery:', error);
-                document.getElementById('galleryInfo').textContent = 'Error loading gallery';
+                console.error('Could not load gallery-data.json', error);
+                showMessage('Could not load gallery-data.json. Run this from a local server, not file://');
             }
         }
-
-        // Start
         loadGallery();
 
-        // Reload gallery every 30 seconds for live updates
-        setInterval(loadGallery, 30000);
+        function openArtworkPanel(art) {
+            const tags = Array.isArray(art.tags) ? art.tags : [];
+            const media = art.media || '';
+            const type = art.type || 'media';
+            panel.innerHTML = `
+                <button class="close-panel" id="closePanel" aria-label="Close">×</button>
+                <h2>${escapeHtml(art.title || 'Untitled')}</h2>
+                <div class="artist">${escapeHtml(art.artist ? `by ${art.artist}` : 'Unknown artist')}</div>
+                <p>${escapeHtml(art.description || 'No description supplied.')}</p>
+                <div class="tags">${tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>
+                <div class="panel-actions">
+                    ${media ? `<a class="primary-btn" href="${escapeHtml(media)}" target="_blank" rel="noopener">Open ${escapeHtml(type)}</a>` : ''}
+                    <button class="secondary-btn" id="resumeBtn">Resume Walkthrough</button>
+                </div>
+            `;
+            panel.style.display = 'block';
+            document.getElementById('closePanel').onclick = () => panel.style.display = 'none';
+            document.getElementById('resumeBtn').onclick = () => { panel.style.display = 'none'; controls.lock(); };
+            controls.unlock();
+        }
+
+        const raycaster = new THREE.Raycaster();
+        function inspectArtwork() {
+            if (!controls.isLocked) return;
+            raycaster.setFromCamera({ x: 0, y: 0 }, camera);
+            const hits = raycaster.intersectObjects(artworks, true);
+            const hit = hits.find(h => h.object.userData && h.object.userData.artwork);
+            if (hit) openArtworkPanel(hit.object.userData.artwork);
+            else showMessage('Aim the crosshair directly at an artwork, then click.');
+        }
+        renderer.domElement.addEventListener('click', inspectArtwork);
+
+        const keys = {};
+        document.addEventListener('keydown', e => keys[e.code] = true);
+        document.addEventListener('keyup', e => keys[e.code] = false);
+
+        function clampToRoom() {
+            camera.position.x = THREE.MathUtils.clamp(camera.position.x, -ROOM.width / 2 + PLAYER.radius, ROOM.width / 2 - PLAYER.radius);
+            camera.position.z = THREE.MathUtils.clamp(camera.position.z, -ROOM.depth / 2 + PLAYER.radius, ROOM.depth / 2 - PLAYER.radius);
+            camera.position.y = PLAYER.eyeHeight;
+        }
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = Math.min(clock.getDelta(), 0.05);
+            if (controls.isLocked) {
+                const distance = PLAYER.speed * delta;
+                if (keys.KeyW || keys.ArrowUp) controls.moveForward(distance);
+                if (keys.KeyS || keys.ArrowDown) controls.moveForward(-distance);
+                if (keys.KeyA || keys.ArrowLeft) controls.moveRight(-distance);
+                if (keys.KeyD || keys.ArrowRight) controls.moveRight(distance);
+                clampToRoom();
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
