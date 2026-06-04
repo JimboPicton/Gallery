@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Gallery v2</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#111;font-family:Arial}
+#ui{
+position:absolute;top:10px;left:10px;z-index:10;
+background:rgba(0,0,0,.6);color:#fff;padding:10px;border-radius:8px;
+max-width:260px;font-size:13px
+}
+#overlay{
+position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+background:rgba(0,0,0,.85);color:#fff;cursor:pointer;z-index:20;font-size:18px
+}
+#panel{
+position:absolute;right:10px;top:10px;width:260px;
+background:rgba(0,0,0,.7);color:#fff;padding:10px;border-radius:8px;
+display:none;z-index:15
+}
+#panel img{width:100%;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div id="ui">WASD move • Mouse look • Click artworks • ESC unlock</div>
+<div id="overlay">Click to Enter Gallery</div>
+<div id="panel"></div>
+
+<script type="module">
+import * as THREE from "https://unpkg.com/three@0.179.1/build/three.module.js";
+import { PointerLockControls } from "https://unpkg.com/three@0.179.1/examples/jsm/controls/PointerLockControls.js";
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x101014);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0,1.7,0);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const controls = new PointerLockControls(camera, document.body);
+
+document.getElementById("overlay").onclick = ()=>controls.lock();
+
+controls.addEventListener("lock",()=>{
+document.getElementById("overlay").style.display="none";
+});
+controls.addEventListener("unlock",()=>{
+document.getElementById("overlay").style.display="flex";
+});
+
+scene.add(new THREE.AmbientLight(0xffffff,1.2));
+const dir = new THREE.DirectionalLight(0xffffff,1.5);
+dir.position.set(5,10,5);
+scene.add(dir);
+
+// ROOM
+const ROOM = {w:20,h:6,d:14};
+
+const wallMat = new THREE.MeshStandardMaterial({color:0x2a2a33,side:THREE.DoubleSide});
+const floorMat = new THREE.MeshStandardMaterial({color:0x151515});
+const ceilMat = new THREE.MeshStandardMaterial({color:0x1c1c1c});
+
+const colliders = [];
+
+function addCollider(mesh){
+    colliders.push(mesh);
+    scene.add(mesh);
+}
+
+// floor
+const floor = new THREE.Mesh(
+new THREE.PlaneGeometry(ROOM.w,ROOM.d),
+floorMat
+);
+floor.rotation.x = -Math.PI/2;
+scene.add(floor);
+
+// ceiling
+const ceil = new THREE.Mesh(
+new THREE.PlaneGeometry(ROOM.w,ROOM.d),
+ceilMat
+);
+ceil.rotation.x = Math.PI/2;
+ceil.position.y = ROOM.h;
+scene.add(ceil);
+
+// walls
+function wall(w,h,x,y,z,ry=0){
+const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h),wallMat);
+m.position.set(x,y,z);
+m.rotation.y = ry;
+addCollider(m);
+return m;
+}
+
+const back = wall(ROOM.w,ROOM.h,0,ROOM.h/2,-ROOM.d/2,0);
+const front = wall(ROOM.w,ROOM.h,0,ROOM.h/2,ROOM.d/2,Math.PI);
+const left = wall(ROOM.d,ROOM.h,-ROOM.w/2,ROOM.h/2,0,Math.PI/2);
+const right = wall(ROOM.d,ROOM.h,ROOM.w/2,ROOM.h/2,0,-Math.PI/2);
+
+// MOVEMENT
+const keys = {};
+document.addEventListener("keydown",e=>keys[e.code]=true);
+document.addEventListener("keyup",e=>keys[e.code]=false);
+
+const velocity = new THREE.Vector3();
+const direction = new THREE.Vector3();
+
+function move(delta){
+if(!controls.isLocked) return;
+
+direction.set(0,0,0);
+if(keys["KeyW"]) direction.z -= 1;
+if(keys["KeyS"]) direction.z += 1;
+if(keys["KeyA"]) direction.x -= 1;
+if(keys["KeyD"]) direction.x += 1;
+
+direction.normalize();
+
+velocity.set(direction.x,0,direction.z).multiplyScalar(delta*6);
+
+controls.moveRight(velocity.x);
+controls.moveForward(velocity.z);
+}
+
+// ARTWORKS
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+const artworks = [];
+
+function createArtwork(data, index){
+
+const canvas = document.createElement("canvas");
+canvas.width = 512;
+canvas.height = 512;
+const ctx = canvas.getContext("2d");
+
+ctx.fillStyle="#fff";
+ctx.fillRect(0,0,512,512);
+ctx.fillStyle="#000";
+ctx.font="28px Arial";
+ctx.fillText(data.title || "Untitled",20,80);
+ctx.fillText(data.artist || "",20,130);
+
+const tex = new THREE.CanvasTexture(canvas);
+
+const mesh = new THREE.Mesh(
+new THREE.PlaneGeometry(2.2,1.6),
+new THREE.MeshBasicMaterial({map:tex})
+);
+
+// placement logic (walls only)
+const wallIndex = index % 4;
+const row = Math.floor(index / 4);
+
+const spacingX = 4;
+const spacingY = 2.2;
+const baseY = ROOM.h - 1.8 - row * spacingY;
+
+if(wallIndex===0){
+mesh.position.set(-6 + (index%4)*spacingX, baseY, -ROOM.d/2 + 0.05);
+}
+if(wallIndex===1){
+mesh.position.set(-6 + (index%4)*spacingX, baseY, ROOM.d/2 - 0.05);
+mesh.rotation.y = Math.PI;
+}
+if(wallIndex===2){
+mesh.position.set(-ROOM.w/2 + 0.05, baseY, -3 + (index%4)*3);
+mesh.rotation.y = Math.PI/2;
+}
+if(wallIndex===3){
+mesh.position.set(ROOM.w/2 - 0.05, baseY, -3 + (index%4)*3);
+mesh.rotation.y = -Math.PI/2;
+}
+
+mesh.userData = data;
+
+artworks.push(mesh);
+scene.add(mesh);
+}
+
+// LOAD DATA
+async function load(){
+let data=[];
+try{
+data = await fetch("./gallery-data.json").then(r=>r.json());
+}catch(e){console.error(e)}
+
+data.forEach((d,i)=>createArtwork(d,i));
+}
+
+load();
+
+// CLICK INTERACTION
+function onClick(){
+mouse.x=0;
+mouse.y=0;
+
+raycaster.setFromCamera(mouse,camera);
+const hits = raycaster.intersectObjects(artworks);
+
+if(hits.length){
+const d = hits[0].object.userData;
+const panel = document.getElementById("panel");
+panel.style.display="block";
+panel.innerHTML=`
+<b>${d.title||"Untitled"}</b><br/>
+<i>${d.artist||""}</i>
+${d.image?`<img src="${d.image}"/>`:``}
+<p>${d.description||""}</p>
+`;
+}
+}
+
+document.addEventListener("click",onClick);
+
+// LOOP
+const clock = new THREE.Clock();
+
+function animate(){
+requestAnimationFrame(animate);
+
+const delta = clock.getDelta();
+move(delta);
+
+renderer.render(scene,camera);
+}
+
+animate();
+
+window.addEventListener("resize",()=>{
+camera.aspect=window.innerWidth/window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+
+</body>
+</html>
