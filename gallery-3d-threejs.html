@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Gallery (Three.js)</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#111;font-family:Arial,sans-serif}
+#info{
+position:absolute;top:10px;left:10px;z-index:10;
+background:rgba(0,0,0,.7);color:#fff;padding:10px;border-radius:6px
+}
+#overlay{
+position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+background:rgba(0,0,0,.85);color:white;cursor:pointer;z-index:20;
+}
+</style>
+</head>
+<body>
+<div id="info">Click to enter gallery. WASD = move, Mouse = look, ESC = release cursor.</div>
+<div id="overlay">Click To Enter Gallery</div>
+
+<script type="module">
+import * as THREE from "https://unpkg.com/three@0.179.1/build/three.module.js";
+import { PointerLockControls } from "https://unpkg.com/three@0.179.1/examples/jsm/controls/PointerLockControls.js";
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0,1.7,0);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const controls = new PointerLockControls(camera, document.body);
+
+document.getElementById("overlay").addEventListener("click",()=>{
+    controls.lock();
+});
+
+controls.addEventListener("lock",()=>{
+    document.getElementById("overlay").style.display="none";
+});
+
+controls.addEventListener("unlock",()=>{
+    document.getElementById("overlay").style.display="flex";
+});
+
+scene.add(new THREE.AmbientLight(0xffffff,1.5));
+
+const spot = new THREE.DirectionalLight(0xffffff,2);
+spot.position.set(0,8,0);
+scene.add(spot);
+
+const ROOM_WIDTH = 20;
+const ROOM_HEIGHT = 6;
+const ROOM_DEPTH = 12;
+
+const wallMaterial = new THREE.MeshStandardMaterial({
+    color:0x2b2b35,
+    side:THREE.DoubleSide
+});
+
+const floorMaterial = new THREE.MeshStandardMaterial({color:0x1a1a1a});
+const ceilingMaterial = new THREE.MeshStandardMaterial({color:0x202020});
+
+// floor
+const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(ROOM_WIDTH, ROOM_DEPTH),
+    floorMaterial
+);
+floor.rotation.x = -Math.PI/2;
+scene.add(floor);
+
+// ceiling
+const ceiling = new THREE.Mesh(
+    new THREE.PlaneGeometry(ROOM_WIDTH, ROOM_DEPTH),
+    ceilingMaterial
+);
+ceiling.position.y = ROOM_HEIGHT;
+ceiling.rotation.x = Math.PI/2;
+scene.add(ceiling);
+
+// back wall
+const backWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(ROOM_WIDTH, ROOM_HEIGHT),
+    wallMaterial
+);
+backWall.position.set(0,ROOM_HEIGHT/2,-ROOM_DEPTH/2);
+scene.add(backWall);
+
+// front wall
+const frontWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(ROOM_WIDTH, ROOM_HEIGHT),
+    wallMaterial
+);
+frontWall.position.set(0,ROOM_HEIGHT/2,ROOM_DEPTH/2);
+frontWall.rotation.y = Math.PI;
+scene.add(frontWall);
+
+// left wall
+const leftWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(ROOM_DEPTH, ROOM_HEIGHT),
+    wallMaterial
+);
+leftWall.position.set(-ROOM_WIDTH/2,ROOM_HEIGHT/2,0);
+leftWall.rotation.y = Math.PI/2;
+scene.add(leftWall);
+
+// right wall
+const rightWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(ROOM_DEPTH, ROOM_HEIGHT),
+    wallMaterial
+);
+rightWall.position.set(ROOM_WIDTH/2,ROOM_HEIGHT/2,0);
+rightWall.rotation.y = -Math.PI/2;
+scene.add(rightWall);
+
+async function loadGallery(){
+    let artworks=[];
+    try{
+        artworks = await fetch("./gallery-data.json").then(r=>r.json());
+    }catch(e){
+        console.error(e);
+    }
+
+    const walls=[backWall,frontWall,leftWall,rightWall];
+    let index=0;
+
+    for(const art of artworks){
+        const canvas=document.createElement("canvas");
+        canvas.width=512;
+        canvas.height=512;
+
+        const ctx=canvas.getContext("2d");
+        ctx.fillStyle="#ffffff";
+        ctx.fillRect(0,0,512,512);
+        ctx.fillStyle="#000000";
+        ctx.font="28px Arial";
+        ctx.fillText(art.title || "Untitled",20,80);
+        ctx.fillText(art.artist || "",20,130);
+
+        const texture=new THREE.CanvasTexture(canvas);
+
+        const frame=new THREE.Mesh(
+            new THREE.PlaneGeometry(2,1.5),
+            new THREE.MeshBasicMaterial({map:texture})
+        );
+
+        const wallIndex=index%4;
+        const row=Math.floor(index/4);
+
+        const y=3.5-(row*2);
+
+        switch(wallIndex){
+            case 0:
+                frame.position.set(-6+(index%4)*4,y,-ROOM_DEPTH/2+0.05);
+                break;
+            case 1:
+                frame.position.set(-6+(index%4)*4,y,ROOM_DEPTH/2-0.05);
+                frame.rotation.y=Math.PI;
+                break;
+            case 2:
+                frame.position.set(-ROOM_WIDTH/2+0.05,y,-3+(index%4)*2);
+                frame.rotation.y=Math.PI/2;
+                break;
+            case 3:
+                frame.position.set(ROOM_WIDTH/2-0.05,y,-3+(index%4)*2);
+                frame.rotation.y=-Math.PI/2;
+                break;
+        }
+
+        scene.add(frame);
+        index++;
+    }
+}
+
+loadGallery();
+
+const keys={};
+
+document.addEventListener("keydown",e=>keys[e.code]=true);
+document.addEventListener("keyup",e=>keys[e.code]=false);
+
+const clock=new THREE.Clock();
+
+function animate(){
+    requestAnimationFrame(animate);
+
+    const delta=clock.getDelta();
+    const speed=5*delta;
+
+    if(controls.isLocked){
+        if(keys["KeyW"]) controls.moveForward(speed);
+        if(keys["KeyS"]) controls.moveForward(-speed);
+        if(keys["KeyA"]) controls.moveRight(-speed);
+        if(keys["KeyD"]) controls.moveRight(speed);
+    }
+
+    renderer.render(scene,camera);
+}
+
+animate();
+
+window.addEventListener("resize",()=>{
+    camera.aspect=window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+</body>
+</html>
