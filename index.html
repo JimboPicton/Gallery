@@ -344,7 +344,11 @@
     <div id="imageModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <img id="modalImage" class="modal-media" />
+            <div id="modalMediaContainer" style="background: #0a0a0a; padding: 20px;">
+                <img id="modalImage" class="modal-media" />
+                <video id="modalVideo" class="modal-media" controls></video>
+                <iframe id="modalIframe" class="modal-media" style="display: none;"></iframe>
+            </div>
             <div class="modal-info">
                 <div class="modal-title" id="modalTitle"></div>
                 <div class="modal-artist" id="modalArtist"></div>
@@ -358,7 +362,27 @@
     </footer>
 
     <script>
-        // Gallery data - stored in JSON format (can be updated via admin panel)
+        // Helper function to convert YouTube URLs to embed format
+        function getYouTubeEmbedUrl(url) {
+            // Remove tracking parameters
+            url = url.split('?')[0];
+            
+            const patterns = [
+                { regex: /(?:youtube\.com\/watch\?v=)([^&]+)/, format: id => `https://www.youtube.com/embed/${id}` },
+                { regex: /(?:youtu\.be\/)([^?]+)/, format: id => `https://www.youtube.com/embed/${id}` },
+                { regex: /(?:youtube\.com\/embed\/)([^?]+)/, format: id => `https://www.youtube.com/embed/${id}` }
+            ];
+
+            for (let pattern of patterns) {
+                const match = url.match(pattern.regex);
+                if (match) {
+                    return pattern.format(match[1]);
+                }
+            }
+            return url;
+        }
+
+        // Gallery data - stored in JSON format
         let galleryData = [];
 
         // Load gallery data from JSON file
@@ -395,7 +419,7 @@
             }
 
             gallery.innerHTML = filtered.map((item, index) => `
-                <div class="gallery-item" onclick="openModal(${index})">
+                <div class="gallery-item" onclick="openModal(${index}, '${filter === 'all' ? item.type : filter}')">
                     <div class="media-container">
                         ${getMediaPreview(item)}
                         <span class="media-type-badge">${item.type.toUpperCase()}</span>
@@ -415,9 +439,10 @@
         function getMediaPreview(item) {
             switch(item.type) {
                 case 'image':
-                    return `<img src="${item.media}" alt="${item.title}">`;
+                    return `<img src="${item.media}" alt="${item.title}" onerror="this.style.display='none'">`;
                 case 'video':
-                    return `<video src="${item.media}" muted></video>`;
+                    const embedUrl = getYouTubeEmbedUrl(item.media);
+                    return `<iframe src="${embedUrl}" style="border: none;" allowfullscreen></iframe>`;
                 case 'model':
                     return `<iframe src="${item.media}" style="border: none;"></iframe>`;
                 default:
@@ -425,7 +450,7 @@
             }
         }
 
-        function openModal(index) {
+        function openModal(index, type) {
             const item = galleryData[index];
             const modal = document.getElementById('imageModal');
             
@@ -433,9 +458,21 @@
             document.getElementById('modalArtist').innerText = `by ${item.artist}`;
             document.getElementById('modalDescription').innerText = item.description;
 
+            // Hide all media elements first
+            document.getElementById('modalImage').style.display = 'none';
+            document.getElementById('modalVideo').style.display = 'none';
+            document.getElementById('modalIframe').style.display = 'none';
+
             if (item.type === 'image') {
                 document.getElementById('modalImage').src = item.media;
                 document.getElementById('modalImage').style.display = 'block';
+            } else if (item.type === 'video') {
+                const embedUrl = getYouTubeEmbedUrl(item.media);
+                document.getElementById('modalIframe').src = embedUrl;
+                document.getElementById('modalIframe').style.display = 'block';
+            } else if (item.type === 'model') {
+                document.getElementById('modalIframe').src = item.media;
+                document.getElementById('modalIframe').style.display = 'block';
             }
 
             modal.style.display = 'block';
