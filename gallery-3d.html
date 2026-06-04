@@ -80,9 +80,11 @@
             border-radius: 10px;
             border: 1px solid rgba(102, 126, 234, 0.5);
             max-width: 300px;
+            max-height: 400px;
             backdrop-filter: blur(10px);
             z-index: 100;
             display: none;
+            overflow-y: auto;
         }
 
         .frame-info.active {
@@ -123,6 +125,9 @@
             transform: translate(-50%, -50%);
             text-align: center;
             z-index: 200;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 10px;
         }
 
         .loading-spinner {
@@ -260,8 +265,8 @@
         // Frame data
         const frames = [];
 
-        // Create picture frame
-        function createPictureFrame(x, y, z, rotationY, width, height, imageUrl, artworkData) {
+        // Create picture frame with canvas texture
+        function createPictureFrame(x, y, z, rotationY, width, height, artworkData) {
             const frameGroup = new THREE.Group();
             frameGroup.position.set(x, y, z);
             frameGroup.rotation.y = rotationY;
@@ -283,30 +288,56 @@
             frameMesh.castShadow = true;
             frameMesh.receiveShadow = true;
 
-            // Create canvas for image
+            // Create canvas for display
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 1024;
             const ctx = canvas.getContext('2d');
 
-            // Load and draw image
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = () => {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                texture.needsUpdate = true;
-            };
-            img.onerror = () => {
-                // Fallback color if image fails to load
-                ctx.fillStyle = '#333';
+            // Draw immediately based on media type
+            if (artworkData.type === 'image') {
+                // Try to load image, but create placeholder immediately
+                drawPlaceholder(ctx, '📸', artworkData.title);
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    texture.needsUpdate = true;
+                };
+                img.src = artworkData.media;
+            } else if (artworkData.type === 'video') {
+                drawPlaceholder(ctx, '🎬', artworkData.title);
+            } else if (artworkData.type === 'model') {
+                drawPlaceholder(ctx, '🎨', artworkData.title);
+            }
+
+            function drawPlaceholder(ctx, icon, title) {
+                // Background gradient
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, '#2a2a3e');
+                gradient.addColorStop(1, '#1a1a2e');
+                ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#999';
-                ctx.font = '24px Arial';
+
+                // Icon
+                ctx.fillStyle = '#667eea';
+                ctx.font = 'bold 120px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('Image loading...', canvas.width / 2, canvas.height / 2);
-                texture.needsUpdate = true;
-            };
-            img.src = imageUrl;
+                ctx.textBaseline = 'middle';
+                ctx.fillText(icon, canvas.width / 2, canvas.height / 2 - 100);
+
+                // Title (truncated to fit)
+                ctx.fillStyle = '#c0c0c0';
+                ctx.font = 'bold 32px Arial';
+                const truncatedTitle = title.substring(0, 30);
+                ctx.fillText(truncatedTitle, canvas.width / 2, canvas.height / 2 + 100);
+
+                // Border
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+            }
 
             const texture = new THREE.CanvasTexture(canvas);
             texture.magFilter = THREE.LinearFilter;
@@ -330,10 +361,7 @@
             frameGroup.add(imageMesh);
 
             // Store artwork data on the frame
-            frameGroup.userData = {
-                ...artworkData,
-                imageMesh: imageMesh
-            };
+            frameGroup.userData = { ...artworkData };
 
             scene.add(frameGroup);
             frames.push(frameGroup);
@@ -349,7 +377,7 @@
                 const response = await fetch('gallery-data.json');
                 galleryData = await response.json();
             } catch (error) {
-                console.log('Gallery data not found, using empty array');
+                console.error('Error loading gallery data:', error);
             }
 
             // Create gallery space
@@ -385,7 +413,8 @@
                         rotationY = -Math.PI / 2;
                     }
 
-                    createPictureFrame(x, y, z, rotationY, frameWidth, frameHeight, artwork.media, artwork);
+                    // Pass only artworkData
+                    createPictureFrame(x, y, z, rotationY, frameWidth, frameHeight, artwork);
                 });
 
                 document.getElementById('loading').style.display = 'none';
@@ -407,7 +436,7 @@
 
             raycaster.setFromCamera(mouse, camera);
 
-            const intersects = raycaster.intersectObjects(frames.map(f => f.children[1])); // Check image planes only
+            const intersects = raycaster.intersectObjects(frames.map(f => f.children[1]));
 
             if (intersects.length > 0) {
                 selectedFrame = intersects[0].object.parent;
