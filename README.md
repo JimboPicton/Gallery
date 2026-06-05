@@ -1,5 +1,23 @@
 # Digital Media Student Gallery
 
+## v8.1 — Procedural Corridor Bridge + Editor Simplification
+
+Latest changes:
+
+- Replaced the older hallway-room approach with procedural doorway-to-doorway corridor bridges.
+- Doorway stubs are now floor/ceiling-only so corridor side walls should not block room openings.
+- Corridor elbows are trimmed to reduce internal crossing wall planes.
+- Shrunk doorway nodes in the Gallery Layout Editor and moved doorway codes to hover tooltips only.
+- Removed the normal-layout wall preview rail from room cards to reduce visual clutter.
+- Continued the move away from JSON terminology toward Save Draft / Publish Gallery workflow.
+
+Recommended workflow:
+
+1. Edit rooms, corridor bridges, theme and media.
+2. Use Publish Gallery to export the complete gallery package.
+3. Upload/commit the exported JSON files to GitHub when ready for the live site to update.
+
+
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, immersive Three.js walkthrough, visual layout editor, artwork/media placement editor, and admin content tools.
 
 ## Current Version

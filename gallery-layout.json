@@ -3,104 +3,40 @@
     {
       "id": "animation",
       "title": "Animation",
-      "x": -0.29,
-      "z": -0.68,
+      "x": 0,
+      "z": 0,
       "width": 20,
       "depth": 14,
       "height": 6,
-      "wallColor": "#e8dcc2",
+      "wallColor": "#2a2a33",
       "wallTexture": "",
       "label": {
         "text": "Animation",
-        "subtitle": "",
         "wall": "front",
         "x": 0,
-        "y": 4.8,
-        "font": "Noto Sans",
-        "size": 86,
-        "color": "#ffffff",
-        "width": 6.2
+        "y": 4.8
       },
-      "wallColors": {
-        "front": "#e8dcc2",
-        "back": "#e8dcc2",
-        "left": "#e8dcc2",
-        "right": "#e8dcc2"
-      },
-      "wallTextures": {
-        "front": "",
-        "back": "",
-        "left": "",
-        "right": ""
-      }
+      "wallColors": {},
+      "wallTextures": {}
     },
     {
       "id": "games",
-      "title": "Game Design",
-      "x": 29,
-      "z": -0.8,
+      "title": "Games & Interactive Media",
+      "x": 30,
+      "z": 0,
       "width": 20,
       "depth": 14,
       "height": 6,
-      "wallColor": "#ff4000",
+      "wallColor": "#2a2a33",
       "wallTexture": "",
       "label": {
-        "text": "Game Design",
-        "subtitle": "",
+        "text": "Games & Interactive Media",
         "wall": "front",
         "x": 0,
-        "y": 4.8,
-        "font": "Noto Sans",
-        "size": 86,
-        "color": "#ffffff",
-        "width": 6.2
+        "y": 4.8
       },
-      "wallColors": {
-        "front": "#ff4000",
-        "back": "#ff4000",
-        "left": "#ff4000",
-        "right": "#ff4000"
-      },
-      "wallTextures": {
-        "front": "",
-        "back": "",
-        "left": "",
-        "right": ""
-      }
-    },
-    {
-      "id": "room3",
-      "title": "Graphic Design",
-      "x": -1.94,
-      "z": 23.88,
-      "width": 20,
-      "depth": 14,
-      "height": 6,
-      "wallColor": "#4338ca",
-      "wallColors": {
-        "front": "#4338ca",
-        "back": "#4338ca",
-        "left": "#4338ca",
-        "right": "#4338ca"
-      },
-      "wallTexture": "",
-      "wallTextures": {
-        "front": "",
-        "back": "",
-        "left": "",
-        "right": ""
-      },
-      "label": {
-        "text": "Graphic Design",
-        "subtitle": "2025",
-        "wall": "front",
-        "x": 0,
-        "y": 4.8,
-        "font": "Noto Sans",
-        "size": 86,
-        "color": "#ffffff",
-        "width": 6.2
-      }
+      "wallColors": {},
+      "wallTextures": {}
     }
   ],
   "hallways": [
@@ -115,23 +51,22 @@
       "width": 4,
       "height": 4,
       "wallColor": "#22222a"
-    },
-    {
-      "id": "hall2",
-      "from": "animation",
-      "to": "room3",
-      "fromWall": "front",
-      "fromSlot": "center",
-      "toWall": "back",
-      "toSlot": "center",
-      "width": 4,
-      "height": 4,
-      "wallColor": "#22222a"
     }
   ],
   "settings": {
     "floorColor": "#151515",
     "ceilingColor": "#1c1c1c",
+    "ambientLight": 1.1,
+    "directionalLight": 1.4,
+    "additionalLights": [
+      {
+        "x": 0,
+        "y": 5.5,
+        "z": 0,
+        "intensity": 1.8,
+        "color": "#ffffff"
+      }
+    ],
     "defaultWallColor": "#2a2a33",
     "palette": [
       "#2a2a33",
@@ -143,37 +78,6 @@
       "#1f2937",
       "#ffffff"
     ],
-    "ambientLight": 1.1,
-    "directionalLight": 1.4,
-    "additionalLights": [
-      {
-        "id": "light1",
-        "x": -0.91,
-        "y": 5.5,
-        "z": -1.4,
-        "intensity": 1.8,
-        "color": "#ffffff",
-        "distance": 18
-      },
-      {
-        "id": "light1_copy1",
-        "x": 28.5,
-        "y": 5.5,
-        "z": -1.83,
-        "intensity": 1.8,
-        "color": "#ffffff",
-        "distance": 18
-      },
-      {
-        "id": "light1_copy2",
-        "x": -2.31,
-        "y": 5.5,
-        "z": 23.61,
-        "intensity": 1.8,
-        "color": "#ffffff",
-        "distance": 18
-      }
-    ],
     "teleports": [
       {
         "id": "teleport1",
@@ -181,23 +85,9 @@
         "x": 0,
         "z": 3,
         "size": 1.4,
-        "linkedTo": "teleport1_copy1",
         "toX": 30,
         "toZ": 0,
-        "destinationLabel": "Jump to Games Copy",
-        "interaction": "press",
-        "radius": 2.2
-      },
-      {
-        "id": "teleport1_copy1",
-        "label": "Jump to Games Copy",
-        "x": 35.15,
-        "z": -3.33,
-        "size": 1.4,
-        "linkedTo": "teleport1",
-        "toX": 30,
-        "toZ": 0,
-        "destinationLabel": "Jump to Games",
+        "destinationLabel": "Games & Interactive Media",
         "interaction": "press",
         "radius": 2.2
       }
@@ -211,11 +101,11 @@
           "label": "Gallery Ambient Bed",
           "kind": "ambient",
           "type": "direct",
-          "url": "https://on.soundcloud.com/1Sm58IPSsqyAiiPirJ",
-          "x": 2.31,
+          "url": "",
+          "x": 0,
           "y": 1.8,
-          "z": 23.84,
-          "radius": 12,
+          "z": 0,
+          "radius": 18,
           "volume": 0.5,
           "loop": true
         }

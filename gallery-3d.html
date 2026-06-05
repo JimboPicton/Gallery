@@ -74,35 +74,56 @@ function makeWallWithOpenings(room,wall,openings,material){const span=(wall==='f
 function makeLabel(room){if(!room.label)return;const label=room.label||{};const main=label.text||room.title||'';const sub=label.subtitle||label.subheading||'';if(!main&&!sub)return;const c=document.createElement('canvas');c.width=1400;c.height=420;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=10;ctx.shadowOffsetY=5;const font=String(label.font||'Noto Sans').replace(/[^a-zA-Z0-9 ,_-]/g,'');const size=Number(label.size||label.fontSize||86);const col=label.color||'#ffffff';ctx.fillStyle=col;ctx.font=`700 ${size}px ${font}, Roboto, Arial, sans-serif`;ctx.fillText(main,c.width/2,sub?c.height*.42:c.height*.5);if(sub){ctx.font=`400 ${Math.round(size*.45)}px ${font}, Roboto, Arial, sans-serif`;ctx.fillStyle=label.subtitleColor||col;ctx.fillText(sub,c.width/2,c.height*.64)}const tex=new THREE.CanvasTexture(c);const aspect=c.width/c.height;const w=Number(label.width||6.2),h=w/aspect;const p=wallPosition(room,label.wall||'front',Number(label.x||0),Number(label.y||4.8),.08);addPlane(w,h,p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false}));}
 function wallMaterialFor(room,wall,layout){return mat(resolveWallColor(room,wall,layout),resolveWallTexture(room,wall))}function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
 function addQuad(points,material){const g=new THREE.BufferGeometry();const verts=new Float32Array(points.flatMap(p=>[p.x,p.y,p.z]));g.setAttribute('position',new THREE.BufferAttribute(verts,3));g.setIndex([0,1,2,0,2,3]);g.computeVertexNormals();const m=material.clone();m.side=THREE.DoubleSide;const mesh=new THREE.Mesh(g,m);scene.add(mesh);return mesh;}
-function makeHallSegment(x,z,w,d,h,layout,wallColor,opts={}){const floorM=mat(layout.settings?.floorColor||'#151515',''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',''),wallM=mat(wallColor||'#22222a','');addPlane(w,d,{x,y:0,z},{x:-Math.PI/2},floorM);addPlane(w,d,{x,y:h,z},{x:Math.PI/2},ceilM);if(!opts.noWalls){if(w>=d){addPlane(w,h,{x,y:h/2,z:z-d/2},{y:0},wallM);addPlane(w,h,{x,y:h/2,z:z+d/2},{y:Math.PI},wallM)}else{addPlane(d,h,{x:x-w/2,y:h/2,z},{y:Math.PI/2},wallM);addPlane(d,h,{x:x+w/2,y:h/2,z},{y:-Math.PI/2},wallM)}}addBound(x,z,w,d,.02)}
-function hallwayRectBetween(p1,p2,width,extend=0){
-  const dx=p2.x-p1.x,dz=p2.z-p1.z;
-  if(Math.abs(dx)>=Math.abs(dz)){const len=Math.max(Math.abs(dx)+extend*2,.05);return {x:(p1.x+p2.x)/2,z:p1.z,w:len,d:width,axis:'x'};}
-  const len=Math.max(Math.abs(dz)+extend*2,.05);return {x:p1.x,z:(p1.z+p2.z)/2,w:width,d:len,axis:'z'};
+function makeHallSegment(x,z,w,d,h,layout,wallColor,opts={}){
+  const floorM=mat(layout.settings?.floorColor||'#151515',''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',''),wallM=mat(wallColor||'#22222a','');
+  addPlane(w,d,{x,y:0,z},{x:-Math.PI/2},floorM);
+  addPlane(w,d,{x,y:h,z},{x:Math.PI/2},ceilM);
+  if(!opts.noWalls){
+    const axis=opts.axis||(w>=d?'x':'z');
+    const trimStart=Math.max(0,Number(opts.trimStart||0)), trimEnd=Math.max(0,Number(opts.trimEnd||0));
+    if(axis==='x'){
+      const len=Math.max(.05,w-trimStart-trimEnd);
+      const dir=opts.dir||1;
+      const cx=x + dir*(trimStart-trimEnd)/2;
+      addPlane(len,h,{x:cx,y:h/2,z:z-d/2},{y:0},wallM);
+      addPlane(len,h,{x:cx,y:h/2,z:z+d/2},{y:Math.PI},wallM);
+    }else{
+      const len=Math.max(.05,d-trimStart-trimEnd);
+      const dir=opts.dir||1;
+      const cz=z + dir*(trimStart-trimEnd)/2;
+      addPlane(len,h,{x:x-w/2,y:h/2,z:cz},{y:Math.PI/2},wallM);
+      addPlane(len,h,{x:x+w/2,y:h/2,z:cz},{y:-Math.PI/2},wallM);
+    }
+  }
+  addBound(x,z,w,d,.02);
 }
-function makeAxisHallSegment(p1,p2,width,height,layout,color,opts={}){const r=hallwayRectBetween(p1,p2,width,opts.extend||0);makeHallSegment(r.x,r.z,r.w,r.d,height,layout,color,opts);}
+function segmentMeta(p1,p2,width,extend=0){
+  const dx=p2.x-p1.x,dz=p2.z-p1.z;
+  if(Math.abs(dx)>=Math.abs(dz)){const dir=dx>=0?1:-1;const len=Math.max(Math.abs(dx)+extend*2,.05);return {x:(p1.x+p2.x)/2,z:p1.z,w:len,d:width,axis:'x',dir};}
+  const dir=dz>=0?1:-1;const len=Math.max(Math.abs(dz)+extend*2,.05);return {x:p1.x,z:(p1.z+p2.z)/2,w:width,d:len,axis:'z',dir};
+}
+function makeAxisHallSegment(p1,p2,width,height,layout,color,opts={}){const r=segmentMeta(p1,p2,width,opts.extend||0);makeHallSegment(r.x,r.z,r.w,r.d,height,layout,color,{...opts,axis:r.axis,dir:r.dir});}
 function wallOutwardVector(w){w=normalizeWall(w);if(w==='front')return {x:0,z:1};if(w==='back')return {x:0,z:-1};if(w==='left')return {x:-1,z:0};return {x:1,z:0}}
 function addv(p,v,d){return {x:p.x+v.x*d,z:p.z+v.z*d}}
 function makeHall(h,rooms,layout){
   const a=rooms.find(r=>r.id===h.from),b=rooms.find(r=>r.id===h.to);if(!a||!b)return;
-  const width=Number(h.width||4),height=Number(h.height||4),color=h.wallColor||'#22222a';
+  const width=Number(h.width||4),height=Number(h.height||4),color=h.wallColor||layout.settings?.hallwayColor||'#22222a';
   const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
   const p1=portalWorld(a,fw,h.fromSlot||'center'),p2=portalWorld(b,tw,h.toSlot||'center');
   const n1=wallOutwardVector(fw),n2=wallOutwardVector(tw);
-  const stub=Math.max(width*.75,1.4);
-  // Start just outside each room. This avoids pushing hallway side-walls back through the doorway opening,
-  // which was causing apparent blocked entries when new rooms were added or slots changed.
-  const a0=addv(p1,n1,.08), a1=addv(p1,n1,stub);
-  const b0=addv(p2,n2,.08), b1=addv(p2,n2,stub);
+  const stub=Math.max(width*.65,1.25), elbowPad=width*.55;
+  // v8.1 procedural doorway bridge: room openings are cut by makeRoom; corridors are generated as bridge segments
+  // from doorway-node to doorway-node. Doorway stubs are floor/ceiling only, so side-walls never block the opening.
+  const a0=addv(p1,n1,.03), a1=addv(p1,n1,stub);
+  const b0=addv(p2,n2,.03), b1=addv(p2,n2,stub);
   makeAxisHallSegment(a0,a1,width,height,layout,color,{noWalls:true});
   makeAxisHallSegment(b0,b1,width,height,layout,color,{noWalls:true});
   const sameX=Math.abs(a1.x-b1.x)<.05, sameZ=Math.abs(a1.z-b1.z)<.05;
-  if(sameX||sameZ){makeAxisHallSegment(a1,b1,width,height,layout,color);return;}
+  if(sameX||sameZ){makeAxisHallSegment(a1,b1,width,height,layout,color,{trimStart:elbowPad,trimEnd:elbowPad});return;}
   const goXFirst=(fw==='left'||fw==='right');
   const elbow=goXFirst?{x:b1.x,z:a1.z}:{x:a1.x,z:b1.z};
-  // The elbow is intentionally floor/ceiling-only at the joint to prevent internal corner wall planes crossing the walking path.
-  makeAxisHallSegment(a1,elbow,width,height,layout,color);
-  makeAxisHallSegment(elbow,b1,width,height,layout,color);
+  makeAxisHallSegment(a1,elbow,width,height,layout,color,{trimStart:0,trimEnd:elbowPad});
+  makeAxisHallSegment(elbow,b1,width,height,layout,color,{trimStart:elbowPad,trimEnd:0});
   makeHallSegment(elbow.x,elbow.z,width,width,height,layout,color,{noWalls:true});
 }
 function escHTML(v){return String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}

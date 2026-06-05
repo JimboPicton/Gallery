@@ -1,14 +1,1 @@
-{
-  "title": "Creative Media Student Gallery",
-  "intro": "A lightweight virtual exhibition platform for Creative Media student work. Select a gallery, enter the 3D exhibition, or use the management tools to curate spaces and media.",
-  "footer": "Creative Media Student Gallery",
-  "logoUrl": "https://cdn.brandfetch.io/idVBrs4C1B/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1772606085645",
-  "heroImageUrl": "",
-  "colors": {
-    "primary": "#006b3f",
-    "secondary": "#78be20",
-    "dark": "#071b14",
-    "surface": "#f7fbf4",
-    "accent": "#0a7d4f"
-  }
-}
+{}
