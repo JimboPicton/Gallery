@@ -323,3 +323,21 @@ YouTube, SoundCloud and Echo360 URLs are not direct audio streams and should be 
 ### Note on multiple galleries
 
 Because GitHub Pages is static hosting, browser-created galleries are saved locally unless exported and committed to the repository or backed by a future authenticated save workflow. Use Gallery Manager > Export Bundle to move or back up a gallery project.
+
+## v6.2 Hallway, YouTube Overlay and JSON Reminder Fixes
+
+- Fixed hallway rendering so offset doorway connections no longer create overlapping internal wall planes.
+- Removed the extra in-scene placeholder/play mesh from video artworks; the reticle now provides the interaction cue without visually blocking the thumbnail.
+- Updated YouTube embeds to use a cleaner playback panel with pointer lock released.
+- Fixed Manage Submissions persistence so local draft edits are not immediately overwritten by the repository JSON when the list refreshes.
+- Added an export/upload reminder when gallery metadata changes, reminding editors to export/copy `gallery-data.json` and upload or commit it to GitHub for the live site.
+
+## v6.3 - Simplified Navigation, Gallery Access and VR Starter
+
+- Simplified `index.html` around three clear user intents: **Enter the Gallery**, **Manage Galleries**, and **Design and Media Management Tools**.
+- Renamed the admin workflow to **Manage Artwork & Media** for consistency across pages.
+- Strengthened Gallery Manager as the central curator hub for selecting the active gallery and launching layout, artwork/media, and placement tools.
+- Added optional password-gated gallery access for locally managed galleries.
+- Added clear warning that static GitHub Pages password gates are suitable for draft review/casual access control only, not secure private hosting.
+- Added WebXR/VR starter support via the Three.js VR button. This enables headset entry where supported by browser/device over HTTPS.
+- Updated the 3D gallery access flow so password-protected galleries are unlocked before the welcome/cultural notice screen is shown.
