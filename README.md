@@ -341,3 +341,50 @@ Because GitHub Pages is static hosting, browser-created galleries are saved loca
 - Added clear warning that static GitHub Pages password gates are suitable for draft review/casual access control only, not secure private hosting.
 - Added WebXR/VR starter support via the Three.js VR button. This enables headset entry where supported by browser/device over HTTPS.
 - Updated the 3D gallery access flow so password-protected galleries are unlocked before the welcome/cultural notice screen is shown.
+
+
+## v6.4 Hallway Alignment, YouTube Audio Handling and Sound UI
+
+- Reworked hallway rendering to use a single oriented corridor between doorway centres, reducing seams, gaps and stray wall planes when doorway slots are not perfectly aligned.
+- Prevented YouTube URLs from being loaded through the browser `Audio()` API, which is blocked by CORS on GitHub Pages.
+- Added embedded YouTube player fallback for gallery-wide YouTube soundtrack links after the user presses the sound button.
+- Clarified audio button wording from "Enable sound" to "Turn sound on/off".
+- Added guidance that MP3/OGG/WAV/M4A should be used for direct background or spatial audio.
+
+
+## v6.5 - Cross-Screen JSON Draft Safety
+
+- Added navigation guards on editing screens when local JSON changes are present.
+- Replaced risky local-draft restore prompts with automatic loading of the latest local draft.
+- Added clearer reminders that local browser changes must be exported/copied and uploaded to GitHub for the live public gallery.
+- Export/copy actions now mark the relevant JSON component as handled for the current browser session.
+
+
+## v6.6 CQU-Inspired Branding and Editable Main Page
+
+- Refreshed `index.html` with a CQU-inspired green palette while keeping colours editable.
+- Added editable main page title, intro text, footer text, logo URL and feature image URL in Gallery Manager.
+- Added colour controls for primary, secondary, accent and background colours.
+- Added reset button for the CQU-inspired palette.
+- Main page now reads local branding settings from `gallery-site-settings`.
+
+Note: The palette is inspired by CQUniversity's refreshed green-led branding direction, but editors can override it for each deployment.
+
+
+## v6.7 - Active Gallery Selector
+
+- Added an obvious gallery selector to the main `index.html` page.
+- Added an Active Gallery panel at the top of `gallery-manager.html`.
+- The selected active gallery now controls which exhibition opens from the main page **Enter the Gallery** button.
+- Gallery cards now show an **Active** pill so the current selection is easier to see.
+- Added a Preview Active Gallery shortcut from Gallery Manager.
+
+## v6.8 - Hallway, YouTube and embedded audio repair
+
+- Reverted hallway generation to orthogonal L-shaped corridor segments to avoid diagonal wall planes when new rooms are added.
+- Improved room-to-hallway overlap so corridor joins tuck into doorway cut-outs more cleanly.
+- Fixed artwork click handling so the reticle target opens the larger media panel reliably.
+- Added SoundCloud URL detection so SoundCloud share links are no longer loaded as direct audio and do not trigger browser CORS errors.
+- Added SoundCloud embedded-player fallback for gallery audio and media panels.
+- Added SoundCloud as a recognised media type in artwork/media management screens.
+
