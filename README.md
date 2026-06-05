@@ -518,3 +518,11 @@ Use `interaction: "press"` for deliberate **E key** activation. Use `interaction
 - Improved embedded media handling for YouTube and SoundCloud and prioritised E-key activation for media.
 
 This build focuses on stability and curator workflow before adding further visual/social features.
+
+## v9.1 - YouTube Preview and Label Renderer Regression Fix
+
+- Restored YouTube wall preview thumbnails in the 3D gallery.
+- Added a play overlay to YouTube/video/SoundCloud-style media cards so viewers understand to press E to activate playback.
+- Restored clean transparent room label typography using Noto Sans/Roboto-style rendering instead of grey bordered wall panels.
+- Labels now support optional subtitle, font, colour, width and size values when present in the room label JSON.
+- Updated artwork media rendering to use a dedicated texture helper so image/video/YouTube previews are less likely to regress during corridor or geometry work.
