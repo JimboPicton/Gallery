@@ -1,58 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Artwork & Media</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#101014 0%,#171722 100%);color:#fff;min-height:100vh}.container{max-width:1200px;margin:0 auto;padding:24px}header{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 10px 35px rgba(0,0,0,.25)}header h1{font-size:2rem;margin-bottom:6px}.nav-tabs,.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.nav-tab,button,.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:#2a2a3a;color:#fff;text-decoration:none}.nav-tab.active,.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2)}.btn-secondary{background:#303044;border:1px solid #667eea}.btn-delete{background:#b83d52}.tab-content{display:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px}.tab-content.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.form-group{margin-bottom:14px}label{display:block;margin-bottom:6px;color:#cfd3ff;font-weight:700}input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:#0f0f16;color:#fff}textarea{min-height:110px;resize:vertical}.hint{font-size:.9rem;color:#aaa;line-height:1.45}.alert{padding:12px;border-radius:10px;margin:12px 0}.alert-success{background:rgba(76,175,80,.16);border:1px solid rgba(76,175,80,.45);color:#8be28f}.alert-info{background:rgba(102,126,234,.15);border:1px solid rgba(102,126,234,.45);color:#c7d0ff}.alert-warning{background:rgba(255,193,7,.14);border:1px solid rgba(255,193,7,.55);color:#ffe08a}.stickyReminder{position:sticky;top:10px;z-index:20;display:none}.submissions-list{display:grid;gap:14px}.submission-item{display:grid;grid-template-columns:96px 1fr auto;gap:14px;align-items:start;background:rgba(255,255,255,.055);border:1px solid rgba(102,126,234,.22);border-radius:14px;padding:14px}.thumb{width:96px;height:64px;border-radius:8px;background:#111;border:1px solid rgba(255,255,255,.12);object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:24px}.submission-info h3{margin-bottom:4px}.submission-info p{color:#aaa;font-size:.92rem;margin:.18rem 0}.submission-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:18px}.modal.open{display:flex}.modal-card{width:min(860px,100%);max-height:90vh;overflow:auto;background:#171722;border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}.tag-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.tag{background:rgba(102,126,234,.25);color:#cfd3ff;padding:6px 10px;border-radius:999px}.toplinks a{color:#cfd3ff;margin-right:12px}@media(max-width:820px){.grid,.submission-item{grid-template-columns:1fr}.submission-actions{justify-content:flex-start}.thumb{width:100%;height:120px}}
-</style>
-</head>
-<body><div class="container"><header><h1>🎨 Manage Artwork &amp; Media</h1><p>Manage student submissions, media metadata and export-ready gallery-data.json.</p><p class="toplinks"><a href="./index.html">Main</a><a href="./gallery-manager.html">Gallery Manager</a><a href="./layout-editor.html">Gallery Layout Editor</a><a href="./artwork-editor.html">Artwork Placement Editor</a><a href="./gallery-3d.html">Enter Gallery</a><a href="./publish.html">Publish Gallery</a></p></header>
-<div id="jsonReminder" class="alert alert-warning stickyReminder"><strong>Reminder:</strong> You have local artwork/media changes. Use <a href="./publish.html" style="color:#fff;text-decoration:underline">Publish Gallery</a> to export all JSON files together, or export <code>gallery-data.json</code> only if you are updating artwork/media. <button class="btn-secondary" onclick="downloadData()" style="margin-left:8px">Export now</button></div>
-<div class="nav-tabs"><button class="nav-tab active" onclick="switchTab('add-work',this)">Add New Work</button><button class="nav-tab" onclick="switchTab('manage',this)">Manage Artwork &amp; Media</button><button class="nav-tab" onclick="switchTab('help',this)">Help</button></div>
-<div id="add-work" class="tab-content active"><h2>Add New Artwork</h2><p class="hint">This browser cannot write directly to GitHub Pages without credentials, so changes are staged locally and exported as gallery-data.json.</p><form id="addWorkForm" style="margin-top:18px"><div class="grid"><div class="form-group"><label>Student / Artist Name *</label><input id="artistName" required></div><div class="form-group"><label>Artwork Title *</label><input id="workTitle" required></div></div><div class="form-group"><label>Description / Artist Statement</label><textarea id="workDescription"></textarea></div><div class="grid"><div class="form-group"><label>Media Type *</label><select id="mediaType" required onchange="updateMediaPlaceholder()"><option value="image">Image</option><option value="youtube">YouTube</option><option value="vimeo">Vimeo</option><option value="soundcloud">SoundCloud</option><option value="echo360">Echo360</option><option value="video">Direct video file</option><option value="model">GLB/GLTF model</option><option value="link">External link</option></select></div><div class="form-group"><label id="mediaLabel">Media URL *</label><input id="mediaUrl" required placeholder="https://..."></div></div><div class="grid"><div class="form-group"><label>Room ID</label><input id="room" value="main"></div><div class="form-group"><label>Wall</label><select id="wall"><option>front</option><option>back</option><option>left</option><option>right</option></select></div></div><div class="grid"><div class="form-group"><label>Tags, comma separated</label><input id="tags" placeholder="animation, games, 3D"></div><div class="form-group"><label>Autoplay media in popup?</label><select id="autoplay"><option value="false">No</option><option value="true">Yes</option></select></div></div><div class="toolbar"><button class="btn-primary" type="submit">Add to Gallery</button><button class="btn-secondary" type="reset">Clear Form</button><button class="btn-secondary" type="button" onclick="downloadData()">Export gallery-data.json</button></div></form><div id="successMessage" class="alert alert-success" style="display:none">✓ Artwork added. Export gallery-data.json when ready.</div></div>
-<div id="manage" class="tab-content"><h2>Manage Artwork &amp; Media</h2><div class="toolbar"><input id="searchBox" placeholder="Search title, artist, type or tags" oninput="loadSubmissions()" style="max-width:360px"><button class="btn-secondary" onclick="downloadData()">Export gallery-data.json</button><button class="btn-secondary" onclick="copyData()">Copy JSON</button><button class="btn-secondary" onclick="document.getElementById('importFile').click()">Import JSON</button><input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)"></div><div id="submissionsList" class="submissions-list"><p class="hint">Loading submissions...</p></div></div>
-<div id="help" class="tab-content"><h2>Help</h2><div class="alert alert-info"><strong>Manage Submissions now supports:</strong> edit metadata, duplicate, remove, search/filter, import, copy JSON and export JSON.</div><p class="hint">For YouTube, paste either a normal watch URL or youtu.be URL. The 3D gallery will show a thumbnail preview on the wall and open an accessible embedded player when selected.</p></div></div>
-<div id="editModal" class="modal"><div class="modal-card"><h2>Edit Submission</h2><div id="editForm"></div><div class="toolbar"><button class="btn-primary" onclick="saveEdit()">Save Changes</button><button class="btn-secondary" onclick="closeEdit()">Cancel</button></div></div></div>
-<script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Admin Panel</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-function dirtyKey(){return scopedKey('gallery-data-dirty')}
-let hasLocalChanges=false;
-function markDirtyChange(){hasLocalChanges=true;localStorage.setItem(dirtyKey(),'1');}
-function markExportedChange(){hasLocalChanges=false;localStorage.removeItem(dirtyKey());hideJsonReminder();}
-function dirtyMessage(){return 'You have local changes that are saved in this browser but may not yet be exported to the JSON file. Export or copy the JSON before moving screens if you want to update GitHub. Continue anyway?';}
-function guardNavigation(){
-  document.addEventListener('click',function(e){const a=e.target.closest('a[href]');if(!a)return;const href=a.getAttribute('href')||'';if(href.startsWith('#')||href.startsWith('javascript:')||a.target==='_blank')return;if((hasLocalChanges||localStorage.getItem(dirtyKey())==='1')&&!confirm(dirtyMessage()))e.preventDefault();},true);
-  window.addEventListener('beforeunload',function(e){if(hasLocalChanges||localStorage.getItem(dirtyKey())==='1'){e.preventDefault();e.returnValue='';}});
-}
-guardNavigation();
-let galleryData=[],editingIndex=-1;const params=new URLSearchParams(location.search);const galleryId=params.get('gallery')||localStorage.getItem('active-gallery-id')||'repo';function scopedKey(base){return galleryId&&galleryId!=='repo'?base+'-'+galleryId:base}function storedGallery(){try{return (JSON.parse(localStorage.getItem('gallery-projects')||'[]')).find(g=>g.id===galleryId)||null}catch(e){return null}}function updateStoredGallery(){if(!galleryId||galleryId==='repo')return;let gs=JSON.parse(localStorage.getItem('gallery-projects')||'[]');let g=gs.find(x=>x.id===galleryId);if(g){g.data=galleryData;localStorage.setItem('gallery-projects',JSON.stringify(gs,null,2));}}
-function normalize(item,i=0){return {id:item.id||'art'+(i+1),title:item.title||item.name||'Untitled',artist:item.artist||item.student||'',description:item.description||'',media:item.media||item.image||item.url||'',image:item.image||'',mediaType:item.mediaType||item.type||'image',type:item.mediaType||item.type||'image',room:item.room||'main',wall:item.wall||'back',x:Number(item.x??0),y:Number(item.y??3),width:Number(item.width??3),height:Number(item.height??1.7),tags:Array.isArray(item.tags)?item.tags:String(item.tags||'').split(',').map(t=>t.trim()).filter(Boolean),autoplay:item.autoplay===true||item.autoplay==='true',statementDisplay:item.statementDisplay||'popup',statementSide:item.statementSide||'right',statementWidth:Number(item.statementWidth??2.2),statementHeight:Number(item.statementHeight??1.1),modelScale:Number(item.modelScale||item.scale||1),rotationY:Number(item.rotationY||0),z:Number(item.z||0)}}
-function switchTab(tabName,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.getElementById(tabName).classList.add('active');if(btn)btn.classList.add('active');if(tabName==='manage')loadSubmissions()}
-function updateMediaPlaceholder(){const type=document.getElementById('mediaType').value,input=document.getElementById('mediaUrl'),label=document.getElementById('mediaLabel');const p={image:'https://.../image.jpg',youtube:'https://youtu.be/... or https://youtube.com/watch?v=...',vimeo:'https://vimeo.com/...',soundcloud:'https://soundcloud.com/... or https://on.soundcloud.com/...',echo360:'https://echo360.org.au/...',video:'uploads/video.mp4',model:'models/object.glb',link:'https://...'};input.placeholder=p[type]||'https://...';label.textContent=type==='model'?'Model URL *':'Media URL *'}
-async function loadGalleryData(){
-  const sg=storedGallery();
-  if(sg&&Array.isArray(sg.data)){galleryData=sg.data.map(normalize);return}
-  const draft=localStorage.getItem(scopedKey('gallery-data-draft'));
-  if(draft){try{galleryData=JSON.parse(draft).map(normalize);if(localStorage.getItem(dirtyKey())==='1')showJsonReminder();return}catch(e){}}
-  try{const r=await fetch('gallery-data.json?ts='+Date.now(),{cache:'no-cache'});galleryData=(await r.json()).map(normalize)}
-  catch(e){galleryData=[]}
-}
-function showJsonReminder(){const el=document.getElementById('jsonReminder');if(el)el.style.display='block'}
-function hideJsonReminder(){const el=document.getElementById('jsonReminder');if(el)el.style.display='none'}
-function persist(){localStorage.setItem(scopedKey('gallery-data-draft'),JSON.stringify(galleryData,null,2));updateStoredGallery();markDirtyChange();showJsonReminder()}
-document.getElementById('addWorkForm').addEventListener('submit',async e=>{e.preventDefault();await loadGalleryData();galleryData.push(normalize({title:v('workTitle'),artist:v('artistName'),description:v('workDescription'),media:v('mediaUrl'),mediaType:v('mediaType'),type:v('mediaType'),room:v('room'),wall:v('wall'),tags:v('tags'),autoplay:v('autoplay')}));persist();document.getElementById('successMessage').style.display='block';setTimeout(()=>document.getElementById('successMessage').style.display='none',3500);e.target.reset();updateMediaPlaceholder()});
-function thumb(item){const type=String(item.mediaType||item.type||'').toLowerCase(),url=item.media||item.image||'';const id=youtubeId(url);if(id)return `<img class="thumb" src="https://img.youtube.com/vi/${id}/mqdefault.jpg" alt="">`;if(type==='image'||url.match(/\.(png|jpe?g|gif|webp)$/i))return `<img class="thumb" src="${escA(url)}" alt="">`;if(type==='model')return '<div class="thumb">⬢</div>';if(type.includes('video')||type.includes('youtube')||type.includes('vimeo')||type.includes('soundcloud'))return '<div class="thumb">▶</div>';return '<div class="thumb">🔗</div>'}
-async function loadSubmissions(){await loadGalleryData();const q=(document.getElementById('searchBox')?.value||'').toLowerCase();const list=document.getElementById('submissionsList');const rows=galleryData.map((item,index)=>({item,index})).filter(({item})=>!q||JSON.stringify(item).toLowerCase().includes(q));if(!rows.length){list.innerHTML='<p class="hint">No submissions found.</p>';return}list.innerHTML=rows.map(({item,index})=>`<div class="submission-item">${thumb(item)}<div class="submission-info"><h3>${esc(item.title)}</h3><p>by ${esc(item.artist)}</p><p>Type: ${esc(item.mediaType||item.type)} | Room: ${esc(item.room)} | Wall: ${esc(item.wall)}</p><p>Tags: ${(item.tags||[]).map(esc).join(', ')||'—'}</p><p class="hint">${esc((item.description||'').slice(0,130))}${(item.description||'').length>130?'…':''}</p></div><div class="submission-actions"><button class="btn-secondary" onclick="editSubmission(${index})">Edit</button><button class="btn-secondary" onclick="duplicateSubmission(${index})">Duplicate</button><button class="btn-delete" onclick="deleteSubmission(${index})">Remove</button></div></div>`).join('')}
-function editSubmission(i){editingIndex=i;const a=galleryData[i];document.getElementById('editForm').innerHTML=`<div class="grid"><div class="form-group"><label>ID</label><input id="e_id" value="${escA(a.id)}"></div><div class="form-group"><label>Title</label><input id="e_title" value="${escA(a.title)}"></div></div><div class="grid"><div class="form-group"><label>Artist</label><input id="e_artist" value="${escA(a.artist)}"></div><div class="form-group"><label>Media Type</label><select id="e_mediaType"><option>image</option><option>youtube</option><option>vimeo</option><option>soundcloud</option><option>echo360</option><option>video</option><option>model</option><option>link</option></select></div></div><div class="form-group"><label>Description / Statement</label><textarea id="e_description">${esc(a.description)}</textarea></div><div class="form-group"><label>Media URL</label><input id="e_media" value="${escA(a.media||a.image||'')}"></div><div class="grid"><div class="form-group"><label>Room</label><input id="e_room" value="${escA(a.room)}"></div><div class="form-group"><label>Wall</label><select id="e_wall"><option>front</option><option>back</option><option>left</option><option>right</option></select></div></div><div class="grid"><div class="form-group"><label>X</label><input id="e_x" type="number" step="0.1" value="${a.x}"></div><div class="form-group"><label>Y</label><input id="e_y" type="number" step="0.1" value="${a.y}"></div></div><div class="grid"><div class="form-group"><label>Width</label><input id="e_width" type="number" step="0.1" value="${a.width}"></div><div class="form-group"><label>Height</label><input id="e_height" type="number" step="0.1" value="${a.height}"></div></div><div class="grid"><div class="form-group"><label>Tags, comma separated</label><input id="e_tags" value="${escA((a.tags||[]).join(', '))}"></div><div class="form-group"><label>Autoplay</label><select id="e_autoplay"><option value="false">No</option><option value="true">Yes</option></select></div></div>`;document.getElementById('e_mediaType').value=a.mediaType||a.type||'image';document.getElementById('e_wall').value=a.wall||'back';document.getElementById('e_autoplay').value=String(!!a.autoplay);document.getElementById('editModal').classList.add('open')}
-function saveEdit(){if(editingIndex<0)return;const a=galleryData[editingIndex];Object.assign(a,normalize({...a,id:v('e_id'),title:v('e_title'),artist:v('e_artist'),description:v('e_description'),media:v('e_media'),mediaType:v('e_mediaType'),type:v('e_mediaType'),room:v('e_room'),wall:v('e_wall'),x:v('e_x'),y:v('e_y'),width:v('e_width'),height:v('e_height'),tags:v('e_tags'),autoplay:v('e_autoplay')},editingIndex));persist();closeEdit();loadSubmissions()}
-function closeEdit(){document.getElementById('editModal').classList.remove('open');editingIndex=-1}
-function duplicateSubmission(i){galleryData.splice(i+1,0,normalize({...galleryData[i],id:(galleryData[i].id||'art')+'_copy',title:(galleryData[i].title||'Untitled')+' Copy'},i+1));persist();loadSubmissions()}
-function deleteSubmission(i){if(confirm('Remove this submission?')){galleryData.splice(i,1);persist();loadSubmissions()}}
-function downloadData(){localStorage.setItem(scopedKey('gallery-data-draft'),JSON.stringify(galleryData,null,2));updateStoredGallery();markExportedChange();alert('Exporting gallery-data.json. Upload or commit this file to GitHub so the live gallery uses your latest metadata.');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(galleryData,null,2)],{type:'application/json'}));a.download='gallery-data.json';a.click();URL.revokeObjectURL(a.href)}
-async function copyData(){persist();markExportedChange();await navigator.clipboard.writeText(JSON.stringify(galleryData,null,2));alert('gallery-data.json copied to clipboard. Upload or commit the updated JSON to GitHub when ready.')}
-function importData(e){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{try{galleryData=JSON.parse(reader.result).map(normalize);persist();loadSubmissions()}catch(err){alert('Could not import JSON: '+err.message)}};reader.readAsText(f)}
-function youtubeId(url){return (String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/]+)/)||[])[1]||''}
-function v(id){return document.getElementById(id).value}function esc(s){return String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}function escA(s){return esc(s).replace(/"/g,'&quot;')}updateMediaPlaceholder();loadGalleryData();
-</script></body></html>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding-bottom: 20px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid transparent;
+            color: #a0a0a0;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #b71c1c;
+        }
+
+        .tag-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tag-input input {
+            flex: 1;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.2em;
+        }
+
+        .submissions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .submission-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .submission-info h3 {
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .submission-info p {
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+
+        .submission-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4CAF50;
+        }
+
+        .alert-info {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            color: #667eea;
+        }
+
+        .instructions {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #c0c0c0;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .submission-item {
+                flex-direction: column;
+            }
+
+            .submission-actions {
+                width: 100%;
+                margin-top: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Gallery Admin Panel</h1>
+            <p>Manage student submissions</p>
+        <a href="./publish.html">Publish</a></header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('add-work')">Add New Work</button>
+            <button class="nav-tab" onclick="switchTab('manage')">Manage Submissions</button>
+            <button class="nav-tab" onclick="switchTab('help')">Help</button>
+        </div>
+
+        <!-- Add Work Tab -->
+        <div id="add-work" class="tab-content active">
+            <h2>Add New Artwork to Gallery</h2>
+            <form id="addWorkForm" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label>Student Name *</label>
+                    <input type="text" id="artistName" required placeholder="e.g., Alex Chen">
+                </div>
+
+                <div class="form-group">
+                    <label>Artwork Title *</label>
+                    <input type="text" id="workTitle" required placeholder="e.g., Digital Landscape">
+                </div>
+
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="workDescription" required placeholder="Describe the artwork, techniques used, inspiration..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Media Type *</label>
+                    <select id="mediaType" required onchange="updateMediaPlaceholder()">
+                        <option value="">Select type...</option>
+                        <option value="image">Image (JPG, PNG, etc.)</option>
+                        <option value="video">Video (MP4, WebM, etc.)</option>
+                        <option value="model">3D Model (Sketchfab embed, etc.)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="mediaLabel">Media URL *</label>
+                    <input type="url" id="mediaUrl" required placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label>Tags (separate with Enter)</label>
+                    <div class="tag-input">
+                        <input type="text" id="tagInput" placeholder="e.g., digital, landscape, color">
+                        <button type="button" class="btn-secondary" onclick="addTag()">Add Tag</button>
+                    </div>
+                    <div class="tag-list" id="tagList"></div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Add to Gallery</button>
+                    <button type="reset" class="btn-secondary">Clear Form</button>
+                </div>
+            </form>
+            <div id="successMessage" class="alert alert-success" style="display: none; margin-top: 20px;">
+                ✓ Artwork added successfully! View it in the <a href="index.html" style="color: #4CAF50; text-decoration: underline;">gallery</a>.
+            </div>
+        </div>
+
+        <!-- Manage Tab -->
+        <div id="manage" class="tab-content">
+            <h2>Current Submissions</h2>
+            <div id="submissionsList" class="submissions-list" style="margin-top: 20px;">
+                <p style="color: #a0a0a0;">Loading submissions...</p>
+            </div>
+        </div>
+
+        <!-- Help Tab -->
+        <div id="help" class="tab-content">
+            <h2>How to Use This Gallery</h2>
+            
+            <div class="instructions" style="margin-top: 20px; margin-bottom: 20px;">
+                <h3>📸 Adding Images</h3>
+                <ol>
+                    <li>Use the "Add New Work" tab</li>
+                    <li>Fill in student name, title, and description</li>
+                    <li>Select "Image" as media type</li>
+                    <li>Paste the URL of the image (from Imgur, Cloudinary, etc.)</li>
+                    <li>Add relevant tags and submit</li>
+                </ol>
+            </div>
+
+            <div class="instructions" style="margin-bottom: 20px;">
+                <h3>🎬 Adding Videos</h3>
+                <ol>
+                    <li>Upload video to YouTube, Vimeo, or similar platform</li>
+                    <li>Select "Video" as media type</li>
+                    <li>Paste the direct video URL (not the embed code)</li>
+                    <li>Submit with description and tags</li>
+                </ol>
+            </div>
+
+            <div class="instructions" style="margin-bottom: 20px;">
+                <h3>🎨 Adding 3D Models</h3>
+                <ol>
+                    <li>Upload 3D model to Sketchfab or similar platform</li>
+                    <li>Select "3D Model" as media type</li>
+                    <li>Paste the embed URL (right-click → Copy embed link on Sketchfab)</li>
+                    <li>Submit with details and tags</li>
+                </ol>
+            </div>
+
+            <div class="instructions">
+                <h3>💾 Saving Your Gallery</h3>
+                <ol>
+                    <li>All submissions are saved in <code>gallery-data.json</code></li>
+                    <li>After adding works, commit and push to GitHub</li>
+                    <li>Enable GitHub Pages in repository settings</li>
+                    <li>Gallery will be live at: <code>https://yourusername.github.io/Gallery/</code></li>
+                </ol>
+            </div>
+
+            <div class="alert alert-info" style="margin-top: 20px;">
+                <strong>💡 Pro Tip:</strong> Use free services like Imgur, Cloudinary, or Sketchfab to host media. This keeps your GitHub repo lightweight!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tags = [];
+        let galleryData = [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'manage') {
+                loadSubmissions();
+            }
+        }
+
+        function updateMediaPlaceholder() {
+            const type = document.getElementById('mediaType').value;
+            const input = document.getElementById('mediaUrl');
+            const label = document.getElementById('mediaLabel');
+
+            const placeholders = {
+                'image': 'https://imgur.com/...',
+                'video': 'https://youtube.com/watch?v=...',
+                'model': 'https://sketchfab.com/models/.../embed'
+            };
+
+            input.placeholder = placeholders[type] || 'https://...';
+            label.textContent = type === 'model' ? 'Embed URL *' : 'Media URL *';
+        }
+
+        function addTag() {
+            const input = document.getElementById('tagInput');
+            const tag = input.value.trim();
+            
+            if (tag && !tags.includes(tag)) {
+                tags.push(tag);
+                renderTags();
+                input.value = '';
+            }
+        }
+
+        function removeTag(tag) {
+            tags = tags.filter(t => t !== tag);
+            renderTags();
+        }
+
+        function renderTags() {
+            const tagList = document.getElementById('tagList');
+            tagList.innerHTML = tags.map(tag => `
+                <div class="tag">
+                    ${tag}
+                    <button type="button" onclick="removeTag('${tag}')">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('addWorkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const newWork = {
+                title: document.getElementById('workTitle').value,
+                artist: document.getElementById('artistName').value,
+                description: document.getElementById('workDescription').value,
+                media: document.getElementById('mediaUrl').value,
+                type: document.getElementById('mediaType').value,
+                tags: tags
+            };
+
+            loadGalleryData().then(() => {
+                galleryData.push(newWork);
+                saveGalleryData();
+                
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 4000);
+
+                // Reset form
+                document.getElementById('addWorkForm').reset();
+                tags = [];
+                renderTags();
+            });
+        });
+
+        async function loadGalleryData() {
+            try {
+                const response = await fetch('gallery-data.json');
+                galleryData = await response.json();
+            } catch (error) {
+                galleryData = [];
+            }
+        }
+
+        function saveGalleryData() {
+            const dataStr = JSON.stringify(galleryData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gallery-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Gallery data downloaded! Please replace gallery-data.json in your repo with this file.');
+        }
+
+        async function loadSubmissions() {
+            await loadGalleryData();
+            const list = document.getElementById('submissionsList');
+
+            if (galleryData.length === 0) {
+                list.innerHTML = '<p style="color: #a0a0a0; text-align: center; padding: 40px;">No submissions yet</p>';
+                return;
+            }
+
+            list.innerHTML = galleryData.map((item, index) => `
+                <div class="submission-item">
+                    <div class="submission-info">
+                        <h3>${item.title}</h3>
+                        <p>by ${item.artist}</p>
+                        <p>Type: ${item.type} | Tags: ${item.tags.join(', ')}</p>
+                    </div>
+                    <div class="submission-actions">
+                        <button class="btn-delete" onclick="deleteSubmission(${index})">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSubmission(index) {
+            if (confirm('Are you sure you want to remove this submission?')) {
+                loadGalleryData().then(() => {
+                    galleryData.splice(index, 1);
+                    saveGalleryData();
+                    loadSubmissions();
+                });
+            }
+        }
+
+        // Allow Enter key to add tags
+        document.addEventListener('keypress', function(e) {
+            if (e.target.id === 'tagInput' && e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+
+        // Load submissions on page load
+        loadGalleryData();
+    </script>
+</body>
+</html>

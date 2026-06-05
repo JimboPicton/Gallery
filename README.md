@@ -1,40 +1,20 @@
 # Digital Media Student Gallery
 
-## v8.1 — Procedural Corridor Bridge + Editor Simplification
-
-Latest changes:
-
-- Replaced the older hallway-room approach with procedural doorway-to-doorway corridor bridges.
-- Doorway stubs are now floor/ceiling-only so corridor side walls should not block room openings.
-- Corridor elbows are trimmed to reduce internal crossing wall planes.
-- Shrunk doorway nodes in the Gallery Layout Editor and moved doorway codes to hover tooltips only.
-- Removed the normal-layout wall preview rail from room cards to reduce visual clutter.
-- Continued the move away from JSON terminology toward Save Draft / Publish Gallery workflow.
-
-Recommended workflow:
-
-1. Edit rooms, corridor bridges, theme and media.
-2. Use Publish Gallery to export the complete gallery package.
-3. Upload/commit the exported JSON files to GitHub when ready for the live site to update.
-
-
-A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, immersive Three.js walkthrough, visual layout editor, artwork/media placement editor, and admin content tools.
+A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork editor, and a visual layout editor for rooms, hallways, lighting, wall colours, artwork placement, and teleport points.
 
 ## Current Version
 
-**v5.7 — Architecture stabilisation, minimap, guided tour, GLB model support**
+**v4.5 — Teleport, hallway collision, and palette UX fixes**
 
-### Latest changes in this build
+### Latest changes
 
-- Formalised wall colour/texture resolution so the layout editor and 3D renderer now use the same hierarchy: gallery theme default → selected room override → individual wall override.
-- Added a visual wall-colour preview strip to rooms in the layout editor so front/right/back/left wall colours can be checked without opening the 3D gallery.
-- Added a 3D gallery minimap for visitors. Press `M` or use the minimap Hide/Show button.
-- Added a lightweight guided tour HUD in the 3D gallery with Start, Next and Stop controls.
-- Added GLB/GLTF model support using Three.js `GLTFLoader`.
-- Added `model` as a media type in the artwork editor.
-- Added editable model scale and Y rotation fields in the artwork editor.
-- Added teleport activation settings to the layout editor: Press E or walk-over auto trigger, plus activation radius.
-- Preserved the GitHub Pages static JSON workflow.
+- Fixed hallway movement after the previous doorway alignment update. Doorway openings now remain visually aligned while the walkable bounds allow the viewer to pass through them.
+- Added a **Teleport** tool to the layout editor.
+- Teleport tokens appear on the 3D gallery floor with a visual icon.
+- Hovering over a teleport token shows its destination label.
+- Clicking a teleport token moves the viewer directly to its configured destination.
+- Added visible selection highlighting to colour palette swatches.
+- Updated `gallery-layout.json` schema to support `settings.teleports`.
 
 ## Files
 
@@ -42,11 +22,11 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 Gallery/
 ├── index.html              # Main navigation and gallery landing page
 ├── gallery-3d.html         # Three.js walkthrough gallery
-├── admin.html              # Artwork/media management page
-├── layout-editor.html      # Visual room, hallway, lighting, colour, audio and teleport editor
-├── artwork-editor.html     # Artwork/media/model placement and sizing editor
-├── gallery-data.json       # Artwork, media and model data
-├── gallery-layout.json     # Room, hallway, lighting, colour, audio and teleport data
+├── admin.html              # Artwork management page
+├── layout-editor.html      # Visual room, hallway, lighting, colour and teleport editor
+├── artwork-editor.html     # Artwork wall placement and sizing editor
+├── gallery-data.json       # Artwork/media data
+├── gallery-layout.json     # Room, hallway, lighting, colour and teleport data
 └── README.md               # Project documentation
 ```
 
@@ -72,7 +52,7 @@ Avoid root-relative paths such as `/gallery-layout.json`, because those can brea
 
 ## Running Locally
 
-Do not double-click the HTML files directly when testing Three.js modules, GLB models or JSON loading. Run a local web server from the project folder:
+Do not double-click the HTML files directly when testing Three.js modules or JSON loading. Run a simple local web server from the project folder:
 
 ```bash
 python -m http.server
@@ -98,16 +78,13 @@ Use this editor to:
 
 - Add and drag rooms.
 - Create hallways by selecting numbered room connection nodes.
-- Edit global, room and individual wall colours.
-- Check the per-wall colour preview strip on each room.
-- Set wall textures.
+- Edit wall colours and wall textures.
+- Set global default wall colours.
 - Add and position light nodes.
-- Add and pair teleport tokens.
-- Choose teleport activation mode and radius.
-- Add and position audio nodes.
+- Add and position teleport tokens.
 - Export, copy, locally save, restore, or optionally save `gallery-layout.json` to GitHub.
 
-### 2. Place artworks, media and models
+### 2. Place artworks
 
 Open:
 
@@ -118,11 +95,11 @@ artwork-editor.html
 Use this editor to:
 
 - Assign artworks to rooms.
-- Choose the wall for image/video/link artwork placement.
-- Adjust X/Y placement, width and height.
-- Choose whether artist statements appear as wall text, popup text, both or neither.
-- Set media type to `image`, `youtube`, `echo360`, `video`, `model`, or `link`.
-- For GLB/GLTF models, enter the model URL/path, scale and Y rotation.
+- Choose the wall for each artwork.
+- Adjust artwork X/Y placement.
+- Adjust artwork width and height.
+- Duplicate artwork placement entries.
+- Choose whether artist statements appear as wall text, popups, both, or neither.
 
 ### 3. View the 3D gallery
 
@@ -137,33 +114,13 @@ Controls:
 - Click to enter pointer-lock mode.
 - `W/A/S/D` to move.
 - Mouse to look.
-- Click artworks or models to inspect metadata/media.
-- Press `E` near a Press E teleport token.
-- Walk over auto-trigger teleports if enabled.
-- Press `M` to show/hide the minimap.
-- Use the Guided Tour controls to step through artworks and models.
-- `ESC` releases the cursor so page controls and links can be used.
+- Click artworks to view media and statements.
+- Hover/click teleport tokens to move to another location.
+- `ESC` releases the cursor so the top-left menu can be used.
 
 ## Layout Data: `gallery-layout.json`
 
-The layout file controls rooms, hallway connections, wall colours, lighting, audio and teleport tokens.
-
-### Colour hierarchy
-
-Wall colours are resolved in this order:
-
-```text
-settings.defaultWallColor
-  → room.wallColor
-  → room.wallColors.front/back/left/right
-```
-
-Wall textures follow the same structure:
-
-```text
-room.wallTexture
-  → room.wallTextures.front/back/left/right
-```
+The layout file controls rooms, hallway connections, wall colours, lighting, and teleport tokens.
 
 ### Room example
 
@@ -194,6 +151,47 @@ room.wallTexture
 }
 ```
 
+### Hallway example
+
+```json
+{
+  "id": "hall1",
+  "from": "animation",
+  "to": "games",
+  "fromWall": "right",
+  "fromSlot": "center",
+  "toWall": "left",
+  "toSlot": "center",
+  "width": 4,
+  "height": 4,
+  "wallColor": "#22222a"
+}
+```
+
+Hallways are created from numbered nodes in the layout editor. The 3D gallery uses those nodes to cut wall openings and create walkable hallway bounds.
+
+### Lighting example
+
+```json
+{
+  "id": "light1",
+  "x": 0,
+  "y": 5.5,
+  "z": 0,
+  "intensity": 1.8,
+  "color": "#ffffff",
+  "distance": 18
+}
+```
+
+Lights are stored under:
+
+```json
+"settings": {
+  "additionalLights": []
+}
+```
+
 ### Teleport example
 
 ```json
@@ -203,262 +201,320 @@ room.wallTexture
   "x": 0,
   "z": 3,
   "size": 1.4,
-  "linkedTo": "teleport2",
-  "destinationLabel": "Games & Interactive Media",
+  "toX": 30,
+  "toZ": 0,
+  "destinationLabel": "Games & Interactive Media"
+}
+```
+
+Teleports are stored under:
+
+```json
+"settings": {
+  "teleports": []
+}
+```
+
+In the 3D gallery, teleport tokens are shown as floor icons. Hovering over one displays the destination. Clicking one moves the viewer to `toX` / `toZ`.
+
+## Colour Palette System
+
+The layout editor supports:
+
+- A global default wall colour.
+- A reusable colour palette.
+- Per-room wall colour.
+- Per-wall overrides for front, back, left, and right walls.
+- Visual highlighting of selected palette swatches.
+
+The palette lives in:
+
+```json
+"settings": {
+  "defaultWallColor": "#2a2a33",
+  "palette": ["#2a2a33", "#f5f0e8", "#334155"]
+}
+```
+
+## Artwork Data: `gallery-data.json`
+
+Artwork placement can include room, wall, size, media type, and statement display settings.
+
+```json
+{
+  "title": "Artwork Title",
+  "artist": "Student Name",
+  "description": "Artist statement or project description.",
+  "media": "https://example.com/media.mp4",
+  "mediaType": "video",
+  "room": "animation",
+  "wall": "back",
+  "x": 0,
+  "y": 3.1,
+  "width": 3,
+  "height": 1.7,
+  "statementDisplay": "both",
+  "statementSide": "right",
+  "statementWidth": 2.2,
+  "statementHeight": 1.1
+}
+```
+
+Supported `statementDisplay` values:
+
+```text
+popup
+wall
+both
+none
+```
+
+## Media Support
+
+The gallery supports:
+
+- Images via direct image URLs.
+- Direct video files such as `.mp4`, `.webm`, and `.ogg` with browser controls/playhead.
+- YouTube embeds.
+- Echo360/EchoVideo embeds, provided the institution allows public or authenticated sharing links.
+- External links for media that cannot be embedded.
+
+## Saving and Publishing
+
+GitHub Pages is static hosting, so the editor cannot write to your repo unless you use the optional GitHub API save tool.
+
+The layout editor supports:
+
+- Local autosave in the browser.
+- Restore local draft.
+- Export `gallery-layout.json`.
+- Copy JSON to clipboard.
+- Optional Save to GitHub using a token with repository contents write access.
+
+If using export manually, replace the repo’s `gallery-layout.json` with the downloaded file and wait for GitHub Pages to refresh.
+
+## Troubleshooting
+
+### I cannot walk through a hallway opening
+
+Use this version or later. Earlier v4 hallway fixes could visually align the doorway but leave a small gap in the walkable bounds. v4.5 fixes the walkable bounds so room and hallway spaces meet at the doorway.
+
+### Wall colour did not change
+
+Check whether a per-wall override is set. The priority order is:
+
+1. Per-wall colour override.
+2. Room default wall colour.
+3. Global default wall colour.
+
+### The editor reset wiped my work
+
+Use **Restore** to recover the browser-local draft if autosave had captured it. Export major layout changes regularly.
+
+### JSON changed but GitHub Pages still shows the old layout
+
+Open `gallery-layout.json` directly in the browser and hard refresh. GitHub Pages can take a short time to update after commits.
+
+## Changelog
+
+### v5.2 - Layout Editor Context Menu
+- Added right-click context menus in `layout-editor.html`.
+- Right-click rooms, hallways, lights, teleports, or audio nodes to edit, duplicate, copy JSON, or delete.
+- Right-click empty layout space to add a room, light, teleport, or audio source at that exact map location.
+- This improves visual editing and reduces reliance on the top toolbar.
+
+
+### v5.1 — Teleport Pairing UX + Favicon Fix
+- Fixed teleport pairing mode so clicking the first teleport no longer cancels pairing mode.
+- Added clearer pairing instructions: click the start teleport, then click the destination teleport.
+- Added a highlighted visual state for the first selected teleport token.
+- Added a small `favicon.svg` and linked it from the main HTML pages to remove the browser `/favicon.ico` 404 warning.
+
+
+### v4.5
+
+- Fixed hallway walk-through collision after doorway alignment changes.
+- Added teleport token editor and 3D teleport behaviour.
+- Added hover labels for teleport destinations.
+- Added selected-state highlighting for palette swatches.
+- Updated README documentation.
+
+### v4.4
+
+- Fixed layout editor reset issue.
+- Reorganised layout editor toolbar.
+- Improved safe fallback behaviour when repo JSON fails to load.
+
+### v4.3
+
+- Added wall colour palette tools.
+- Added global default wall colour.
+- Added per-wall colour overrides.
+
+### v4.2
+
+- Fixed hallway doorway alignment.
+- Improved 2D/3D hallway geometry consistency.
+
+### v4.1
+
+- Added draggable light nodes.
+- Added artwork duplication and sizing.
+- Added artist statement wall/popup options.
+- Improved video display handling.
+
+## Browser Compatibility
+
+- Chrome / Chromium recommended.
+- Firefox supported.
+- Edge supported.
+- Safari supported where WebGL and pointer lock are available.
+
+
+---
+
+## Changelog: v5 UX, Teleport Pairing, and Spatial Audio
+
+### Layout Editor UX cleanup
+
+The colour and customisation controls have been reorganised into a clearer hierarchy:
+
+1. **Gallery Theme Defaults**
+   - Global default wall colour
+   - Global floor and ceiling colours
+   - Default hallway colour
+   - Ambient and directional light levels
+   - Editable colour palette swatches
+
+2. **Selected Room Overrides**
+   - Room-specific wall colour
+   - Room-specific wall texture URL
+   - Room label settings
+
+3. **Per-Wall Overrides**
+   - Front, back, left, and right wall colour overrides
+   - Per-wall texture URL fields
+
+The renderer applies these in this order:
+
+```text
+Per-wall override → Selected room override → Gallery theme default
+```
+
+### Colour palette indicators
+
+Palette swatches now visibly highlight the selected colour, making it clearer which palette colour is currently applied to a field.
+
+### Teleport pairing
+
+Teleports are now intended to work visually rather than by manually entering destination coordinates.
+
+Workflow:
+
+1. Open `layout-editor.html`.
+2. Click **Teleport** to create teleport tokens.
+3. Drag each token onto the gallery floorplan.
+4. Click **Pair Teleports**.
+5. Click the first teleport token.
+6. Click the second teleport token.
+
+The editor displays a styled double-headed arrow between paired teleport tokens. In the 3D gallery, hovering over a teleport displays its destination label, and clicking it moves the viewer to the paired teleport.
+
+Manual destination coordinates are still available as a fallback.
+
+### Teleport visual cleanup
+
+The previous floating blue destination label above teleport tokens has been removed from the 3D gallery. Teleport information now appears as a hover label so it is less visually distracting.
+
+### Spatial audio sources
+
+The layout editor now supports draggable audio source nodes.
+
+Supported source types:
+
+- Direct MP3 / OGG / WAV / M4A file URL
+- YouTube link
+- SoundCloud link
+- Echo360 link
+
+Important limitation: browser security means that only direct audio files can reliably support distance-based fading inside the 3D space. YouTube, SoundCloud, and Echo360 links are documented as external/embed-style media sources rather than true spatial audio sources.
+
+Direct audio source settings include:
+
+- label
+- kind: ambient or narration
+- source URL
+- X/Z position
+- height
+- fade radius
+- volume
+- loop on/off
+
+### Viewer audio controls
+
+The 3D gallery now includes viewer-facing sound controls:
+
+- Enable sound
+- Mute
+- Master volume
+- Audio status indicator
+
+Audio does not autoplay. The viewer must click **Enable sound**, which is required by modern browser autoplay policies.
+
+### Files updated
+
+- `layout-editor.html`
+- `gallery-3d.html`
+- `gallery-layout.json`
+- `README.md`
+
+### v5.3 Audio UI Fix
+- Fixed the 3D gallery audio toggle so **Enable sound** becomes **Disable sound** and actually pauses/resets direct audio sources.
+- The mute checkbox and master volume slider now update the active audio state reliably.
+- Removed visible audio floor icons from the 3D walkthrough; audio source markers remain an editor-only layout tool.
+
+## Changelog
+
+### v5.4 – Palette selection fix
+- Fixed colour palette swatches in the Layout Editor so selecting a swatch updates the active colour field without immediately rebuilding the form.
+- Added clear selected-state highlighting for the currently selected swatch.
+- Added status feedback reminding users to click Apply to save colour changes into `gallery-layout.json`.
+
+
+## v5.5 Teleport Activation Update
+
+- Teleports now use a clearer default interaction: look at or stand near a teleport pad, then press **E** to travel.
+- Teleports can optionally use automatic walk-over activation by setting `interaction` to `auto` or `walkover` in `gallery-layout.json`.
+- Each teleport supports a configurable trigger radius using `radius`, for example `"radius": 2.2`.
+- The 3D gallery now displays a clear prompt such as `Press E to travel` when a teleport is available.
+- Click-to-teleport was removed from the main interaction path to avoid accidental teleporting while inspecting artworks.
+
+### Teleport JSON Example
+
+```json
+{
+  "id": "teleport-animation-to-games",
+  "label": "Games Room",
+  "x": 0,
+  "z": 3,
+  "linkedTo": "teleport-games-to-animation",
   "interaction": "press",
   "radius": 2.2
 }
 ```
 
-Use `interaction: "press"` for Press E activation or `interaction: "auto"` for walk-over activation.
+Use `interaction: "press"` for deliberate **E key** activation. Use `interaction: "auto"` only where walk-over teleporting is preferred.
 
-## Artwork and model data: `gallery-data.json`
 
-### Standard artwork example
+## v9.0 - Procedural Corridor Bridges and Unified Publish
 
-```json
-{
-  "id": "art1",
-  "title": "Student Work",
-  "artist": "Student Name",
-  "description": "Artist statement text.",
-  "room": "animation",
-  "wall": "back",
-  "x": 0,
-  "y": 3.2,
-  "width": 3.2,
-  "height": 1.8,
-  "mediaType": "image",
-  "media": "uploads/work.jpg"
-}
-```
+- Replaced the fragile hallway-room rendering with procedural corridor bridges generated between doorway nodes.
+- Doorway bridge stubs are floor/ceiling-only so hallway side-wall planes do not push back through room openings.
+- Room doorway openings are widened slightly to reduce seam artefacts.
+- Layout Editor doorway nodes are smaller, cleaner dots with doorway codes shown on hover only.
+- Hallway previews are simplified to dashed corridor lines rather than large rectangles that visually cut across rooms.
+- Added a central Publish Gallery page that exports layout, artwork/media, site settings, gallery registry and a combined bundle.
+- Added draft-aware loading for gallery-layout.json and gallery-data.json with `?draft=0` support to view published repo JSON.
+- Improved embedded media handling for YouTube and SoundCloud and prioritised E-key activation for media.
 
-### GLB model example
-
-```json
-{
-  "id": "model1",
-  "title": "Digital Sculpture",
-  "artist": "Student Name",
-  "description": "A placed 3D model.",
-  "room": "animation",
-  "mediaType": "model",
-  "media": "models/sculpture.glb",
-  "x": 0,
-  "y": 0,
-  "z": 0,
-  "modelScale": 1,
-  "rotationY": 0
-}
-```
-
-For model records, `x` and `z` are offsets from the room centre. `y` is height above the floor. `modelScale` controls overall scale and `rotationY` is in degrees.
-
-## Audio Notes
-
-Direct MP3/OGG/WAV/M4A files can be used as gallery or room audio sources with distance fade.
-
-YouTube, SoundCloud and Echo360 URLs are not direct audio streams and should be treated as embedded media or external links rather than spatial audio sources.
-
-## Changelog
-
-### v5.8
-
-- Added centre-screen viewer reticle/crosshair in the 3D gallery.
-- Reticle changes state when looking at artworks, media, models and teleport pads.
-- Pointer-lock click handling now uses the centre gaze ray for more VR-like interaction behaviour.
-- Kept the feature viewer-facing only so the editor UI remains uncluttered.
-
-### v5.7
-
-- Shared wall colour/texture resolver added to editor and 3D renderer.
-- Layout editor room previews now reflect resolved wall colours.
-- Added minimap HUD to 3D gallery.
-- Added guided tour HUD to 3D gallery.
-- Added GLB/GLTF model loading via `GLTFLoader`.
-- Added model media type, model scale and Y rotation fields to artwork editor.
-- Added teleport activation mode and radius controls.
-
-### v5.6
-
-- Expanded admin metadata editing.
-- Added duplication, search/filter, autoplay toggle and import/export concepts.
-
-### v5.5
-
-- Improved teleport activation workflow.
-- Added clearer teleport prompts and pairing behaviour.
-
-### v5.4 and earlier
-
-- Added palette selection fixes, audio UI fixes, context menu tools, hallway snapping, lighting, teleports and visual layout editing.
-
-## v5.9 – Management, Media Preview, UI and Colour Fixes
-
-### Admin / Manage Submissions
-- Rebuilt `admin.html` management workflow.
-- Manage Submissions now supports metadata editing, duplication, deletion, search/filter, import, copy JSON, and export of `gallery-data.json`.
-- Added support for media types: image, YouTube, Vimeo, Echo360, direct video, GLB/GLTF model, and external link.
-- Added YouTube thumbnail cards in the management screen.
-
-### YouTube Artwork Behaviour
-- YouTube artworks now display a thumbnail-style wall preview rather than only title/artist placeholder text.
-- Selecting a YouTube artwork now opens an embedded player panel with usable controls.
-- The 3D gallery now releases pointer lock when opening the artwork/media panel so the viewer can use the YouTube playhead and controls.
-- Optional autoplay metadata is supported for media popups.
-
-### Consistent Editor UI
-- Updated `artwork-editor.html` to better match the visual approach used in the Gallery Editor.
-- Added clearer top navigation, card styling, improved side panel styling, and visual media badges.
-- YouTube/image artworks now show a more meaningful preview in the wall positioning editor.
-
-### Colour System Repair
-- The 3D gallery now checks local editor drafts before falling back to repo JSON, so room/environment colour edits can be previewed immediately without first exporting/replacing JSON.
-- Changing a room wall colour in the Layout Editor now synchronises the four wall colour fields, preventing stale per-wall overrides from making it appear that colour changes are not working.
-- Added an “Apply wall colour to all rooms” option in Gallery Theme Defaults for fast exhibition-wide colour changes.
-
-### Notes
-- GitHub Pages remains static, so exported JSON still needs to be committed/replaced for the public live site unless using the GitHub save option.
-- Local draft preview is intended for editor testing on the same browser/device.
-
-## v6.0 hallway, labels and media interaction polish
-
-- Removed the doorway threshold/cap planes that could appear as stray geometry inside hallways.
-- Reworked room labels as clean transparent text with no grey panel or border.
-- Added room-label editor options for subtitle, font choice, text size, text colour and label width.
-- Updated the 3D media panel to open as a larger centred overlay and suppress the pointer-lock entry overlay while media is being used.
-- Improved YouTube embeds with a larger playback panel and a fallback “Open on YouTube” link.
-
-
-## v6.1 - Gallery Management and Welcome Banner
-
-- Added `gallery-manager.html` for creating, duplicating, selecting, importing and exporting additional galleries in the browser.
-- Added active-gallery support through `?gallery=` links and local browser storage so editors, submissions and the 3D viewer can target different gallery projects.
-- Updated main page naming for consistency: Gallery Layout Editor, Artwork Placement Editor, Manage Submissions, Gallery Manager.
-- Added a configurable welcome banner / cultural notice shown before entering the 3D gallery.
-- Welcome banner supports transparent logo URLs, title, body text, custom button text, background opacity and show-once behaviour per gallery/browser.
-
-### Note on multiple galleries
-
-Because GitHub Pages is static hosting, browser-created galleries are saved locally unless exported and committed to the repository or backed by a future authenticated save workflow. Use Gallery Manager > Export Bundle to move or back up a gallery project.
-
-## v6.2 Hallway, YouTube Overlay and JSON Reminder Fixes
-
-- Fixed hallway rendering so offset doorway connections no longer create overlapping internal wall planes.
-- Removed the extra in-scene placeholder/play mesh from video artworks; the reticle now provides the interaction cue without visually blocking the thumbnail.
-- Updated YouTube embeds to use a cleaner playback panel with pointer lock released.
-- Fixed Manage Submissions persistence so local draft edits are not immediately overwritten by the repository JSON when the list refreshes.
-- Added an export/upload reminder when gallery metadata changes, reminding editors to export/copy `gallery-data.json` and upload or commit it to GitHub for the live site.
-
-## v6.3 - Simplified Navigation, Gallery Access and VR Starter
-
-- Simplified `index.html` around three clear user intents: **Enter the Gallery**, **Manage Galleries**, and **Design and Media Management Tools**.
-- Renamed the admin workflow to **Manage Artwork & Media** for consistency across pages.
-- Strengthened Gallery Manager as the central curator hub for selecting the active gallery and launching layout, artwork/media, and placement tools.
-- Added optional password-gated gallery access for locally managed galleries.
-- Added clear warning that static GitHub Pages password gates are suitable for draft review/casual access control only, not secure private hosting.
-- Added WebXR/VR starter support via the Three.js VR button. This enables headset entry where supported by browser/device over HTTPS.
-- Updated the 3D gallery access flow so password-protected galleries are unlocked before the welcome/cultural notice screen is shown.
-
-
-## v6.4 Hallway Alignment, YouTube Audio Handling and Sound UI
-
-- Reworked hallway rendering to use a single oriented corridor between doorway centres, reducing seams, gaps and stray wall planes when doorway slots are not perfectly aligned.
-- Prevented YouTube URLs from being loaded through the browser `Audio()` API, which is blocked by CORS on GitHub Pages.
-- Added embedded YouTube player fallback for gallery-wide YouTube soundtrack links after the user presses the sound button.
-- Clarified audio button wording from "Enable sound" to "Turn sound on/off".
-- Added guidance that MP3/OGG/WAV/M4A should be used for direct background or spatial audio.
-
-
-## v6.5 - Cross-Screen JSON Draft Safety
-
-- Added navigation guards on editing screens when local JSON changes are present.
-- Replaced risky local-draft restore prompts with automatic loading of the latest local draft.
-- Added clearer reminders that local browser changes must be exported/copied and uploaded to GitHub for the live public gallery.
-- Export/copy actions now mark the relevant JSON component as handled for the current browser session.
-
-
-## v6.6 CQU-Inspired Branding and Editable Main Page
-
-- Refreshed `index.html` with a CQU-inspired green palette while keeping colours editable.
-- Added editable main page title, intro text, footer text, logo URL and feature image URL in Gallery Manager.
-- Added colour controls for primary, secondary, accent and background colours.
-- Added reset button for the CQU-inspired palette.
-- Main page now reads local branding settings from `gallery-site-settings`.
-
-Note: The palette is inspired by CQUniversity's refreshed green-led branding direction, but editors can override it for each deployment.
-
-
-## v6.7 - Active Gallery Selector
-
-- Added an obvious gallery selector to the main `index.html` page.
-- Added an Active Gallery panel at the top of `gallery-manager.html`.
-- The selected active gallery now controls which exhibition opens from the main page **Enter the Gallery** button.
-- Gallery cards now show an **Active** pill so the current selection is easier to see.
-- Added a Preview Active Gallery shortcut from Gallery Manager.
-
-## v6.8 - Hallway, YouTube and embedded audio repair
-
-- Reverted hallway generation to orthogonal L-shaped corridor segments to avoid diagonal wall planes when new rooms are added.
-- Improved room-to-hallway overlap so corridor joins tuck into doorway cut-outs more cleanly.
-- Fixed artwork click handling so the reticle target opens the larger media panel reliably.
-- Added SoundCloud URL detection so SoundCloud share links are no longer loaded as direct audio and do not trigger browser CORS errors.
-- Added SoundCloud embedded-player fallback for gallery audio and media panels.
-- Added SoundCloud as a recognised media type in artwork/media management screens.
-
-
-
-## v6.9 Doorway Labels, E-Key Media Activation, and Hallway Join Refinement
-
-- Updated Gallery Layout Editor doorway node labels to use wall-aware names such as `R1-F-1`, `R1-R-2`, `R1-L-3`, and `R1-B-4` (`B` is used for rear/back to avoid duplicating `R` for both rear and right).
-- Added `E` key activation for artwork/media/model interaction in the 3D gallery. This gives users a reliable fallback when browser pointer-lock or iframe behaviour interferes with mouse clicks.
-- Updated reticle prompts to show `Press E / click` for interactive media.
-- Refined hallway generation so corridor stubs leave each room orthogonally before joining, reducing visible alignment gaps when new rooms are added.
-- Slightly widened generated doorway cut-outs to reduce wall/corridor seam artefacts.
-
-## v6.9 Hallway Nodes, Media Activation, and Draft/Repo Clarity
-
-- Updated doorway node labels to the clearer `R#-Wall-#` pattern, for example `R1-F-1`, `R1-B-2`, `R1-L-1`, `R1-R-1`.
-- Uses `B` for Back/Rear to avoid conflict with `R` for Right.
-- Improved hallway doorway cut-outs and corridor overlap to reduce visible seams/gaps where hallways meet rooms.
-- Media interaction now prioritises `E` activation while looking at artwork/media, rather than relying on mouse click/pointer-lock behaviour.
-- YouTube media opens in the larger embedded playback panel with the cursor released.
-- Added clearer 3D gallery source-mode messaging: browser draft/local gallery versus published repo JSON.
-- Added `?draft=0` / `?source=repo` support to view the published GitHub JSON and ignore browser-local drafts.
-- Clarified that browser-local galleries/drafts are stored per browser and are not shared until JSON is exported and uploaded/committed.
-
-
-## v7.0 - Active Gallery + Hallway Portal Repair
-
-- Made the index page Enter the Gallery button resolve the active gallery at click time, so it follows the Gallery Manager selection more reliably.
-- Added cross-tab active-gallery refresh handling.
-- Reworked hallway doorway stubs so side-wall geometry no longer pushes back through room openings.
-- Widened generated room cut-outs to reduce visible seams at corridor joins.
-- Simplified doorway nodes in the Gallery Layout Editor: users now see clean green dots, with doorway codes available on hover/tooltips only.
-- Notes: browser localStorage still affects draft galleries. Use `?draft=0` to view the published GitHub JSON instead of the local browser draft.
-
-
-## v7.1 – Admin Reminder + Media Playback Cleanup
-
-- Fixed the Manage Artwork & Media reminder so it only appears when there are unexported local artwork/media changes.
-- Exporting `gallery-data.json` now clears the artwork/media reminder.
-- Closing the media panel now removes embedded players from the DOM so YouTube/SoundCloud playback stops cleanly.
-- Added pointerdown/click fallback while keeping **E** as the most reliable activation method for browser-embedded media.
-
-
-## v8.0 - Unified Draft + Publish System
-
-Added a central `publish.html` workflow so editors can export layout, artwork/media, site settings, gallery registry and active gallery information together. This reduces the risk of updating one JSON file while forgetting another.
-
-### New workflow
-
-1. Make changes in Gallery Layout Editor, Manage Artwork & Media, Artwork Placement Editor, or Gallery Manager.
-2. Open **Publish Gallery**.
-3. Choose the active gallery and whether to publish browser drafts or repository JSON.
-4. Download all publish files.
-5. Upload/commit the changed JSON files to GitHub.
-6. Click **Mark as Published / Clear Reminders** once the GitHub update is complete.
-
-### Important note
-
-Local browser drafts are still browser-specific. Public users and other browsers will only see changes after the exported JSON files are uploaded to GitHub Pages.
+This build focuses on stability and curator workflow before adding further visual/social features.
