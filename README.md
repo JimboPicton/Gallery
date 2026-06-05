@@ -408,3 +408,39 @@ Note: The palette is inspired by CQUniversity's refreshed green-led branding dir
 - Added clearer 3D gallery source-mode messaging: browser draft/local gallery versus published repo JSON.
 - Added `?draft=0` / `?source=repo` support to view the published GitHub JSON and ignore browser-local drafts.
 - Clarified that browser-local galleries/drafts are stored per browser and are not shared until JSON is exported and uploaded/committed.
+
+
+## v7.0 - Active Gallery + Hallway Portal Repair
+
+- Made the index page Enter the Gallery button resolve the active gallery at click time, so it follows the Gallery Manager selection more reliably.
+- Added cross-tab active-gallery refresh handling.
+- Reworked hallway doorway stubs so side-wall geometry no longer pushes back through room openings.
+- Widened generated room cut-outs to reduce visible seams at corridor joins.
+- Simplified doorway nodes in the Gallery Layout Editor: users now see clean green dots, with doorway codes available on hover/tooltips only.
+- Notes: browser localStorage still affects draft galleries. Use `?draft=0` to view the published GitHub JSON instead of the local browser draft.
+
+
+## v7.1 – Admin Reminder + Media Playback Cleanup
+
+- Fixed the Manage Artwork & Media reminder so it only appears when there are unexported local artwork/media changes.
+- Exporting `gallery-data.json` now clears the artwork/media reminder.
+- Closing the media panel now removes embedded players from the DOM so YouTube/SoundCloud playback stops cleanly.
+- Added pointerdown/click fallback while keeping **E** as the most reliable activation method for browser-embedded media.
+
+
+## v8.0 - Unified Draft + Publish System
+
+Added a central `publish.html` workflow so editors can export layout, artwork/media, site settings, gallery registry and active gallery information together. This reduces the risk of updating one JSON file while forgetting another.
+
+### New workflow
+
+1. Make changes in Gallery Layout Editor, Manage Artwork & Media, Artwork Placement Editor, or Gallery Manager.
+2. Open **Publish Gallery**.
+3. Choose the active gallery and whether to publish browser drafts or repository JSON.
+4. Download all publish files.
+5. Upload/commit the changed JSON files to GitHub.
+6. Click **Mark as Published / Clear Reminders** once the GitHub update is complete.
+
+### Important note
+
+Local browser drafts are still browser-specific. Public users and other browsers will only see changes after the exported JSON files are uploaded to GitHub Pages.
