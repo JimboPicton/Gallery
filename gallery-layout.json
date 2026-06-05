@@ -110,6 +110,15 @@
           "loop": true
         }
       ]
+    },
+    "welcomeBanner": {
+      "enabled": true,
+      "showOnce": true,
+      "title": "Welcome to the Gallery",
+      "message": "This exhibition may contain works that require cultural, contextual or content guidance. Please read any notes supplied by the curator or artists before entering.",
+      "logoUrl": "",
+      "buttonText": "Enter Gallery",
+      "backgroundOpacity": 0.86
     }
   }
 }

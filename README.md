@@ -302,3 +302,24 @@ YouTube, SoundCloud and Echo360 URLs are not direct audio streams and should be 
 ### Notes
 - GitHub Pages remains static, so exported JSON still needs to be committed/replaced for the public live site unless using the GitHub save option.
 - Local draft preview is intended for editor testing on the same browser/device.
+
+## v6.0 hallway, labels and media interaction polish
+
+- Removed the doorway threshold/cap planes that could appear as stray geometry inside hallways.
+- Reworked room labels as clean transparent text with no grey panel or border.
+- Added room-label editor options for subtitle, font choice, text size, text colour and label width.
+- Updated the 3D media panel to open as a larger centred overlay and suppress the pointer-lock entry overlay while media is being used.
+- Improved YouTube embeds with a larger playback panel and a fallback “Open on YouTube” link.
+
+
+## v6.1 - Gallery Management and Welcome Banner
+
+- Added `gallery-manager.html` for creating, duplicating, selecting, importing and exporting additional galleries in the browser.
+- Added active-gallery support through `?gallery=` links and local browser storage so editors, submissions and the 3D viewer can target different gallery projects.
+- Updated main page naming for consistency: Gallery Layout Editor, Artwork Placement Editor, Manage Submissions, Gallery Manager.
+- Added a configurable welcome banner / cultural notice shown before entering the 3D gallery.
+- Welcome banner supports transparent logo URLs, title, body text, custom button text, background opacity and show-once behaviour per gallery/browser.
+
+### Note on multiple galleries
+
+Because GitHub Pages is static hosting, browser-created galleries are saved locally unless exported and committed to the repository or backed by a future authenticated save workflow. Use Gallery Manager > Export Bundle to move or back up a gallery project.
