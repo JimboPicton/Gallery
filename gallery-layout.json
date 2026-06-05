@@ -3,12 +3,12 @@
     {
       "id": "animation",
       "title": "Animation",
-      "x": 0,
+      "x": 0.26,
       "z": 0,
       "width": 20,
       "depth": 14,
       "height": 6,
-      "wallColor": "#2a2a33",
+      "wallColor": "#6b3f2a",
       "wallTexture": "",
       "label": {
         "text": "Animation",
@@ -16,18 +16,28 @@
         "x": 0,
         "y": 4.8
       },
-      "wallColors": {},
-      "wallTextures": {}
+      "wallColors": {
+        "front": "#6b3f2a",
+        "back": "#6b3f2a",
+        "left": "#6b3f2a",
+        "right": "#6b3f2a"
+      },
+      "wallTextures": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+      }
     },
     {
       "id": "games",
       "title": "Games & Interactive Media",
-      "x": 30,
-      "z": 0,
+      "x": 34.01,
+      "z": -0.55,
       "width": 20,
       "depth": 14,
       "height": 6,
-      "wallColor": "#2a2a33",
+      "wallColor": "#6b3f2a",
       "wallTexture": "",
       "label": {
         "text": "Games & Interactive Media",
@@ -35,8 +45,18 @@
         "x": 0,
         "y": 4.8
       },
-      "wallColors": {},
-      "wallTextures": {}
+      "wallColors": {
+        "front": "#4338ca",
+        "back": "#2a2a33",
+        "left": "#2a2a33",
+        "right": "#2a2a33"
+      },
+      "wallTextures": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+      }
     }
   ],
   "hallways": [
@@ -48,25 +68,14 @@
       "fromSlot": "center",
       "toWall": "left",
       "toSlot": "center",
-      "width": 4,
+      "width": 6,
       "height": 4,
-      "wallColor": "#22222a"
+      "wallColor": "#f5f0e8"
     }
   ],
   "settings": {
     "floorColor": "#151515",
     "ceilingColor": "#1c1c1c",
-    "ambientLight": 1.1,
-    "directionalLight": 1.4,
-    "additionalLights": [
-      {
-        "x": 0,
-        "y": 5.5,
-        "z": 0,
-        "intensity": 1.8,
-        "color": "#ffffff"
-      }
-    ],
     "defaultWallColor": "#2a2a33",
     "palette": [
       "#2a2a33",
@@ -78,6 +87,28 @@
       "#1f2937",
       "#ffffff"
     ],
+    "ambientLight": 1.1,
+    "directionalLight": 1.4,
+    "additionalLights": [
+      {
+        "id": "light1",
+        "x": 38.28,
+        "y": 5.5,
+        "z": 0.32,
+        "intensity": 1.8,
+        "color": "#ffffff",
+        "distance": 18
+      },
+      {
+        "id": "light1_copy1",
+        "x": 7.79,
+        "y": 5.5,
+        "z": -4.3,
+        "intensity": 1.8,
+        "color": "#ffffff",
+        "distance": 18
+      }
+    ],
     "teleports": [
       {
         "id": "teleport1",
@@ -85,9 +116,23 @@
         "x": 0,
         "z": 3,
         "size": 1.4,
+        "linkedTo": "teleport2",
         "toX": 30,
         "toZ": 0,
-        "destinationLabel": "Games & Interactive Media",
+        "destinationLabel": "Teleport 2",
+        "interaction": "press",
+        "radius": 2.2
+      },
+      {
+        "id": "teleport2",
+        "label": "Teleport 2",
+        "x": 32.91,
+        "z": 0.46,
+        "size": 1.4,
+        "linkedTo": "teleport1",
+        "toX": 0,
+        "toZ": 0,
+        "destinationLabel": "Jump to Animation",
         "interaction": "press",
         "radius": 2.2
       }
@@ -101,11 +146,11 @@
           "label": "Gallery Ambient Bed",
           "kind": "ambient",
           "type": "direct",
-          "url": "",
-          "x": 0,
+          "url": "https://youtu.be/KWt2-lUpg-E?si=nK8dROGodXza9KR7",
+          "x": -0.2,
           "y": 1.8,
-          "z": 0,
-          "radius": 18,
+          "z": -0.07,
+          "radius": 10,
           "volume": 0.5,
           "loop": true
         }
@@ -113,12 +158,13 @@
     },
     "welcomeBanner": {
       "enabled": true,
-      "showOnce": true,
-      "title": "Welcome to the Gallery",
-      "message": "This exhibition may contain works that require cultural, contextual or content guidance. Please read any notes supplied by the curator or artists before entering.",
-      "logoUrl": "",
+      "showOnce": false,
+      "title": "Welcome to the CQU Creative Media Student Gallery",
+      "message": "Please take a moment to read any cultural, safety or content notes before entering the exhibition.",
+      "logoUrl": "https://cdn.brandfetch.io/idVBrs4C1B/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1772606085645",
       "buttonText": "Enter Gallery",
-      "backgroundOpacity": 0.86
-    }
+      "backgroundOpacity": 0.85
+    },
+    "hallwayColor": "#22222a"
   }
 }
