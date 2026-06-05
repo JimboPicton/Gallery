@@ -1,0 +1,348 @@
+{
+  "publishedAt": "2026-06-05T03:42:13.029Z",
+  "activeGallery": "repo",
+  "layout": {
+    "rooms": [
+      {
+        "id": "animation",
+        "title": "Animation",
+        "x": -0.16,
+        "z": -1.69,
+        "width": 20,
+        "depth": 14,
+        "height": 6,
+        "wallColor": "#e8dcc2",
+        "wallTexture": "",
+        "label": {
+          "text": "Animation",
+          "subtitle": "",
+          "wall": "back",
+          "x": 0,
+          "y": 4.8,
+          "font": "Noto Sans",
+          "size": 86,
+          "color": "#ffffff",
+          "width": 6.2
+        },
+        "wallColors": {
+          "front": "#e8dcc2",
+          "back": "#e8dcc2",
+          "left": "#e8dcc2",
+          "right": "#e8dcc2"
+        },
+        "wallTextures": {
+          "front": "",
+          "back": "",
+          "left": "",
+          "right": ""
+        }
+      },
+      {
+        "id": "games",
+        "title": "Game Design",
+        "x": 35.13,
+        "z": -1.56,
+        "width": 20,
+        "depth": 14,
+        "height": 6,
+        "wallColor": "#ff4000",
+        "wallTexture": "",
+        "label": {
+          "text": "Game Design",
+          "subtitle": "",
+          "wall": "front",
+          "x": 0,
+          "y": 4.8,
+          "font": "Noto Sans",
+          "size": 86,
+          "color": "#ffffff",
+          "width": 6.2
+        },
+        "wallColors": {
+          "front": "#ff4000",
+          "back": "#ff4000",
+          "left": "#ff4000",
+          "right": "#ff4000"
+        },
+        "wallTextures": {
+          "front": "",
+          "back": "",
+          "left": "",
+          "right": ""
+        }
+      },
+      {
+        "id": "room3",
+        "title": "Graphic Design",
+        "x": 0.16,
+        "z": 25,
+        "width": 20,
+        "depth": 14,
+        "height": 6,
+        "wallColor": "#4338ca",
+        "wallColors": {
+          "front": "#4338ca",
+          "back": "#4338ca",
+          "left": "#4338ca",
+          "right": "#4338ca"
+        },
+        "wallTexture": "",
+        "wallTextures": {
+          "front": "",
+          "back": "",
+          "left": "",
+          "right": ""
+        },
+        "label": {
+          "text": "Graphic Design",
+          "subtitle": "2025",
+          "wall": "front",
+          "x": 0,
+          "y": 4.8,
+          "font": "Noto Sans",
+          "size": 86,
+          "color": "#ffffff",
+          "width": 6.2
+        }
+      }
+    ],
+    "hallways": [
+      {
+        "id": "hall1",
+        "from": "animation",
+        "to": "games",
+        "fromWall": "right",
+        "fromSlot": "center",
+        "toWall": "left",
+        "toSlot": "center",
+        "width": 4,
+        "height": 4,
+        "wallColor": "#22222a"
+      },
+      {
+        "id": "hall2",
+        "from": "animation",
+        "to": "room3",
+        "fromWall": "front",
+        "fromSlot": "center",
+        "toWall": "back",
+        "toSlot": "center",
+        "width": 4,
+        "height": 4,
+        "wallColor": "#22222a"
+      }
+    ],
+    "settings": {
+      "floorColor": "#151515",
+      "ceilingColor": "#1c1c1c",
+      "defaultWallColor": "#2a2a33",
+      "palette": [
+        "#2a2a33",
+        "#f5f0e8",
+        "#e8dcc2",
+        "#334155",
+        "#4338ca",
+        "#6b3f2a",
+        "#1f2937",
+        "#ffffff"
+      ],
+      "ambientLight": 1.1,
+      "directionalLight": 1.4,
+      "additionalLights": [
+        {
+          "id": "light1",
+          "x": -0.91,
+          "y": 5.5,
+          "z": -1.4,
+          "intensity": 1.8,
+          "color": "#ffffff",
+          "distance": 18
+        },
+        {
+          "id": "light1_copy1",
+          "x": 28.5,
+          "y": 5.5,
+          "z": -1.83,
+          "intensity": 1.8,
+          "color": "#ffffff",
+          "distance": 18
+        },
+        {
+          "id": "light1_copy2",
+          "x": -2.31,
+          "y": 5.5,
+          "z": 23.61,
+          "intensity": 1.8,
+          "color": "#ffffff",
+          "distance": 18
+        }
+      ],
+      "teleports": [
+        {
+          "id": "teleport1",
+          "label": "Jump to Games",
+          "x": 0,
+          "z": 3,
+          "size": 1.4,
+          "linkedTo": "teleport1_copy1",
+          "toX": 30,
+          "toZ": 0,
+          "destinationLabel": "Jump to Games Copy"
+        },
+        {
+          "id": "teleport1_copy1",
+          "label": "Jump to Games Copy",
+          "x": 35.15,
+          "z": -3.33,
+          "size": 1.4,
+          "linkedTo": "teleport1",
+          "toX": 30,
+          "toZ": 0,
+          "destinationLabel": "Jump to Games"
+        }
+      ],
+      "audio": {
+        "enabled": false,
+        "masterVolume": 0.75,
+        "sources": [
+          {
+            "id": "ambient1",
+            "label": "Gallery Ambient Bed",
+            "kind": "ambient",
+            "type": "direct",
+            "url": "https://on.soundcloud.com/1Sm58IPSsqyAiiPirJ",
+            "x": 0.44,
+            "y": 1.8,
+            "z": 25.59,
+            "radius": 12,
+            "volume": 0.5,
+            "loop": true
+          }
+        ]
+      },
+      "welcomeBanner": {
+        "enabled": true,
+        "showOnce": true,
+        "title": "Welcome to the Gallery",
+        "message": "This exhibition may contain works that require cultural, contextual or content guidance. Please read any notes supplied by the curator or artists before entering.",
+        "logoUrl": "",
+        "buttonText": "Enter Gallery",
+        "backgroundOpacity": 0.86
+      }
+    }
+  },
+  "data": [
+    {
+      "id": "art1",
+      "title": "Ned Kelly Paintings in VR",
+      "artist": "Jim Picton",
+      "description": "A sample VR artwork entry. Replace this with student work through the Manage Artworks page or by editing the exported JSON file.",
+      "room": "animation",
+      "wall": "back",
+      "x": 0,
+      "y": 3.2,
+      "width": 3.2,
+      "height": 1.8,
+      "mediaType": "youtube",
+      "type": "youtube",
+      "media": "https://youtu.be/VuveCtup_LM?si=sjI57HvCpgwZX6q6",
+      "image": "",
+      "tags": [
+        "Ned Kelly",
+        "VR",
+        "openbrush",
+        "tilt brush"
+      ],
+      "statementDisplay": "popup",
+      "statementSide": "right",
+      "statementWidth": 2.2,
+      "statementHeight": 1.1
+    }
+  ],
+  "site": {
+    "title": "Creative Media Student Gallery",
+    "intro": "A lightweight virtual exhibition platform for Creative Media student work. Select a gallery, enter the 3D exhibition, or use the management tools to curate spaces and media.",
+    "footer": "Creative Media Student Gallery",
+    "logoUrl": "https://cdn.brandfetch.io/idVBrs4C1B/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1772606085645",
+    "heroImageUrl": "",
+    "colors": {
+      "primary": "#006b3f",
+      "secondary": "#78be20",
+      "dark": "#071b14",
+      "surface": "#f7fbf4",
+      "accent": "#0a7d4f"
+    }
+  },
+  "galleries": [
+    {
+      "id": "test-gallery",
+      "name": "Test Gallery",
+      "description": "Just a second test gallery to try switching.",
+      "access": "password",
+      "password": "Password1",
+      "layout": {
+        "rooms": [
+          {
+            "id": "animation",
+            "title": "Animation",
+            "x": 0,
+            "z": 0,
+            "width": 20,
+            "depth": 14,
+            "height": 6,
+            "wallColor": "#2a2a33",
+            "wallColors": {},
+            "wallTexture": "",
+            "wallTextures": {},
+            "label": {
+              "text": "Animation",
+              "subtitle": "",
+              "wall": "front",
+              "x": 0,
+              "y": 4.8,
+              "font": "Noto Sans",
+              "size": 86,
+              "color": "#ffffff",
+              "width": 6.2
+            }
+          }
+        ],
+        "hallways": [],
+        "settings": {
+          "floorColor": "#151515",
+          "ceilingColor": "#1c1c1c",
+          "defaultWallColor": "#2a2a33",
+          "palette": [
+            "#2a2a33",
+            "#f5f0e8",
+            "#e8dcc2",
+            "#334155",
+            "#4338ca",
+            "#6b3f2a",
+            "#1f2937",
+            "#ffffff"
+          ],
+          "ambientLight": 1.1,
+          "directionalLight": 1.4,
+          "additionalLights": [],
+          "teleports": [],
+          "audio": {
+            "enabled": false,
+            "masterVolume": 0.75,
+            "sources": []
+          },
+          "welcomeBanner": {
+            "enabled": true,
+            "showOnce": true,
+            "title": "Welcome to the Gallery",
+            "message": "Please take a moment to read any cultural, safety or content notes before entering the exhibition.",
+            "logoUrl": "",
+            "buttonText": "Enter Gallery",
+            "backgroundOpacity": 0.86
+          }
+        }
+      },
+      "data": []
+    }
+  ]
+}
