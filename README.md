@@ -274,3 +274,31 @@ YouTube, SoundCloud and Echo360 URLs are not direct audio streams and should be 
 ### v5.4 and earlier
 
 - Added palette selection fixes, audio UI fixes, context menu tools, hallway snapping, lighting, teleports and visual layout editing.
+
+## v5.9 – Management, Media Preview, UI and Colour Fixes
+
+### Admin / Manage Submissions
+- Rebuilt `admin.html` management workflow.
+- Manage Submissions now supports metadata editing, duplication, deletion, search/filter, import, copy JSON, and export of `gallery-data.json`.
+- Added support for media types: image, YouTube, Vimeo, Echo360, direct video, GLB/GLTF model, and external link.
+- Added YouTube thumbnail cards in the management screen.
+
+### YouTube Artwork Behaviour
+- YouTube artworks now display a thumbnail-style wall preview rather than only title/artist placeholder text.
+- Selecting a YouTube artwork now opens an embedded player panel with usable controls.
+- The 3D gallery now releases pointer lock when opening the artwork/media panel so the viewer can use the YouTube playhead and controls.
+- Optional autoplay metadata is supported for media popups.
+
+### Consistent Editor UI
+- Updated `artwork-editor.html` to better match the visual approach used in the Gallery Editor.
+- Added clearer top navigation, card styling, improved side panel styling, and visual media badges.
+- YouTube/image artworks now show a more meaningful preview in the wall positioning editor.
+
+### Colour System Repair
+- The 3D gallery now checks local editor drafts before falling back to repo JSON, so room/environment colour edits can be previewed immediately without first exporting/replacing JSON.
+- Changing a room wall colour in the Layout Editor now synchronises the four wall colour fields, preventing stale per-wall overrides from making it appear that colour changes are not working.
+- Added an “Apply wall colour to all rooms” option in Gallery Theme Defaults for fast exhibition-wide colour changes.
+
+### Notes
+- GitHub Pages remains static, so exported JSON still needs to be committed/replaced for the public live site unless using the GitHub save option.
+- Local draft preview is intended for editor testing on the same browser/device.
