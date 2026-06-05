@@ -388,3 +388,23 @@ Note: The palette is inspired by CQUniversity's refreshed green-led branding dir
 - Added SoundCloud embedded-player fallback for gallery audio and media panels.
 - Added SoundCloud as a recognised media type in artwork/media management screens.
 
+
+
+## v6.9 Doorway Labels, E-Key Media Activation, and Hallway Join Refinement
+
+- Updated Gallery Layout Editor doorway node labels to use wall-aware names such as `R1-F-1`, `R1-R-2`, `R1-L-3`, and `R1-B-4` (`B` is used for rear/back to avoid duplicating `R` for both rear and right).
+- Added `E` key activation for artwork/media/model interaction in the 3D gallery. This gives users a reliable fallback when browser pointer-lock or iframe behaviour interferes with mouse clicks.
+- Updated reticle prompts to show `Press E / click` for interactive media.
+- Refined hallway generation so corridor stubs leave each room orthogonally before joining, reducing visible alignment gaps when new rooms are added.
+- Slightly widened generated doorway cut-outs to reduce wall/corridor seam artefacts.
+
+## v6.9 Hallway Nodes, Media Activation, and Draft/Repo Clarity
+
+- Updated doorway node labels to the clearer `R#-Wall-#` pattern, for example `R1-F-1`, `R1-B-2`, `R1-L-1`, `R1-R-1`.
+- Uses `B` for Back/Rear to avoid conflict with `R` for Right.
+- Improved hallway doorway cut-outs and corridor overlap to reduce visible seams/gaps where hallways meet rooms.
+- Media interaction now prioritises `E` activation while looking at artwork/media, rather than relying on mouse click/pointer-lock behaviour.
+- YouTube media opens in the larger embedded playback panel with the cursor released.
+- Added clearer 3D gallery source-mode messaging: browser draft/local gallery versus published repo JSON.
+- Added `?draft=0` / `?source=repo` support to view the published GitHub JSON and ignore browser-local drafts.
+- Clarified that browser-local galleries/drafts are stored per browser and are not shared until JSON is exported and uploaded/committed.
