@@ -1,17 +1,32 @@
 [
   {
+    "id": "art1",
     "title": "Ned Kelly Paintings in VR",
     "artist": "Jim Picton",
-    "description": "A sample VR artwork entry. Replace this with student work through the Manage Artworks page or by editing the exported JSON.",
+    "description": "A sample VR artwork entry. Replace this with student work through the Manage Artworks page or by editing the exported JSON file.",
     "media": "https://youtu.be/VuveCtup_LM?si=sjI57HvCpgwZX6q6",
-    "type": "video",
+    "image": "",
     "mediaType": "youtube",
-    "tags": ["Ned Kelly", "VR"],
+    "type": "youtube",
     "room": "animation",
     "wall": "back",
     "x": 0,
     "y": 3.2,
     "width": 3.2,
-    "height": 1.8
+    "height": 1.8,
+    "tags": [
+      "Ned Kelly",
+      "VR",
+      "openbrush",
+      "tilt brush"
+    ],
+    "autoplay": true,
+    "statementDisplay": "popup",
+    "statementSide": "right",
+    "statementWidth": 2.2,
+    "statementHeight": 1.1,
+    "modelScale": 1,
+    "rotationY": 0,
+    "z": 0
   }
 ]
