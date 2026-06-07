@@ -4,17 +4,15 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 
 ## Current Version
 
-**v4.5 — Teleport, hallway collision, and palette UX fixes**
+**v9.6.0 — Portal-volume corridor refactor**
 
 ### Latest changes
 
-- Fixed hallway movement after the previous doorway alignment update. Doorway openings now remain visually aligned while the walkable bounds allow the viewer to pass through them.
-- Added a **Teleport** tool to the layout editor.
-- Teleport tokens appear on the 3D gallery floor with a visual icon.
-- Hovering over a teleport token shows its destination label.
-- Clicking a teleport token moves the viewer directly to its configured destination.
-- Added visible selection highlighting to colour palette swatches.
-- Updated `gallery-layout.json` schema to support `settings.teleports`.
+- Added a shared portal-volume model for hallway doorways.
+- Hallway wall caps, room doorway cut-outs, walkable bounds, and artwork keep-clear checks now use the same portal dimensions.
+- Trimmed corridor wall planes inside doorway throat zones to reduce black slivers, split hallway artefacts, and side-wall clipping at room joins.
+- Updated GitHub Pages-facing version information so the live project clearly reports the current build.
+- Preserved the v9.5.6 duplicate `rangesOverlap()` startup fix.
 
 ## Files
 

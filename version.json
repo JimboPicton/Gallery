@@ -1,0 +1,6 @@
+{
+  "version": "9.6.0",
+  "label": "v9.6.0 — Portal-volume corridor refactor",
+  "date": "2026-06-07",
+  "notes": "Shared portal-volume model for hallway doorway alignment, corridor wall trimming, room cut-outs, walkable bounds, and artwork keep-clear checks."
+}
