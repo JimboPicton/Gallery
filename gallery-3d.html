@@ -92,27 +92,52 @@ function rectEdges(r){
     {side:'top',z:t,x1:l,x2:rr}
   ];
 }
+function routeHallSegments(p1,p2,fw,tw,width){
+  // A hallway is treated as a simple rectangular tube with open ends.
+  // Use the doorway/portal centres as the endpoints. Do not add stub segments,
+  // because overlapping stubs create raised planes and blocking faces at joins.
+  const eps=.001;
+  const sameX=Math.abs(p1.x-p2.x)<.05;
+  const sameZ=Math.abs(p1.z-p2.z)<.05;
+  if(sameX||sameZ) return [[p1,p2]];
+
+  // For elbow corridors, choose a single right-angle route. The corner surfaces
+  // are still built from rectangular planes, but there are no transverse cap
+  // planes at the doorways.
+  const fromHorizontal=(fw==='left'||fw==='right');
+  const toHorizontal=(tw==='left'||tw==='right');
+  let elbow;
+  if(fromHorizontal&&!toHorizontal) elbow={x:p2.x,z:p1.z};
+  else if(!fromHorizontal&&toHorizontal) elbow={x:p1.x,z:p2.z};
+  else if(fromHorizontal) elbow={x:p2.x,z:p1.z};
+  else elbow={x:p1.x,z:p2.z};
+
+  // Avoid zero-length elbows.
+  const segs=[];
+  if(Math.hypot(p1.x-elbow.x,p1.z-elbow.z)>eps) segs.push([p1,elbow]);
+  if(Math.hypot(elbow.x-p2.x,elbow.z-p2.z)>eps) segs.push([elbow,p2]);
+  return segs;
+}
 function makeHall(h,rooms,layout){
   const a=rooms.find(r=>r.id===h.from),b=rooms.find(r=>r.id===h.to);if(!a||!b)return;
   const width=Number(h.width||4),height=Number(h.height||4),color=h.wallColor||layout.settings?.hallwayColor||'#22222a';
   const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
   const p1=portalWorld(a,fw,h.fromSlot||'center'),p2=portalWorld(b,tw,h.toSlot||'center');
-  const n1=wallOutwardVector(fw),n2=wallOutwardVector(tw);
-  // Begin just outside the wall plane so the room opening remains clear; no transverse cap is created at this end.
-  const startInset=.04, stub=Math.max(width*.8,1.25);
-  const a0=addv(p1,n1,startInset),a1=addv(p1,n1,stub),b0=addv(p2,n2,startInset),b1=addv(p2,n2,stub);
-  const pts=[]; pts.push([a0,a1]);
-  if(Math.abs(a1.x-b1.x)<.05||Math.abs(a1.z-b1.z)<.05){pts.push([a1,b1]);}
-  else{const goXFirst=(fw==='left'||fw==='right');const elbow=goXFirst?{x:b1.x,z:a1.z}:{x:a1.x,z:b1.z};pts.push([a1,elbow],[elbow,b1]);}
-  pts.push([b0,b1]);
-  const rects=pts.map(([u,v])=>rectFromSegment(u,v,width)).filter(r=>r.w>.04&&r.d>.04);
-  // Floors and ceilings may overlap at elbows; this is acceptable and avoids visible cracks.
+
+  // v9.5: construct the hallway as a rectangular prim/tube: one floor, one ceiling,
+  // two side walls, and open ends at the room wall portals. No end caps, no extra
+  // doorway planes, and no overlapping stub geometry.
+  const rects=routeHallSegments(p1,p2,fw,tw,width).map(([u,v])=>rectFromSegment(u,v,width)).filter(r=>r.w>.04&&r.d>.04);
+
   rects.forEach(r=>addHallRectFloorCeil(r,height,layout));
   const wallM=mat(color,''); const portals=[{...p1,wall:fw},{...p2,wall:tw}];
   rects.forEach((r,i)=>{
     for(const e of rectEdges(r)){
       if(edgeIsPortalEnd(e,portals,width)) continue;
-      let covered=false; for(let j=0;j<rects.length;j++){if(i!==j&&edgeCoveredByRect(e,rects[j])){covered=true;break;}}
+      let covered=false;
+      for(let j=0;j<rects.length;j++){
+        if(i!==j&&edgeCoveredByRect(e,rects[j])){covered=true;break;}
+      }
       if(!covered) addWallForEdge(e,height,wallM);
     }
   });
