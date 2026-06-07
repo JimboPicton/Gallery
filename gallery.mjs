@@ -33,7 +33,20 @@ function openingsByRoom(layout){const map={};(layout.rooms||[]).forEach(r=>map[r
 function addWallSegment(room,wall,center,width,yCenter,height,material){if(width<=.05||height<=.05)return;const p=wallPosition(room,wall,center,yCenter,.02);addPlane(width,height,p.pos,p.rot,material)}
 function makeWallWithOpenings(room,wall,openings,material){const span=(wall==='front'||wall==='back')?room.width:room.depth;const fullH=room.height;const sorted=(openings||[]).map(o=>({offset:Number(o.offset||0),width:Number(o.width||4),height:Number(o.height||4)})).sort((a,b)=>a.offset-b.offset);let cursor=-span/2;for(const o of sorted){const start=Math.max(-span/2,o.offset-o.width/2),end=Math.min(span/2,o.offset+o.width/2);addWallSegment(room,wall,(cursor+start)/2,start-cursor,fullH/2,fullH,material);addWallSegment(room,wall,(start+end)/2,end-start,(o.height+(fullH-o.height)/2),fullH-o.height,material);cursor=end}addWallSegment(room,wall,(cursor+span/2)/2,span/2-cursor,fullH/2,fullH,material)}
 function makeLabel(room){if(!room.label)return;const label=room.label||{};const main=label.text||room.title||'';const sub=label.subtitle||label.subheading||'';if(!main&&!sub)return;const c=document.createElement('canvas');c.width=1600;c.height=420;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.textAlign='center';ctx.textBaseline='middle';const font=String(label.font||'Noto Sans').replace(/[^a-zA-Z0-9 ,_-]/g,'');const size=Number(label.size||label.fontSize||92);const col=label.color||'#ffffff';ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=12;ctx.shadowOffsetY=5;ctx.fillStyle=col;ctx.font=`800 ${size}px ${font}, Roboto, Arial, sans-serif`;ctx.fillText(main,c.width/2,sub?c.height*.42:c.height*.5);if(sub){ctx.font=`400 ${Math.round(size*.42)}px ${font}, Roboto, Arial, sans-serif`;ctx.fillStyle=label.subtitleColor||col;ctx.fillText(sub,c.width/2,c.height*.64)}const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const aspect=c.width/c.height;const w=Number(label.width||6.6),h=w/aspect;const p=wallPosition(room,label.wall||'front',Number(label.x||0),Number(label.y||4.8),.11);addPlane(w,h,p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide}));}
-function wallMaterialFor(room,wall,layout){const color=room.wallColors?.[wall]||room.wallColor||layout.settings?.defaultWallColor||'#2a2a33';const texture=room.wallTextures?.[wall]||room.wallTexture||'';return mat(color,texture)}function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
+
+function validColor(v){return typeof v==='string'&&/^#?[0-9a-f]{6}$/i.test(v.trim())}
+function cleanColor(v){if(!validColor(v))return '';v=v.trim();return v.startsWith('#')?v:'#'+v}
+function wallColourMap(room){return room.wallColors||room.wallColours||room.wallcolors||room.wallcolours||{}}
+function wallTextureMap(room){return room.wallTextures||room.walltextures||{}}
+function roomBaseWallColor(room,layout){return cleanColor(room.wallColor||room.wallColour||room.color||room.colour||layout.settings?.defaultWallColor||layout.settings?.wallColor||layout.settings?.wallColour)||'#2a2a33'}
+function wallMaterialFor(room,wall,layout){
+  const wc=wallColourMap(room);
+  const color=cleanColor(wc?.[wall]||wc?.[wall+'Color']||wc?.[wall+'Colour'])||roomBaseWallColor(room,layout);
+  const wt=wallTextureMap(room);
+  const texture=wt?.[wall]||room.wallTexture||room.texture||'';
+  return mat(color,texture)
+}
+function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
 function rectFromSegment(a,b,width){
   const dx=b.x-a.x,dz=b.z-a.z;
   if(Math.abs(dx)>=Math.abs(dz)){
@@ -159,23 +172,59 @@ function mergeEdges(edges){
   }
   return out;
 }
-function makeHall(h,rooms,layout){
-  const a=rooms.find(r=>r.id===h.from),b=rooms.find(r=>r.id===h.to);if(!a||!b)return;
-  const width=Number(h.width||4),height=Number(h.height||4),color=h.wallColor||layout.settings?.hallwayColor||'#22222a';
-  const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
-  const p1=getPortalVolume(a,fw,h.fromSlot||'center',width,height),p2=getPortalVolume(b,tw,h.toSlot||'center',width,height);
 
-  // v9.6: portal-volume refactor. Hallways now consume the same doorway volume
-  // used for wall cut-outs, walkable bounds, and artwork keep-clear checks.
-  const rects=routeHallSegments(p1.wallPoint,p2.wallPoint,fw,tw,width).map(([u,v])=>rectFromSegment(u,v,width)).filter(r=>r.w>.04&&r.d>.04);
+function hallwayCenterline(h,rooms){
+  const a=rooms.find(r=>r.id===h.from),b=rooms.find(r=>r.id===h.to);if(!a||!b)return null;
+  const width=Number(h.width||4),height=Number(h.height||4);
+  const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
+  const p1=getPortalVolume(a,fw,h.fromSlot||'center',width,height,.18);
+  const p2=getPortalVolume(b,tw,h.toSlot||'center',width,height,.18);
+  const start={x:p1.x+p1.normal.x*.01,z:p1.z+p1.normal.z*.01};
+  const end={x:p2.x+p2.normal.x*.01,z:p2.z+p2.normal.z*.01};
+  return {a,b,p1,p2,start,end,width,height,fw,tw};
+}
+function hallwayRoute(h,rooms){
+  const c=hallwayCenterline(h,rooms);if(!c)return null;
+  // v9.7: hallways are treated as first-class rectangular conduit spaces.
+  // The stored hallway connects two explicit portal nodes. Rendering uses the
+  // portal centreline as the single source of truth, then creates a clean
+  // rectangular prism (or a simple orthogonal L/T conduit when portals are not aligned).
+  const segs=routeHallSegments(c.start,c.end,c.fw,c.tw,c.width).filter(([u,v])=>Math.hypot(u.x-v.x,u.z-v.z)>.05);
+  return {...c,segs};
+}
+function addHallPrismSegment(seg,width,height,layout,wallM){
+  const [a,b]=seg;const dx=b.x-a.x,dz=b.z-a.z;
+  const horizontal=Math.abs(dx)>=Math.abs(dz);
+  const cx=(a.x+b.x)/2,cz=(a.z+b.z)/2;
+  if(horizontal){
+    const len=Math.abs(dx);if(len<=.04)return;
+    addPlane(len,width,{x:cx,y:.012,z:cz},{x:-Math.PI/2},mat(layout.settings?.floorColor||'#151515',''));
+    addPlane(len,width,{x:cx,y:height,z:cz},{x:Math.PI/2},mat(layout.settings?.ceilingColor||'#1c1c1c',''));
+    addPlane(len,height,{x:cx,y:height/2,z:cz-width/2},{y:0},wallM);
+    addPlane(len,height,{x:cx,y:height/2,z:cz+width/2},{y:Math.PI},wallM);
+    addBound(cx,cz,len,width,.02);
+  }else{
+    const len=Math.abs(dz);if(len<=.04)return;
+    addPlane(width,len,{x:cx,y:.012,z:cz},{x:-Math.PI/2},mat(layout.settings?.floorColor||'#151515',''));
+    addPlane(width,len,{x:cx,y:height,z:cz},{x:Math.PI/2},mat(layout.settings?.ceilingColor||'#1c1c1c',''));
+    addPlane(len,height,{x:cx-width/2,y:height/2,z:cz},{y:Math.PI/2},wallM);
+    addPlane(len,height,{x:cx+width/2,y:height/2,z:cz},{y:-Math.PI/2},wallM);
+    addBound(cx,cz,width,len,.02);
+  }
+}
+function makeHall(h,rooms,layout){
+  const route=hallwayRoute(h,rooms);if(!route)return;
+  const color=cleanColor(h.wallColor||h.wallColour||h.color||h.colour||layout.settings?.hallwayColor||layout.settings?.hallwayColour)||'#22222a';
+  const wallM=mat(color,'');
+  // Build floor/ceiling as a union so elbow joins do not leave triangular or black gaps.
+  const rects=route.segs.map(([u,v])=>rectFromSegment(u,v,route.width)).filter(r=>r.w>.04&&r.d>.04);
   if(!rects.length)return;
   const union=makeUnionCells(rects);
-  union.cells.forEach(c=>addHallCellFloorCeil(c,height,layout));
-
-  const wallM=mat(color,'');
-  const portals=[p1,p2];
-  const edges=[];
-  const {xs,zs,occ}=union;
+  union.cells.forEach(c=>addHallCellFloorCeil(c,route.height,layout));
+  // Render only the external conduit perimeter. Portal-facing caps are omitted,
+  // because the connected room wall already owns the doorway frame.
+  const portals=[route.p1,route.p2];
+  const edges=[];const {xs,zs,occ}=union;
   for(let ix=0;ix<xs.length-1;ix++)for(let iz=0;iz<zs.length-1;iz++){
     if(!occ[ix][iz])continue;
     if(!occ[ix-1]?.[iz])edges.push({side:'left',x:xs[ix],z1:zs[iz],z2:zs[iz+1]});
@@ -184,9 +233,14 @@ function makeHall(h,rooms,layout){
     if(!occ[ix]?.[iz+1])edges.push({side:'top',z:zs[iz+1],x1:xs[ix],x2:xs[ix+1]});
   }
   const trimmed=[];
-  mergeEdges(edges).forEach(e=>{if(!edgeIsPortalEnd(e,portals))trimmed.push(...trimEdgeByPortalVolumes(e,portals));});
-  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,height,wallM));
+  mergeEdges(edges).forEach(e=>{
+    // Drop only the actual end cap, not the side walls that form the hallway.
+    if(edgeIsPortalEnd(e,portals))return;
+    trimmed.push(...trimEdgeByPortalVolumes(e,portals));
+  });
+  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,route.height,wallM));
 }
+
 
 function escHTML(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function youtubeId(url){return (String(url||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/]+)/)||[])[1]||''}

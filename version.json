@@ -1,6 +1,6 @@
 {
-  "version": "9.6.0",
-  "label": "v9.6.0 — Portal-volume corridor refactor",
+  "version": "9.7.0",
+  "label": "v9.7.0 \u2014 First-class hallway conduit refactor",
   "date": "2026-06-07",
-  "notes": "Shared portal-volume model for hallway doorway alignment, corridor wall trimming, room cut-outs, walkable bounds, and artwork keep-clear checks."
+  "notes": "Hallways are now rendered as explicit rectangular conduit spaces between portal nodes. Room and wall colours now use a more robust 3D colour resolver with spelling and alias support."
 }

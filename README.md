@@ -4,7 +4,7 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 
 ## Current Version
 
-**v9.6.0 — Portal-volume corridor refactor**
+**v9.7.0 — First-class hallway conduit refactor**
 
 ### Latest changes
 
@@ -502,6 +502,16 @@ Audio does not autoplay. The viewer must click **Enable sound**, which is requir
 ```
 
 Use `interaction: "press"` for deliberate **E key** activation. Use `interaction: "auto"` only where walk-over teleporting is preferred.
+
+
+## v9.7.0 - First-Class Hallway Conduit Refactor
+
+- Changed hallway rendering from a visual bridge patch to a first-class rectangular conduit model between two explicit portal nodes.
+- Updated the layout editor to display hallway conduits as rectangular spaces with red portal openings, matching the expected level-editing diagram.
+- Hallway floor, ceiling, side walls and walkable bounds are now generated from one shared centreline/portal route.
+- Doorway-facing hallway caps are omitted so the room wall owns the portal frame and the hallway meets it cleanly.
+- Improved room and wall colour handling in the 3D gallery. The renderer now accepts `wallColor`, `wallColour`, `color`, `colour`, `wallColors`, and `wallColours` aliases, plus per-wall colour values.
+- Updated GitHub Pages-facing version information in `index.html`, `README.md`, and `version.json`.
 
 
 ## v9.0 - Procedural Corridor Bridges and Unified Publish

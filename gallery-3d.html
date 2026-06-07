@@ -14,6 +14,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:'N
 <div id="overlay" class="overlay"><div><h1>Click to Enter Gallery</h1><p>Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
 <div id="reticle" class="reticle"></div><div id="ytAudioPanel" class="ytAudioPanel"></div><div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioToggle">Turn sound on</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
 <script type="module">
+
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x101014);
@@ -30,13 +31,7 @@ function addPlane(w,h,pos,rot,material){const mesh=new THREE.Mesh(new THREE.Plan
 function addBound(x,z,w,d,margin=0){bounds.push({minX:x-w/2+margin,maxX:x+w/2-margin,minZ:z-d/2+margin,maxZ:z+d/2-margin})}
 function wallPosition(room,wall,x,y,offset=.07){const hw=room.width/2,hd=room.depth/2;if(wall==='front')return {pos:{x:room.x+x,y,z:room.z+hd-offset},rot:{y:Math.PI}};if(wall==='back')return {pos:{x:room.x+x,y,z:room.z-hd+offset},rot:{y:0}};if(wall==='left')return {pos:{x:room.x-hw+offset,y,z:room.z+x},rot:{y:Math.PI/2}};return {pos:{x:room.x+hw-offset,y,z:room.z+x},rot:{y:-Math.PI/2}}}
 function normalizeSlot(slot){if(slot==='centre')return 'center';return slot||'center'}
-function normalizeWall(w){
-  // v9.5.5: accept older editor/export aliases as well as canonical wall names.
-  w=String(w||'').toLowerCase();
-  const aliases={north:'back',south:'front',east:'right',west:'left',top:'front',bottom:'back'};
-  w=aliases[w]||w;
-  return ['front','back','left','right'].includes(w)?w:'front';
-}
+function normalizeWall(w){return ['front','back','left','right'].includes(w)?w:'front'}
 function portalOffset(room,wall,slot){slot=normalizeSlot(slot);const long=wall==='front'||wall==='back';const span=long?room.width:room.depth;if(slot==='left'||slot==='back')return -span*.25;if(slot==='right'||slot==='front')return span*.25;return 0}
 function portalWorld(room,wall,slot){wall=normalizeWall(wall);slot=normalizeSlot(slot);const off=portalOffset(room,wall,slot);const hw=room.width/2,hd=room.depth/2;if(wall==='front')return {x:room.x+off,z:room.z+hd,axis:'x',offset:off,wall};if(wall==='back')return {x:room.x+off,z:room.z-hd,axis:'x',offset:off,wall};if(wall==='left')return {x:room.x-hw,z:room.z+off,axis:'z',offset:off,wall};return {x:room.x+hw,z:room.z+off,axis:'z',offset:off,wall}}
 function getPortalVolume(room,wall,slot,width=4,height=4,depth=.36){
@@ -54,7 +49,20 @@ function openingsByRoom(layout){const map={};(layout.rooms||[]).forEach(r=>map[r
 function addWallSegment(room,wall,center,width,yCenter,height,material){if(width<=.05||height<=.05)return;const p=wallPosition(room,wall,center,yCenter,.02);addPlane(width,height,p.pos,p.rot,material)}
 function makeWallWithOpenings(room,wall,openings,material){const span=(wall==='front'||wall==='back')?room.width:room.depth;const fullH=room.height;const sorted=(openings||[]).map(o=>({offset:Number(o.offset||0),width:Number(o.width||4),height:Number(o.height||4)})).sort((a,b)=>a.offset-b.offset);let cursor=-span/2;for(const o of sorted){const start=Math.max(-span/2,o.offset-o.width/2),end=Math.min(span/2,o.offset+o.width/2);addWallSegment(room,wall,(cursor+start)/2,start-cursor,fullH/2,fullH,material);addWallSegment(room,wall,(start+end)/2,end-start,(o.height+(fullH-o.height)/2),fullH-o.height,material);cursor=end}addWallSegment(room,wall,(cursor+span/2)/2,span/2-cursor,fullH/2,fullH,material)}
 function makeLabel(room){if(!room.label)return;const label=room.label||{};const main=label.text||room.title||'';const sub=label.subtitle||label.subheading||'';if(!main&&!sub)return;const c=document.createElement('canvas');c.width=1600;c.height=420;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.textAlign='center';ctx.textBaseline='middle';const font=String(label.font||'Noto Sans').replace(/[^a-zA-Z0-9 ,_-]/g,'');const size=Number(label.size||label.fontSize||92);const col=label.color||'#ffffff';ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=12;ctx.shadowOffsetY=5;ctx.fillStyle=col;ctx.font=`800 ${size}px ${font}, Roboto, Arial, sans-serif`;ctx.fillText(main,c.width/2,sub?c.height*.42:c.height*.5);if(sub){ctx.font=`400 ${Math.round(size*.42)}px ${font}, Roboto, Arial, sans-serif`;ctx.fillStyle=label.subtitleColor||col;ctx.fillText(sub,c.width/2,c.height*.64)}const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const aspect=c.width/c.height;const w=Number(label.width||6.6),h=w/aspect;const p=wallPosition(room,label.wall||'front',Number(label.x||0),Number(label.y||4.8),.11);addPlane(w,h,p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide}));}
-function wallMaterialFor(room,wall,layout){const color=room.wallColors?.[wall]||room.wallColor||layout.settings?.defaultWallColor||'#2a2a33';const texture=room.wallTextures?.[wall]||room.wallTexture||'';return mat(color,texture)}function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
+
+function validColor(v){return typeof v==='string'&&/^#?[0-9a-f]{6}$/i.test(v.trim())}
+function cleanColor(v){if(!validColor(v))return '';v=v.trim();return v.startsWith('#')?v:'#'+v}
+function wallColourMap(room){return room.wallColors||room.wallColours||room.wallcolors||room.wallcolours||{}}
+function wallTextureMap(room){return room.wallTextures||room.walltextures||{}}
+function roomBaseWallColor(room,layout){return cleanColor(room.wallColor||room.wallColour||room.color||room.colour||layout.settings?.defaultWallColor||layout.settings?.wallColor||layout.settings?.wallColour)||'#2a2a33'}
+function wallMaterialFor(room,wall,layout){
+  const wc=wallColourMap(room);
+  const color=cleanColor(wc?.[wall]||wc?.[wall+'Color']||wc?.[wall+'Colour'])||roomBaseWallColor(room,layout);
+  const wt=wallTextureMap(room);
+  const texture=wt?.[wall]||room.wallTexture||room.texture||'';
+  return mat(color,texture)
+}
+function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
 function rectFromSegment(a,b,width){
   const dx=b.x-a.x,dz=b.z-a.z;
   if(Math.abs(dx)>=Math.abs(dz)){
@@ -180,23 +188,59 @@ function mergeEdges(edges){
   }
   return out;
 }
-function makeHall(h,rooms,layout){
-  const a=rooms.find(r=>r.id===h.from),b=rooms.find(r=>r.id===h.to);if(!a||!b)return;
-  const width=Number(h.width||4),height=Number(h.height||4),color=h.wallColor||layout.settings?.hallwayColor||'#22222a';
-  const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
-  const p1=getPortalVolume(a,fw,h.fromSlot||'center',width,height),p2=getPortalVolume(b,tw,h.toSlot||'center',width,height);
 
-  // v9.6: portal-volume refactor. Hallways now consume the same doorway volume
-  // used for wall cut-outs, walkable bounds, and artwork keep-clear checks.
-  const rects=routeHallSegments(p1.wallPoint,p2.wallPoint,fw,tw,width).map(([u,v])=>rectFromSegment(u,v,width)).filter(r=>r.w>.04&&r.d>.04);
+function hallwayCenterline(h,rooms){
+  const a=rooms.find(r=>r.id===h.from),b=rooms.find(r=>r.id===h.to);if(!a||!b)return null;
+  const width=Number(h.width||4),height=Number(h.height||4);
+  const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
+  const p1=getPortalVolume(a,fw,h.fromSlot||'center',width,height,.18);
+  const p2=getPortalVolume(b,tw,h.toSlot||'center',width,height,.18);
+  const start={x:p1.x+p1.normal.x*.01,z:p1.z+p1.normal.z*.01};
+  const end={x:p2.x+p2.normal.x*.01,z:p2.z+p2.normal.z*.01};
+  return {a,b,p1,p2,start,end,width,height,fw,tw};
+}
+function hallwayRoute(h,rooms){
+  const c=hallwayCenterline(h,rooms);if(!c)return null;
+  // v9.7: hallways are treated as first-class rectangular conduit spaces.
+  // The stored hallway connects two explicit portal nodes. Rendering uses the
+  // portal centreline as the single source of truth, then creates a clean
+  // rectangular prism (or a simple orthogonal L/T conduit when portals are not aligned).
+  const segs=routeHallSegments(c.start,c.end,c.fw,c.tw,c.width).filter(([u,v])=>Math.hypot(u.x-v.x,u.z-v.z)>.05);
+  return {...c,segs};
+}
+function addHallPrismSegment(seg,width,height,layout,wallM){
+  const [a,b]=seg;const dx=b.x-a.x,dz=b.z-a.z;
+  const horizontal=Math.abs(dx)>=Math.abs(dz);
+  const cx=(a.x+b.x)/2,cz=(a.z+b.z)/2;
+  if(horizontal){
+    const len=Math.abs(dx);if(len<=.04)return;
+    addPlane(len,width,{x:cx,y:.012,z:cz},{x:-Math.PI/2},mat(layout.settings?.floorColor||'#151515',''));
+    addPlane(len,width,{x:cx,y:height,z:cz},{x:Math.PI/2},mat(layout.settings?.ceilingColor||'#1c1c1c',''));
+    addPlane(len,height,{x:cx,y:height/2,z:cz-width/2},{y:0},wallM);
+    addPlane(len,height,{x:cx,y:height/2,z:cz+width/2},{y:Math.PI},wallM);
+    addBound(cx,cz,len,width,.02);
+  }else{
+    const len=Math.abs(dz);if(len<=.04)return;
+    addPlane(width,len,{x:cx,y:.012,z:cz},{x:-Math.PI/2},mat(layout.settings?.floorColor||'#151515',''));
+    addPlane(width,len,{x:cx,y:height,z:cz},{x:Math.PI/2},mat(layout.settings?.ceilingColor||'#1c1c1c',''));
+    addPlane(len,height,{x:cx-width/2,y:height/2,z:cz},{y:Math.PI/2},wallM);
+    addPlane(len,height,{x:cx+width/2,y:height/2,z:cz},{y:-Math.PI/2},wallM);
+    addBound(cx,cz,width,len,.02);
+  }
+}
+function makeHall(h,rooms,layout){
+  const route=hallwayRoute(h,rooms);if(!route)return;
+  const color=cleanColor(h.wallColor||h.wallColour||h.color||h.colour||layout.settings?.hallwayColor||layout.settings?.hallwayColour)||'#22222a';
+  const wallM=mat(color,'');
+  // Build floor/ceiling as a union so elbow joins do not leave triangular or black gaps.
+  const rects=route.segs.map(([u,v])=>rectFromSegment(u,v,route.width)).filter(r=>r.w>.04&&r.d>.04);
   if(!rects.length)return;
   const union=makeUnionCells(rects);
-  union.cells.forEach(c=>addHallCellFloorCeil(c,height,layout));
-
-  const wallM=mat(color,'');
-  const portals=[p1,p2];
-  const edges=[];
-  const {xs,zs,occ}=union;
+  union.cells.forEach(c=>addHallCellFloorCeil(c,route.height,layout));
+  // Render only the external conduit perimeter. Portal-facing caps are omitted,
+  // because the connected room wall already owns the doorway frame.
+  const portals=[route.p1,route.p2];
+  const edges=[];const {xs,zs,occ}=union;
   for(let ix=0;ix<xs.length-1;ix++)for(let iz=0;iz<zs.length-1;iz++){
     if(!occ[ix][iz])continue;
     if(!occ[ix-1]?.[iz])edges.push({side:'left',x:xs[ix],z1:zs[iz],z2:zs[iz+1]});
@@ -205,9 +249,14 @@ function makeHall(h,rooms,layout){
     if(!occ[ix]?.[iz+1])edges.push({side:'top',z:zs[iz+1],x1:xs[ix],x2:xs[ix+1]});
   }
   const trimmed=[];
-  mergeEdges(edges).forEach(e=>{if(!edgeIsPortalEnd(e,portals))trimmed.push(...trimEdgeByPortalVolumes(e,portals));});
-  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,height,wallM));
+  mergeEdges(edges).forEach(e=>{
+    // Drop only the actual end cap, not the side walls that form the hallway.
+    if(edgeIsPortalEnd(e,portals))return;
+    trimmed.push(...trimEdgeByPortalVolumes(e,portals));
+  });
+  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,route.height,wallM));
 }
+
 
 function escHTML(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function youtubeId(url){return (String(url||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/]+)/)||[])[1]||''}
@@ -221,55 +270,13 @@ function drawArtworkCard(ctx,data,type){const media=type.includes('video')||type
 function drawPlayOverlay(ctx,label=''){ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';ctx.fillRect(0,0,1024,576);ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.arc(512,288,74,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,0,0,.72)';ctx.beginPath();ctx.moveTo(492,248);ctx.lineTo(492,328);ctx.lineTo(562,288);ctx.closePath();ctx.fill();ctx.font='bold 28px Arial';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=8;if(label)ctx.fillText(label,512,414);ctx.restore()}
 function makeArtworkTexture(data,type,url){const c=document.createElement('canvas');c.width=1024;c.height=576;const ctx=c.getContext('2d');drawArtworkCard(ctx,data,type);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const yt=youtubeId(url);const isImg=type.includes('image')||String(url||'').match(/\.(png|jpg|jpeg|gif|webp)(\?|$)/i);const isYT=type.includes('youtube')||yt;if(isYT&&yt){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{ctx.drawImage(img,0,0,1024,576);drawPlayOverlay(ctx,'Press E to play');tex.needsUpdate=true};img.onerror=()=>{drawPlayOverlay(ctx,'Press E to play');tex.needsUpdate=true};img.src=`https://img.youtube.com/vi/${yt}/hqdefault.jpg`;return tex}if(isImg&&url){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{ctx.fillStyle='#111';ctx.fillRect(0,0,1024,576);const ar=img.width/img.height,tar=1024/576;let dw=1024,dh=576,dx=0,dy=0;if(ar>tar){dh=1024/ar;dy=(576-dh)/2}else{dw=576*ar;dx=(1024-dw)/2}ctx.drawImage(img,dx,dy,dw,dh);tex.needsUpdate=true};img.src=url;return tex}if(type.includes('video')||type.includes('vimeo')||type.includes('echo')||type.includes('soundcloud'))drawPlayOverlay(ctx,'Press E to play');tex.needsUpdate=true;return tex}
 
-
-function artworkWallBounds(data,room){
-  const wall=normalizeWall(data.wall||'back');
-  const x=Number(data.x||0), y=Number(data.y||3.1), w=Number(data.width||3), h=Number(data.height||1.7);
-  const halfW=w/2, halfH=h/2;
-  const pad=.28; // safety margin so picture frames/shadows do not sit inside openings
-  const vertical={bottom:y-halfH-pad,top:y+halfH+pad};
-  if(wall==='front'||wall==='back'){
-    const z=room.z+(wall==='front'?room.depth/2:-room.depth/2);
-    return {wall,left:room.x+x-halfW-pad,right:room.x+x+halfW+pad,z1:z-.08,z2:z+.08,...vertical,localLeft:x-halfW-pad,localRight:x+halfW+pad};
-  }
-  const wx=room.x+(wall==='right'?room.width/2:-room.width/2);
-  return {wall,left:wx-.08,right:wx+.08,z1:room.z+x-halfW-pad,z2:room.z+x+halfW+pad,...vertical,localLeft:x-halfW-pad,localRight:x+halfW+pad};
-}
-function rangesOverlapInclusive(a1,a2,b1,b2){return Math.max(a1,b1)<=Math.min(a2,b2)}
 function artOverlapsDoorway(data,room,openings){
   const wall=normalizeWall(data.wall||'back'), list=openings?.[room.id]?.[wall]||[];
-  const b=artworkWallBounds(data,room);
-  return list.some(o=>{
-    const doorPad=.22;
-    const ol=Number(o.offset||0)-Number(o.width||4)/2-doorPad;
-    const or=Number(o.offset||0)+Number(o.width||4)/2+doorPad;
-    const doorTop=Number(o.height||4)+doorPad;
-    return rangesOverlapInclusive(b.localLeft,b.localRight,ol,or)&&rangesOverlapInclusive(b.bottom,b.top,0,doorTop);
-  });
+  const x=Number(data.x||0), y=Number(data.y||3.1), w=Number(data.width||3), h=Number(data.height||1.7);
+  const left=x-w/2, right=x+w/2, bottom=y-h/2, top=y+h/2;
+  return list.some(o=>{const ol=Number(o.offset||0)-Number(o.width||4)/2, or=Number(o.offset||0)+Number(o.width||4)/2;const doorTop=Number(o.height||4);return right>ol&&left<or&&top>0&&bottom<doorTop;});
 }
-function artOverlapsHallwayVolume(data,room,layout){
-  // v9.5.5: defensive world-space check. If a stale artwork remains on a wall where
-  // a hallway now cuts through, hide it before it can appear as a vertical split plane.
-  const b=artworkWallBounds(data,room);
-  return (layout.hallways||[]).some(h=>{
-    const a=(layout.rooms||[]).find(r=>r.id===h.from), c=(layout.rooms||[]).find(r=>r.id===h.to); if(!a||!c)return false;
-    const width=Number(h.width||4), height=Number(h.height||4)+.2;
-    if(b.bottom>height||b.top<0)return false;
-    const p1=portalWorld(a,normalizeWall(h.fromWall||'right'),h.fromSlot||'center'), p2=portalWorld(c,normalizeWall(h.toWall||'left'),h.toSlot||'center');
-    return routeHallSegments(p1,p2,normalizeWall(h.fromWall||'right'),normalizeWall(h.toWall||'left'),width)
-      .map(([u,v])=>rectFromSegment(u,v,width+.35))
-      .some(r=>rangesOverlapInclusive(b.left,b.right,r.x1,r.x2)&&rangesOverlapInclusive(b.z1,b.z2,r.z1,r.z2));
-  });
-}
-function createArt(data,rooms,i,openings={},layout={}){
-  const room=rooms.find(r=>r.id===(data.room||rooms[0]?.id));if(!room)return;
-  if(artOverlapsDoorway(data,room,openings)||artOverlapsHallwayVolume(data,room,layout)){
-    console.warn('Artwork hidden because it intersects a hallway/doorway opening:',data.title||data.id);
-    return;
-  }
-  const type=String(data.mediaType||data.type||'artwork').toLowerCase();const url=data.media||data.image||data.url||'';const tex=makeArtworkTexture(data,type,url);const p=wallPosition(room,normalizeWall(data.wall||'back'),Number(data.x||0),Number(data.y||3.1));const mesh=addPlane(Number(data.width||3),Number(data.height||1.7),p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));mesh.userData=data;artMeshes.push(mesh);makeStatement(data,room,p)
-}
-
+function createArt(data,rooms,i,openings={}){const room=rooms.find(r=>r.id===(data.room||rooms[0]?.id));if(!room)return;if(artOverlapsDoorway(data,room,openings)){console.warn('Artwork skipped because it overlaps a doorway opening:',data.title||data.id);return;}const type=String(data.mediaType||data.type||'artwork').toLowerCase();const url=data.media||data.image||data.url||'';const tex=makeArtworkTexture(data,type,url);const p=wallPosition(room,data.wall||'back',Number(data.x||0),Number(data.y||3.1));const mesh=addPlane(Number(data.width||3),Number(data.height||1.7),p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));mesh.userData=data;artMeshes.push(mesh);makeStatement(data,room,p)}
 
 function teleportCanvas(label){
   const c=document.createElement('canvas');c.width=512;c.height=512;const ctx=c.getContext('2d');
@@ -278,12 +285,8 @@ function teleportCanvas(label){
   ctx.font='bold 34px Arial';ctx.fillText(label||'Teleport',256,382);return new THREE.CanvasTexture(c)
 }
 function destinationForTeleport(layout,t){
-  const teleports=layout.settings?.teleports||[];
-  if(t.linkedTo){const o=teleports.find(x=>x.id===t.linkedTo);if(o)return {x:Number(o.x||0),z:Number(o.z||0),label:o.label||o.id,id:o.id};}
-  // If only one side of a pair was linked in the editor, infer the reverse link so travel works both ways.
-  const reciprocal=teleports.find(x=>x.linkedTo===t.id);
-  if(reciprocal)return {x:Number(reciprocal.x||0),z:Number(reciprocal.z||0),label:reciprocal.label||reciprocal.id,id:reciprocal.id};
-  return {x:Number(t.toX||0),z:Number(t.toZ||0),label:t.destinationLabel||t.to||'destination',id:''};
+  if(t.linkedTo){const o=(layout.settings?.teleports||[]).find(x=>x.id===t.linkedTo);if(o)return {x:Number(o.x||0),z:Number(o.z||0),label:o.label||o.id};}
+  return {x:Number(t.toX||0),z:Number(t.toZ||0),label:t.destinationLabel||t.to||'destination'};
 }
 function addTeleports(layout){
   (layout.settings?.teleports||[]).forEach((t,i)=>{
@@ -297,7 +300,7 @@ function addTeleports(layout){
 function addLights(layout){scene.add(new THREE.AmbientLight(0xffffff,Number(layout.settings?.ambientLight??1.1)));const d=new THREE.DirectionalLight(0xffffff,Number(layout.settings?.directionalLight??1.4));d.position.set(5,10,5);scene.add(d);(layout.settings?.additionalLights||[]).forEach(l=>{const p=new THREE.PointLight(new THREE.Color(l.color||'#fff'),Number(l.intensity||1.5),Number(l.distance||28));p.position.set(Number(l.x||0),Number(l.y||5),Number(l.z||0));scene.add(p)})}
 function insideAny(pos){return bounds.some(b=>pos.x>=b.minX&&pos.x<=b.maxX&&pos.z>=b.minZ&&pos.z<=b.maxZ)}
 function tryMove(delta){if(!controls.isLocked)return;const old=camera.position.clone();const speed=6*delta;if(keys.KeyW)controls.moveForward(speed);if(keys.KeyS)controls.moveForward(-speed);if(keys.KeyA)controls.moveRight(-speed);if(keys.KeyD)controls.moveRight(speed);camera.position.y=1.7;if(!insideAny(camera.position))camera.position.copy(old)}
-const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2(),teleportHint=document.getElementById('teleportHint');function setMouse(e){mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera)}function setCenterRay(){raycaster.setFromCamera({x:0,y:0},camera)}function teleportDistance(tp){const dx=camera.position.x-tp.position.x,dz=camera.position.z-tp.position.z;return Math.hypot(dx,dz)}function findTeleportCandidate(){if(!controls.isLocked)return null;setCenterRay();const aimed=raycaster.intersectObjects(teleportMeshes,true)[0]?.object;if(aimed)return aimed;let best=null,bestDist=Infinity;for(const tp of teleportMeshes){const d=teleportDistance(tp),r=Number(tp.userData.radius||2.2);if(d<=r&&d<bestDist){best=tp;bestDist=d}}return best}function activateTeleport(tp=activeTeleport||findTeleportCandidate()){if(!controls.isLocked||!tp||teleportCooldown>0)return false;const d=tp.userData;const x=Number(d.destX??d.toX),z=Number(d.destZ??d.toZ);if(!Number.isFinite(x)||!Number.isFinite(z)){teleportHint.style.display='block';teleportHint.textContent='Teleport has no valid destination.';return false;}camera.position.set(x,1.7,z);teleportCooldown=.8;teleportHint.style.display='none';return true}function teleportMode(tp){const raw=String(tp?.userData?.triggerMode||tp?.userData?.interaction||'press').toLowerCase();if(['proximity','walkover','walk-over','auto'].includes(raw))return 'proximity';if(['both','either','press_or_proximity'].includes(raw))return 'both';return 'press'}function updateTeleportPrompt(delta){if(teleportCooldown>0)teleportCooldown=Math.max(0,teleportCooldown-delta);activeTeleport=findTeleportCandidate();if(!activeTeleport){teleportHint.style.display='none';return}const d=activeTeleport.userData,mode=teleportMode(activeTeleport),dist=teleportDistance(activeTeleport),r=Number(d.radius||2.2);if((mode==='proximity'||mode==='both')&&dist<=r&&teleportCooldown<=0){activateTeleport(activeTeleport);return}const destination=d.destLabel||d.destinationLabel||'destination';teleportHint.style.display='block';if(mode==='proximity'){teleportHint.textContent=(d.label||'Teleport')+' → '+destination+' — walk onto marker to travel';}else if(mode==='both'){teleportHint.textContent=(d.label||'Teleport')+' → '+destination+' — walk onto marker or press E';}else{teleportHint.textContent=(d.label||'Teleport')+' → '+destination+' — press E to travel';}}function openArtworkPanel(d){overlay.style.display='none';controls.unlock();setTimeout(()=>overlay.style.display='none',0);panel.style.display='block';panelContent.innerHTML=`<h2>${escHTML(d.title||'Untitled')}</h2><p><em>${escHTML(d.artist||'')}</em></p>${mediaEmbed(d.media||d.image,d.mediaType||d.type,!!d.autoplay)}${d.statementDisplay!=='none'?`<h3>Artist Statement</h3><p>${escHTML(d.description||'')}</p>`:''}<p class="audioHint">Press E while looking at media/artwork if mouse click is intercepted. Closing this panel stops embedded playback.</p>`}function activateLookTarget(){if(!controls.isLocked)return false;setCenterRay();const hit=raycaster.intersectObjects(artMeshes,true)[0];if(hit){openArtworkPanel(hit.object.userData);return true}return false}renderer.domElement.addEventListener('pointerdown',()=>activateLookTarget());renderer.domElement.addEventListener('click',()=>activateLookTarget());
+const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2(),teleportHint=document.getElementById('teleportHint');function setMouse(e){mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera)}function setCenterRay(){raycaster.setFromCamera({x:0,y:0},camera)}function teleportDistance(tp){const dx=camera.position.x-tp.position.x,dz=camera.position.z-tp.position.z;return Math.hypot(dx,dz)}function findTeleportCandidate(){if(!controls.isLocked)return null;setCenterRay();const aimed=raycaster.intersectObjects(teleportMeshes)[0]?.object;if(aimed)return aimed;let best=null,bestDist=Infinity;for(const tp of teleportMeshes){const d=teleportDistance(tp),r=Number(tp.userData.radius||2.2);if(d<=r&&d<bestDist){best=tp;bestDist=d}}return best}function activateTeleport(tp=activeTeleport){if(!controls.isLocked||!tp||teleportCooldown>0)return;const d=tp.userData;camera.position.set(Number(d.destX??d.toX??0),1.7,Number(d.destZ??d.toZ??0));teleportCooldown=.8;teleportHint.style.display='none'}function teleportMode(tp){return String(tp?.userData?.triggerMode||tp?.userData?.interaction||'press').toLowerCase()}function updateTeleportPrompt(delta){if(teleportCooldown>0)teleportCooldown-=delta;activeTeleport=findTeleportCandidate();if(!activeTeleport){teleportHint.style.display='none';return}const d=activeTeleport.userData,mode=teleportMode(activeTeleport),dist=teleportDistance(activeTeleport),r=Number(d.radius||2.2);if((mode==='proximity'||mode==='walkover'||mode==='auto'||mode==='both')&&dist<=r&&teleportCooldown<=0){activateTeleport(activeTeleport);return}const destination=d.destLabel||d.destinationLabel||'destination';if(mode==='proximity'||mode==='walkover'||mode==='auto'){teleportHint.style.display='block';teleportHint.textContent=(d.label||'Teleport')+' → '+destination+' — walk onto marker to travel';}else if(mode==='both'){teleportHint.style.display='block';teleportHint.textContent=(d.label||'Teleport')+' → '+destination+' — walk onto marker or press E';}else{teleportHint.style.display='block';teleportHint.textContent=(d.label||'Teleport')+' → '+destination+' — press E to travel';}}function openArtworkPanel(d){overlay.style.display='none';controls.unlock();setTimeout(()=>overlay.style.display='none',0);panel.style.display='block';panelContent.innerHTML=`<h2>${escHTML(d.title||'Untitled')}</h2><p><em>${escHTML(d.artist||'')}</em></p>${mediaEmbed(d.media||d.image,d.mediaType||d.type,!!d.autoplay)}${d.statementDisplay!=='none'?`<h3>Artist Statement</h3><p>${escHTML(d.description||'')}</p>`:''}<p class="audioHint">Press E while looking at media/artwork if mouse click is intercepted. Closing this panel stops embedded playback.</p>`}function activateLookTarget(){if(!controls.isLocked)return false;setCenterRay();const hit=raycaster.intersectObjects(artMeshes,true)[0];if(hit){openArtworkPanel(hit.object.userData);return true}return false}renderer.domElement.addEventListener('pointerdown',()=>activateLookTarget());renderer.domElement.addEventListener('click',()=>activateLookTarget());
 const audioState={enabled:false,muted:false,master:.75,sources:[]};
 function addAudioIcons(layout){
   (layout.settings?.audio?.sources||[]).forEach((a,i)=>{
@@ -370,8 +373,9 @@ function updateAudioVolumes(){
 }
 
 const fallback={rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
-const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.hallways||[]).forEach(h=>makeHall(h,layout.rooms||[],layout));camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings,layout));
-const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const delta=clock.getDelta();tryMove(delta);updateTeleportPrompt(delta);updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.hallways||[]).forEach(h=>makeHall(h,layout.rooms||[],layout));camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
+const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);tryMove(clock.getDelta());updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
 </script>
 </body>
 </html>
