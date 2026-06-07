@@ -1,6 +1,6 @@
 {
-  "version": "9.7.1",
-  "label": "v9.7.1 — Hallway circulation network union",
+  "version": "9.7.2",
+  "name": "Hallway State Rebuild and Material Sync",
   "date": "2026-06-07",
-  "notes": "Hallways now render as a single global circulation network union, removing internal conduit walls, floor/ceiling overlaps and clipping artefacts where hallway segments meet."
+  "notes": "Fixes hallway phantom divider artefacts after room dragging, independent hallway colours, and editor-to-3D wall colour synchronisation."
 }

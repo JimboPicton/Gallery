@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x101014);
@@ -36,7 +35,15 @@ function makeLabel(room){if(!room.label)return;const label=room.label||{};const 
 
 function validColor(v){return typeof v==='string'&&/^#?[0-9a-f]{6}$/i.test(v.trim())}
 function cleanColor(v){if(!validColor(v))return '';v=v.trim();return v.startsWith('#')?v:'#'+v}
-function wallColourMap(room){return room.wallColors||room.wallColours||room.wallcolors||room.wallcolours||{}}
+function wallColourMap(room){
+  // v9.7.2: accept all editor/export naming variants so colours seen in the 2D editor
+  // are the same colours used by the 3D renderer.
+  const out={...(room.wallColors||{}),...(room.wallColours||{}),...(room.wallcolors||{}),...(room.wallcolours||{})};
+  ['front','back','left','right'].forEach(w=>{
+    out[w]=out[w]||room[w+'WallColor']||room[w+'WallColour']||room['wallColor_'+w]||room['wallColour_'+w];
+  });
+  return out;
+}
 function wallTextureMap(room){return room.wallTextures||room.walltextures||{}}
 function roomBaseWallColor(room,layout){return cleanColor(room.wallColor||room.wallColour||room.color||room.colour||layout.settings?.defaultWallColor||layout.settings?.wallColor||layout.settings?.wallColour)||'#2a2a33'}
 function wallMaterialFor(room,wall,layout){
@@ -49,11 +56,12 @@ function wallMaterialFor(room,wall,layout){
 function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
 function rectFromSegment(a,b,width){
   const dx=b.x-a.x,dz=b.z-a.z;
+  const join=.06; // small overlap so adjoining/elbow segments union cleanly after room dragging
   if(Math.abs(dx)>=Math.abs(dz)){
-    const len=Math.max(Math.abs(dx),.05), cx=(a.x+b.x)/2, cz=a.z;
+    const len=Math.max(Math.abs(dx),.05)+join*2, cx=(a.x+b.x)/2, cz=a.z;
     return {x:cx,z:cz,w:len,d:width,dir:'x',a,b};
   }
-  const len=Math.max(Math.abs(dz),.05), cx=a.x, cz=(a.z+b.z)/2;
+  const len=Math.max(Math.abs(dz),.05)+join*2, cx=a.x, cz=(a.z+b.z)/2;
   return {x:cx,z:cz,w:width,d:len,dir:'z',a,b};
 }
 function wallOutwardVector(w){w=normalizeWall(w);if(w==='front')return{x:0,z:1};if(w==='back')return{x:0,z:-1};if(w==='left')return{x:-1,z:0};return{x:1,z:0}}
@@ -89,9 +97,12 @@ function rectContainsCell(r,x1,x2,z1,z2){
   const x=(x1+x2)/2,z=(z1+z2)/2;
   return x>=r.x-r.w/2-.001 && x<=r.x+r.w/2+.001 && z>=r.z-r.d/2-.001 && z<=r.z+r.d/2+.001;
 }
+function snapCoord(v){return Math.round(Number(v)*1000)/1000}
 function makeUnionCells(rects){
-  const xs=[...new Set(rects.flatMap(r=>[r.x-r.w/2,r.x+r.w/2]))].sort((a,b)=>a-b);
-  const zs=[...new Set(rects.flatMap(r=>[r.z-r.d/2,r.z+r.d/2]))].sort((a,b)=>a-b);
+  // v9.7.2: snap grid coordinates. Tiny floating-point differences after dragging
+  // rooms were creating phantom one-cell boundaries that appeared as vertical walls.
+  const xs=[...new Set(rects.flatMap(r=>[snapCoord(r.x-r.w/2),snapCoord(r.x+r.w/2)]))].sort((a,b)=>a-b);
+  const zs=[...new Set(rects.flatMap(r=>[snapCoord(r.z-r.d/2),snapCoord(r.z+r.d/2)]))].sort((a,b)=>a-b);
   const cells=[], occ=[];
   for(let ix=0;ix<xs.length-1;ix++){
     occ[ix]=[];
@@ -251,6 +262,28 @@ function collectHallwayNetwork(hallways,rooms){
   });
   return routes;
 }
+
+function hallColor(h,layout){
+  return cleanColor(h?.wallColor||h?.wallColour||h?.color||h?.colour)||cleanColor(layout.settings?.hallwayColor||layout.settings?.hallwayColour)||'#22222a';
+}
+function rectForRouteSegment(route,u,v){
+  const r=rectFromSegment(u,v,route.width);
+  r.hallway=route.hallway;
+  r.color=hallColor(route.hallway, window.__galleryLayoutForMaterials||{});
+  return r;
+}
+function edgeMid(edge){return edge.x!==undefined?{x:edge.x,z:(edge.z1+edge.z2)/2}:{x:(edge.x1+edge.x2)/2,z:edge.z}}
+function distPointToRectEdge(pt,r){
+  const x1=r.x-r.w/2,x2=r.x+r.w/2,z1=r.z-r.d/2,z2=r.z+r.d/2;
+  const dx=Math.max(x1-pt.x,0,pt.x-x2), dz=Math.max(z1-pt.z,0,pt.z-z2);
+  return Math.hypot(dx,dz);
+}
+function colorForNetworkEdge(edge,routeRects,layout){
+  const pt=edgeMid(edge);let best=null,bd=Infinity;
+  for(const r of routeRects){const d=distPointToRectEdge(pt,r);if(d<bd){bd=d;best=r;}}
+  return hallColor(best?.hallway,layout);
+}
+
 function makeHallNetwork(hallways,rooms,layout){
   const routes=collectHallwayNetwork(hallways,rooms);
   if(!routes.length)return;
@@ -258,7 +291,9 @@ function makeHallNetwork(hallways,rooms,layout){
   // Individual hallway prisms leave their own side/cap planes behind at T-junctions
   // and overlaps. The network renderer collects every conduit rectangle first,
   // unions the footprint, then renders only the outside perimeter.
+  window.__galleryLayoutForMaterials=layout;
   const rects=[];
+  const routeRects=[];
   const portals=[];
   let height=0;
   routes.forEach(route=>{
@@ -266,13 +301,12 @@ function makeHallNetwork(hallways,rooms,layout){
     portals.push(route.p1,route.p2);
     route.segs.forEach(([u,v])=>{
       const r=rectFromSegment(u,v,route.width);
-      if(r.w>.04&&r.d>.04)rects.push(r);
+      r.hallway=route.hallway;
+      if(r.w>.04&&r.d>.04){rects.push(r);routeRects.push(r);}
     });
   });
   if(!rects.length)return;
   height=height||4;
-  const color=cleanColor(layout.settings?.hallwayColor||layout.settings?.hallwayColour)||cleanColor(routes[0]?.hallway?.wallColor||routes[0]?.hallway?.wallColour||routes[0]?.hallway?.color||routes[0]?.hallway?.colour)||'#22222a';
-  const wallM=mat(color,'');
   const union=makeUnionCells(rects);
   union.cells.forEach(c=>addHallCellFloorCeil(c,height,layout));
   const edges=[];const {xs,zs,occ}=union;
@@ -288,7 +322,7 @@ function makeHallNetwork(hallways,rooms,layout){
     if(edgeIsPortalEnd(e,portals))return;
     trimmed.push(...trimEdgeByPortalVolumes(e,portals));
   });
-  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,height,wallM));
+  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,height,mat(colorForNetworkEdge(e,routeRects,layout),'')));
 }
 
 
