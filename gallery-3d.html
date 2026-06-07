@@ -193,7 +193,7 @@ function artworkWallBounds(data,room){
   const wx=room.x+(wall==='right'?room.width/2:-room.width/2);
   return {wall,left:wx-.08,right:wx+.08,z1:room.z+x-halfW-pad,z2:room.z+x+halfW+pad,...vertical,localLeft:x-halfW-pad,localRight:x+halfW+pad};
 }
-function rangesOverlap(a1,a2,b1,b2){return Math.max(a1,b1)<=Math.min(a2,b2)}
+function rangesOverlapInclusive(a1,a2,b1,b2){return Math.max(a1,b1)<=Math.min(a2,b2)}
 function artOverlapsDoorway(data,room,openings){
   const wall=normalizeWall(data.wall||'back'), list=openings?.[room.id]?.[wall]||[];
   const b=artworkWallBounds(data,room);
@@ -202,7 +202,7 @@ function artOverlapsDoorway(data,room,openings){
     const ol=Number(o.offset||0)-Number(o.width||4)/2-doorPad;
     const or=Number(o.offset||0)+Number(o.width||4)/2+doorPad;
     const doorTop=Number(o.height||4)+doorPad;
-    return rangesOverlap(b.localLeft,b.localRight,ol,or)&&rangesOverlap(b.bottom,b.top,0,doorTop);
+    return rangesOverlapInclusive(b.localLeft,b.localRight,ol,or)&&rangesOverlapInclusive(b.bottom,b.top,0,doorTop);
   });
 }
 function artOverlapsHallwayVolume(data,room,layout){
@@ -216,7 +216,7 @@ function artOverlapsHallwayVolume(data,room,layout){
     const p1=portalWorld(a,normalizeWall(h.fromWall||'right'),h.fromSlot||'center'), p2=portalWorld(c,normalizeWall(h.toWall||'left'),h.toSlot||'center');
     return routeHallSegments(p1,p2,normalizeWall(h.fromWall||'right'),normalizeWall(h.toWall||'left'),width)
       .map(([u,v])=>rectFromSegment(u,v,width+.35))
-      .some(r=>rangesOverlap(b.left,b.right,r.x1,r.x2)&&rangesOverlap(b.z1,b.z2,r.z1,r.z2));
+      .some(r=>rangesOverlapInclusive(b.left,b.right,r.x1,r.x2)&&rangesOverlapInclusive(b.z1,b.z2,r.z1,r.z2));
   });
 }
 function createArt(data,rooms,i,openings={},layout={}){
