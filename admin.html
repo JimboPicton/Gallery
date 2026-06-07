@@ -498,7 +498,9 @@
 
         async function loadGalleryData() {
             try {
-                const response = await fetch('gallery-data.json');
+                const draft = localStorage.getItem('gallery-data-draft');
+                if (draft) { galleryData = JSON.parse(draft); return; }
+                const response = await fetch('gallery-data.json?ts=' + Date.now(), { cache: 'no-cache' });
                 galleryData = await response.json();
             } catch (error) {
                 galleryData = [];
