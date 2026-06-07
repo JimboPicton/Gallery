@@ -241,6 +241,56 @@ function makeHall(h,rooms,layout){
   mergeEdges(trimmed).forEach(e=>addWallForEdge(e,route.height,wallM));
 }
 
+function collectHallwayNetwork(hallways,rooms){
+  const routes=[];
+  (hallways||[]).forEach(h=>{
+    const route=hallwayRoute(h,rooms);
+    if(!route||!route.segs?.length)return;
+    route.hallway=h;
+    routes.push(route);
+  });
+  return routes;
+}
+function makeHallNetwork(hallways,rooms,layout){
+  const routes=collectHallwayNetwork(hallways,rooms);
+  if(!routes.length)return;
+  // v9.7.1: render the circulation system as one global hallway union.
+  // Individual hallway prisms leave their own side/cap planes behind at T-junctions
+  // and overlaps. The network renderer collects every conduit rectangle first,
+  // unions the footprint, then renders only the outside perimeter.
+  const rects=[];
+  const portals=[];
+  let height=0;
+  routes.forEach(route=>{
+    height=Math.max(height,Number(route.height||4));
+    portals.push(route.p1,route.p2);
+    route.segs.forEach(([u,v])=>{
+      const r=rectFromSegment(u,v,route.width);
+      if(r.w>.04&&r.d>.04)rects.push(r);
+    });
+  });
+  if(!rects.length)return;
+  height=height||4;
+  const color=cleanColor(layout.settings?.hallwayColor||layout.settings?.hallwayColour)||cleanColor(routes[0]?.hallway?.wallColor||routes[0]?.hallway?.wallColour||routes[0]?.hallway?.color||routes[0]?.hallway?.colour)||'#22222a';
+  const wallM=mat(color,'');
+  const union=makeUnionCells(rects);
+  union.cells.forEach(c=>addHallCellFloorCeil(c,height,layout));
+  const edges=[];const {xs,zs,occ}=union;
+  for(let ix=0;ix<xs.length-1;ix++)for(let iz=0;iz<zs.length-1;iz++){
+    if(!occ[ix][iz])continue;
+    if(!occ[ix-1]?.[iz])edges.push({side:'left',x:xs[ix],z1:zs[iz],z2:zs[iz+1]});
+    if(!occ[ix+1]?.[iz])edges.push({side:'right',x:xs[ix+1],z1:zs[iz],z2:zs[iz+1]});
+    if(!occ[ix]?.[iz-1])edges.push({side:'bottom',z:zs[iz],x1:xs[ix],x2:xs[ix+1]});
+    if(!occ[ix]?.[iz+1])edges.push({side:'top',z:zs[iz+1],x1:xs[ix],x2:xs[ix+1]});
+  }
+  const trimmed=[];
+  mergeEdges(edges).forEach(e=>{
+    if(edgeIsPortalEnd(e,portals))return;
+    trimmed.push(...trimEdgeByPortalVolumes(e,portals));
+  });
+  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,height,wallM));
+}
+
 
 function escHTML(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function youtubeId(url){return (String(url||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/]+)/)||[])[1]||''}
@@ -357,5 +407,5 @@ function updateAudioVolumes(){
 }
 
 const fallback={rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
-const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.hallways||[]).forEach(h=>makeHall(h,layout.rooms||[],layout));camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
+const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));makeHallNetwork(layout.hallways||[],layout.rooms||[],layout);camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
 const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);tryMove(clock.getDelta());updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});

@@ -4,15 +4,15 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 
 ## Current Version
 
-**v9.7.0 — First-class hallway conduit refactor**
+**v9.7.1 — Hallway circulation network union**
 
 ### Latest changes
 
-- Added a shared portal-volume model for hallway doorways.
-- Hallway wall caps, room doorway cut-outs, walkable bounds, and artwork keep-clear checks now use the same portal dimensions.
-- Trimmed corridor wall planes inside doorway throat zones to reduce black slivers, split hallway artefacts, and side-wall clipping at room joins.
-- Updated GitHub Pages-facing version information so the live project clearly reports the current build.
-- Preserved the v9.5.6 duplicate `rangesOverlap()` startup fix.
+- Renders all hallway/conduit segments as one shared circulation network rather than separate hallway prisms.
+- Removes internal hallway walls, caps and floor/ceiling overlaps at intersections, T-junctions and multi-hall connections.
+- Keeps the v9.7 portal-volume doorway model for room wall openings and artwork keep-clear checks.
+- Updates GitHub Pages-facing version information so the live project clearly reports the current build.
+- Preserves the v9.5.6 duplicate `rangesOverlap()` startup fix.
 
 ## Files
 
@@ -544,3 +544,11 @@ This build focuses on stability and curator workflow before adding further visua
 - Artwork overlapping a doorway is now flagged in the placement editor and hidden in the 3D gallery until moved clear.
 - Reduced doorway node size in Gallery Layout Editor for a cleaner spatial planning view.
 
+
+
+## v9.7.1 - Hallway Circulation Network Union
+
+- Changed the 3D hallway renderer from per-hallway prism rendering to a global hallway-network union.
+- The renderer now collects all hallway rectangles first, builds a combined walkable footprint, then renders only the outside perimeter walls.
+- This is designed to remove internal clipping planes, vertical slivers, and floor seams where hallway conduits meet or overlap.
+- Room portal openings and artwork doorway keep-clear checks continue to use the shared portal-volume model.
