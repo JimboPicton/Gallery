@@ -526,3 +526,13 @@ This build focuses on stability and curator workflow before adding further visua
 - Restored clean transparent room label typography using Noto Sans/Roboto-style rendering instead of grey bordered wall panels.
 - Labels now support optional subtitle, font, colour, width and size values when present in the room label JSON.
 - Updated artwork media rendering to use a dedicated texture helper so image/video/YouTube previews are less likely to regress during corridor or geometry work.
+
+
+## v9.2 - Corridor Stability and Doorway-Aware Artwork Placement
+
+- Changed procedural corridor bridges to floor/ceiling bridge geometry only, removing corridor side-wall planes that were still clipping into room doorways.
+- Widened doorway cut-outs to reduce seam visibility at room-to-corridor joins.
+- Added doorway exclusion zones to Artwork Placement Editor so artworks are not placed over hallway openings.
+- Artwork overlapping a doorway is now flagged in the placement editor and hidden in the 3D gallery until moved clear.
+- Reduced doorway node size in Gallery Layout Editor for a cleaner spatial planning view.
+
