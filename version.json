@@ -1,8 +1,6 @@
 {
-  "version": "9.8.3",
-  "name": "Half Wall Interaction Layer Hotfix",
-  "date": "2026-06-08",
-  "notes": "Half-wall creation now works over rooms via an interaction-layer lock; partitions can be dragged over rooms and deleted from right-click context menus.",
-  "label": "v9.8.2 \u2013 Straight Hallway + Half Wall UX Hotfix",
-  "build": "v9.8.3"
+  "version": "9.8.4",
+  "label": "Portal seam, active gallery and teleport hotfix",
+  "build": "v9.8.4",
+  "updated": "2026-06-08"
 }
