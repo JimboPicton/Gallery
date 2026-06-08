@@ -2,9 +2,9 @@
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork editor, and a visual layout editor for rooms, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.8.0 – Hallway State Rebuild and Material Sync
+## Current Version: v9.8.1 – Hallway State Rebuild and Material Sync
 
-**v9.8.0 — Hallway circulation network union**
+**v9.8.1 — Hallway circulation network union**
 
 ### Latest changes
 
@@ -504,7 +504,7 @@ Audio does not autoplay. The viewer must click **Enable sound**, which is requir
 Use `interaction: "press"` for deliberate **E key** activation. Use `interaction: "auto"` only where walk-over teleporting is preferred.
 
 
-## v9.8.0 - First-Class Hallway Conduit Refactor
+## v9.8.1 - First-Class Hallway Conduit Refactor
 
 - Changed hallway rendering from a visual bridge patch to a first-class rectangular conduit model between two explicit portal nodes.
 - Updated the layout editor to display hallway conduits as rectangular spaces with red portal openings, matching the expected level-editing diagram.
@@ -546,7 +546,7 @@ This build focuses on stability and curator workflow before adding further visua
 
 
 
-## v9.8.0 - Hallway Circulation Network Union
+## v9.8.1 - Hallway Circulation Network Union
 
 - Changed the 3D hallway renderer from per-hallway prism rendering to a global hallway-network union.
 - The renderer now collects all hallway rectangles first, builds a combined walkable footprint, then renders only the outside perimeter walls.
@@ -554,5 +554,5 @@ This build focuses on stability and curator workflow before adding further visua
 - Room portal openings and artwork doorway keep-clear checks continue to use the shared portal-volume model.
 
 
-## v9.8.0
+## v9.8.1
 Adds half-wall / partition wall layout support, floor and ceiling texture fields, and optional artwork accent lights.
