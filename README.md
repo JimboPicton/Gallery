@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.8.8
+# 3D Student Gallery v9.9.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.8.8 – CQU Chrome and Editor Palette Correction
+## Current Version: v9.9.0 – CQU Chrome and Editor Palette Correction
 
 ### Latest changes
 
@@ -19,7 +19,7 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 
 ## Positioning artwork on half walls
 
-In v9.8.8, the most intuitive method is the 3D gallery view:
+In v9.9.0, the most intuitive method is the 3D gallery view:
 
 1. Enter the gallery.
 2. Right-click on a half wall / partition surface.
@@ -51,13 +51,13 @@ Gallery/
 After testing locally or in GitHub Pages preview, use the Publish page to export updated JSON files and keep the repository version clean.
 
 
-## v9.8.8 Notes
+## v9.9.0 Notes
 - CQU colour scheme now applies to page chrome only, not gallery material palettes.
 - Restored neutral gallery swatches for wall, floor, ceiling and hallway colour selection.
 - Added differentiated toolbar action colours for navigation, create, draft and publish actions.
 
 
-## v9.8.8 Curator Workflow Polish
+## v9.9.0 Curator Workflow Polish
 - Standardised semantic button colours: publishing/enter green, save/export orange, reset/restore/delete red.
 - Added Gallery Settings in Admin for visibility/password and entry splash/warning.
 - Clarified Restore Last Draft versus Reset to Published in the Layout Editor.

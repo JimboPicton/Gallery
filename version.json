@@ -1,8 +1,4 @@
 {
-  "version": "v9.8.8",
-  "label": "Context menu layering, 3D editor tools visibility and entry splash restore",
-  "build": "v9.8.8",
-  "updated": "2026-06-08",
-  "name": "Gallery v9.8.8 Curator Workflow Polish",
-  "notes": "Semantic button colours, admin settings/password grouping, curator mode improvements, camera preservation, and artwork light presets."
+  "version": "9.9.0",
+  "name": "Curator Workflow Update"
 }
