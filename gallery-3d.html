@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>3D Student Gallery v9.8.1</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<title>3D Student Gallery v9.8.2</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:'Noto Sans','Roboto',Arial,sans-serif;color:#fff}canvas{display:block}.hud{position:fixed;top:14px;left:14px;z-index:30;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;max-width:350px;font-size:14px}.hud a{color:#b8c4ff}.overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;text-align:center}.overlay div{pointer-events:auto;cursor:pointer;padding:26px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:rgba(0,0,0,.84);box-shadow:0 12px 60px rgba(0,0,0,.45)}.panel{position:fixed;top:14px;right:14px;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;z-index:35;display:none;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px}.panel h2{margin:.1rem 0 .3rem}.panel iframe,.panel img,.panel video{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}.statement3d{font-family:Arial}.panel button{float:right;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}.error{position:fixed;bottom:14px;left:14px;right:14px;background:#4c1515;border:1px solid #a94444;border-radius:12px;padding:12px;z-index:40}.teleportHint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:36;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;color:#fff;display:none}.audioHud{position:fixed;left:14px;bottom:14px;z-index:38;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.audioHud button{border:0;border-radius:8px;padding:6px 9px;cursor:pointer}.audioHud input[type=range]{width:100px}.audioHint{font-size:12px;color:#bbb}.reticle{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:34;pointer-events:none;width:34px;height:34px;border:2px solid rgba(255,255,255,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.18)}.reticle::after{content:"+";color:white;font-weight:bold}.ytAudioPanel{position:fixed;left:14px;bottom:62px;z-index:38;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px;display:none}.ytAudioPanel iframe{width:260px;height:146px;border:0;border-radius:8px;background:#000}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.179.1/build/three.module.js","three/addons/":"https://unpkg.com/three@0.179.1/examples/jsm/"}}</script>
 </head>
 <body>
-<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.8.1</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
+<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.8.2</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
 <div id="overlay" class="overlay"><div><h1>Click to Enter Gallery</h1><p>Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
 <div id="reticle" class="reticle"></div><div id="ytAudioPanel" class="ytAudioPanel"></div><div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioToggle">Turn sound on</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
 <script type="module">
@@ -53,7 +53,7 @@ function makeLabel(room){if(!room.label)return;const label=room.label||{};const 
 function validColor(v){return typeof v==='string'&&/^#?[0-9a-f]{6}$/i.test(v.trim())}
 function cleanColor(v){if(!validColor(v))return '';v=v.trim();return v.startsWith('#')?v:'#'+v}
 function wallColourMap(room){
-  // v9.8.1: accept all editor/export naming variants so colours seen in the 2D editor
+  // v9.8.2: accept all editor/export naming variants so colours seen in the 2D editor
   // are the same colours used by the 3D renderer.
   const out={...(room.wallColors||{}),...(room.wallColours||{}),...(room.wallcolors||{}),...(room.wallcolours||{})};
   ['front','back','left','right'].forEach(w=>{
@@ -84,23 +84,10 @@ function rectFromSegment(a,b,width){
 function wallOutwardVector(w){w=normalizeWall(w);if(w==='front')return{x:0,z:1};if(w==='back')return{x:0,z:-1};if(w==='left')return{x:-1,z:0};return{x:1,z:0}}
 function addv(p,n,d){return{x:p.x+n.x*d,z:p.z+n.z*d}}
 function routeHallSegments(p1,p2,fw,tw,width){
-  // v9.5.1: hallway route is a centreline path. Geometry is generated later as a
-  // union of axis-aligned rectangles, so elbow joins do not create internal walls.
-  const eps=.001;
-  const sameX=Math.abs(p1.x-p2.x)<.05;
-  const sameZ=Math.abs(p1.z-p2.z)<.05;
-  if(sameX||sameZ) return [[p1,p2]];
-  const fromHorizontal=(fw==='left'||fw==='right');
-  const toHorizontal=(tw==='left'||tw==='right');
-  let elbow;
-  if(fromHorizontal&&!toHorizontal) elbow={x:p2.x,z:p1.z};
-  else if(!fromHorizontal&&toHorizontal) elbow={x:p1.x,z:p2.z};
-  else if(fromHorizontal) elbow={x:p2.x,z:p1.z};
-  else elbow={x:p1.x,z:p2.z};
-  const segs=[];
-  if(Math.hypot(p1.x-elbow.x,p1.z-elbow.z)>eps) segs.push([p1,elbow]);
-  if(Math.hypot(elbow.x-p2.x,elbow.z-p2.z)>eps) segs.push([elbow,p2]);
-  return segs;
+  // v9.8.2: hallways are strictly straight conduits. No auto L-shaped routes,
+  // elbows, or intermediate nodes are generated. A hallway is a single hollow
+  // rectangular prism joining two portal openings.
+  return [[p1,p2]];
 }
 function addHallCellFloorCeil(cell,height,layout){
   const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
@@ -116,7 +103,7 @@ function rectContainsCell(r,x1,x2,z1,z2){
 }
 function snapCoord(v){return Math.round(Number(v)*1000)/1000}
 function makeUnionCells(rects){
-  // v9.8.1: snap grid coordinates. Tiny floating-point differences after dragging
+  // v9.8.2: snap grid coordinates. Tiny floating-point differences after dragging
   // rooms were creating phantom one-cell boundaries that appeared as vertical walls.
   const xs=[...new Set(rects.flatMap(r=>[snapCoord(r.x-r.w/2),snapCoord(r.x+r.w/2)]))].sort((a,b)=>a-b);
   const zs=[...new Set(rects.flatMap(r=>[snapCoord(r.z-r.d/2),snapCoord(r.z+r.d/2)]))].sort((a,b)=>a-b);
@@ -301,45 +288,32 @@ function colorForNetworkEdge(edge,routeRects,layout){
   return hallColor(best?.hallway,layout);
 }
 
+
+function makeStraightHall(route,layout){
+  const h=route.hallway||{};
+  const seg=route.segs?.[0]; if(!seg)return;
+  const [a,b]=seg; const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz); if(len<=.05)return;
+  const width=Number(route.width||4),height=Number(route.height||4);
+  const cx=(a.x+b.x)/2,cz=(a.z+b.z)/2,ang=Math.atan2(dz,dx);
+  const color=hallColor(h,layout), wallM=mat(color,'');
+  const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''), ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
+  addPlane(len,width,{x:cx,y:.012,z:cz},{x:-Math.PI/2,y:-ang},floorM);
+  addPlane(len,width,{x:cx,y:height,z:cz},{x:Math.PI/2,y:ang},ceilM);
+  const nx=-Math.sin(ang), nz=Math.cos(ang);
+  addPlane(len,height,{x:cx+nx*width/2,y:height/2,z:cz+nz*width/2},{y:-ang+Math.PI},wallM);
+  addPlane(len,height,{x:cx-nx*width/2,y:height/2,z:cz-nz*width/2},{y:-ang},wallM);
+  // No end caps: the connected room walls own the portal frames/openings.
+  addBound(cx,cz,Math.abs(dx)+width,Math.abs(dz)+width,.02);
+}
+
 function makeHallNetwork(hallways,rooms,layout){
   const routes=collectHallwayNetwork(hallways,rooms);
   if(!routes.length)return;
-  // v9.7.1: render the circulation system as one global hallway union.
-  // Individual hallway prisms leave their own side/cap planes behind at T-junctions
-  // and overlaps. The network renderer collects every conduit rectangle first,
-  // unions the footprint, then renders only the outside perimeter.
+  // v9.8.2: render each hallway as one straight hollow rectangular conduit.
+  // This avoids the previous axis-aligned union/elbow logic that generated phantom
+  // splits, sheared walls, and L-shaped corridors when rooms were moved apart.
   window.__galleryLayoutForMaterials=layout;
-  const rects=[];
-  const routeRects=[];
-  const portals=[];
-  let height=0;
-  routes.forEach(route=>{
-    height=Math.max(height,Number(route.height||4));
-    portals.push(route.p1,route.p2);
-    route.segs.forEach(([u,v])=>{
-      const r=rectFromSegment(u,v,route.width);
-      r.hallway=route.hallway;
-      if(r.w>.04&&r.d>.04){rects.push(r);routeRects.push(r);}
-    });
-  });
-  if(!rects.length)return;
-  height=height||4;
-  const union=makeUnionCells(rects);
-  union.cells.forEach(c=>addHallCellFloorCeil(c,height,layout));
-  const edges=[];const {xs,zs,occ}=union;
-  for(let ix=0;ix<xs.length-1;ix++)for(let iz=0;iz<zs.length-1;iz++){
-    if(!occ[ix][iz])continue;
-    if(!occ[ix-1]?.[iz])edges.push({side:'left',x:xs[ix],z1:zs[iz],z2:zs[iz+1]});
-    if(!occ[ix+1]?.[iz])edges.push({side:'right',x:xs[ix+1],z1:zs[iz],z2:zs[iz+1]});
-    if(!occ[ix]?.[iz-1])edges.push({side:'bottom',z:zs[iz],x1:xs[ix],x2:xs[ix+1]});
-    if(!occ[ix]?.[iz+1])edges.push({side:'top',z:zs[iz+1],x1:xs[ix],x2:xs[ix+1]});
-  }
-  const trimmed=[];
-  mergeEdges(edges).forEach(e=>{
-    if(edgeIsPortalEnd(e,portals))return;
-    trimmed.push(...trimEdgeByPortalVolumes(e,portals));
-  });
-  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,height,mat(colorForNetworkEdge(e,routeRects,layout),'')));
+  routes.forEach(route=>makeStraightHall(route,layout));
 }
 
 

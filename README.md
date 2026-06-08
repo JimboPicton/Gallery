@@ -2,9 +2,9 @@
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork editor, and a visual layout editor for rooms, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.8.1 – Hallway State Rebuild and Material Sync
+## Current Version: v9.8.2 – Straight Hallway + Half Wall UX Hotfix
 
-**v9.8.1 — Hallway circulation network union**
+**v9.8.2 — Straight hallway conduit and half-wall creation UX**
 
 ### Latest changes
 
@@ -556,3 +556,11 @@ This build focuses on stability and curator workflow before adding further visua
 
 ## v9.8.1
 Adds half-wall / partition wall layout support, floor and ceiling texture fields, and optional artwork accent lights.
+
+
+## v9.8.2 - Straight Hallway + Half Wall UX Hotfix
+
+- Removed automatic L-shaped hallway routing. Hallways now render as a single straight rectangular conduit between two doorway portals.
+- Replaced the previous axis-aligned hallway union renderer with a straight prism renderer to reduce shearing and phantom divider walls.
+- Improved Half Wall mode with crosshair cursor, visible start-point marker, clearer status text, Cancel/Escape support, and minimum wall length validation.
+- Updated GitHub Pages-facing version information.

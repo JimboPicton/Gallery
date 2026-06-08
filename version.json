@@ -1,6 +1,8 @@
 {
-  "version": "9.8.1",
+  "version": "9.8.2",
   "name": "Half-wall gallery layout pivot",
   "date": "2026-06-08",
-  "notes": "Adds first-pass half walls/partition planes, floor and ceiling texture fields, and optional artwork accent lights while hallway work remains available for later refinement."
+  "notes": "Adds first-pass half walls/partition planes, floor and ceiling texture fields, and optional artwork accent lights while hallway work remains available for later refinement.",
+  "label": "v9.8.2 \u2013 Straight Hallway + Half Wall UX Hotfix",
+  "build": "2026-06-08"
 }

@@ -67,23 +67,9 @@ function rectFromSegment(a,b,width){
 function wallOutwardVector(w){w=normalizeWall(w);if(w==='front')return{x:0,z:1};if(w==='back')return{x:0,z:-1};if(w==='left')return{x:-1,z:0};return{x:1,z:0}}
 function addv(p,n,d){return{x:p.x+n.x*d,z:p.z+n.z*d}}
 function routeHallSegments(p1,p2,fw,tw,width){
-  // v9.5.1: hallway route is a centreline path. Geometry is generated later as a
-  // union of axis-aligned rectangles, so elbow joins do not create internal walls.
-  const eps=.001;
-  const sameX=Math.abs(p1.x-p2.x)<.05;
-  const sameZ=Math.abs(p1.z-p2.z)<.05;
-  if(sameX||sameZ) return [[p1,p2]];
-  const fromHorizontal=(fw==='left'||fw==='right');
-  const toHorizontal=(tw==='left'||tw==='right');
-  let elbow;
-  if(fromHorizontal&&!toHorizontal) elbow={x:p2.x,z:p1.z};
-  else if(!fromHorizontal&&toHorizontal) elbow={x:p1.x,z:p2.z};
-  else if(fromHorizontal) elbow={x:p2.x,z:p1.z};
-  else elbow={x:p1.x,z:p2.z};
-  const segs=[];
-  if(Math.hypot(p1.x-elbow.x,p1.z-elbow.z)>eps) segs.push([p1,elbow]);
-  if(Math.hypot(elbow.x-p2.x,elbow.z-p2.z)>eps) segs.push([elbow,p2]);
-  return segs;
+  // v9.8.2: hallways are strictly straight conduits. No auto L-shaped routes,
+  // elbows, or intermediate nodes are generated.
+  return [[p1,p2]];
 }
 function addHallCellFloorCeil(cell,height,layout){
   const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
@@ -284,65 +270,29 @@ function colorForNetworkEdge(edge,routeRects,layout){
   return hallColor(best?.hallway,layout);
 }
 
+
+function makeStraightHall(route,layout){
+  const h=route.hallway||{};
+  const seg=route.segs?.[0]; if(!seg)return;
+  const [a,b]=seg; const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz); if(len<=.05)return;
+  const width=Number(route.width||4),height=Number(route.height||4);
+  const cx=(a.x+b.x)/2,cz=(a.z+b.z)/2,ang=Math.atan2(dz,dx);
+  const color=hallColor(h,layout), wallM=mat(color,'');
+  const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''), ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
+  addPlane(len,width,{x:cx,y:.012,z:cz},{x:-Math.PI/2,y:-ang},floorM);
+  addPlane(len,width,{x:cx,y:height,z:cz},{x:Math.PI/2,y:ang},ceilM);
+  const nx=-Math.sin(ang), nz=Math.cos(ang);
+  addPlane(len,height,{x:cx+nx*width/2,y:height/2,z:cz+nz*width/2},{y:-ang+Math.PI},wallM);
+  addPlane(len,height,{x:cx-nx*width/2,y:height/2,z:cz-nz*width/2},{y:-ang},wallM);
+  addBound(cx,cz,Math.abs(dx)+width,Math.abs(dz)+width,.02);
+}
+
 function makeHallNetwork(hallways,rooms,layout){
   const routes=collectHallwayNetwork(hallways,rooms);
   if(!routes.length)return;
-  // v9.7.1: render the circulation system as one global hallway union.
-  // Individual hallway prisms leave their own side/cap planes behind at T-junctions
-  // and overlaps. The network renderer collects every conduit rectangle first,
-  // unions the footprint, then renders only the outside perimeter.
+  // v9.8.2: render each hallway as one straight hollow rectangular conduit.
   window.__galleryLayoutForMaterials=layout;
-  const rects=[];
-  const routeRects=[];
-  const portals=[];
-  let height=0;
-  routes.forEach(route=>{
-    height=Math.max(height,Number(route.height||4));
-    portals.push(route.p1,route.p2);
-    route.segs.forEach(([u,v])=>{
-      const r=rectFromSegment(u,v,route.width);
-      r.hallway=route.hallway;
-      if(r.w>.04&&r.d>.04){rects.push(r);routeRects.push(r);}
-    });
-  });
-  if(!rects.length)return;
-  height=height||4;
-  const union=makeUnionCells(rects);
-  union.cells.forEach(c=>addHallCellFloorCeil(c,height,layout));
-  const edges=[];const {xs,zs,occ}=union;
-  for(let ix=0;ix<xs.length-1;ix++)for(let iz=0;iz<zs.length-1;iz++){
-    if(!occ[ix][iz])continue;
-    if(!occ[ix-1]?.[iz])edges.push({side:'left',x:xs[ix],z1:zs[iz],z2:zs[iz+1]});
-    if(!occ[ix+1]?.[iz])edges.push({side:'right',x:xs[ix+1],z1:zs[iz],z2:zs[iz+1]});
-    if(!occ[ix]?.[iz-1])edges.push({side:'bottom',z:zs[iz],x1:xs[ix],x2:xs[ix+1]});
-    if(!occ[ix]?.[iz+1])edges.push({side:'top',z:zs[iz+1],x1:xs[ix],x2:xs[ix+1]});
-  }
-  const trimmed=[];
-  mergeEdges(edges).forEach(e=>{
-    if(edgeIsPortalEnd(e,portals))return;
-    trimmed.push(...trimEdgeByPortalVolumes(e,portals));
-  });
-  mergeEdges(trimmed).forEach(e=>addWallForEdge(e,height,mat(colorForNetworkEdge(e,routeRects,layout),'')));
-}
-
-
-function escHTML(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function youtubeId(url){return (String(url||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^&?/]+)/)||[])[1]||''}
-function isSoundCloudUrl(url){return /soundcloud\.com|on\.soundcloud\.com/i.test(String(url||''))}
-function soundCloudEmbed(url){return `<iframe src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=false&visual=true" allow="autoplay"></iframe><p><a href="${escHTML(url)}" target="_blank">Open on SoundCloud</a></p>`}
-function mediaEmbed(url,type,autoplay=false){if(!url)return '';type=(type||'').toLowerCase();const safe=escHTML(url);const yt=youtubeId(url);if(type.includes('youtube')||yt){const id=yt;return id?`<iframe src="https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1${autoplay?'&autoplay=1&mute=1':''}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><p><a href="https://www.youtube.com/watch?v=${id}" target="_blank">Open on YouTube</a></p>`:''}if(type.includes('soundcloud')||isSoundCloudUrl(url))return soundCloudEmbed(url);if(type.includes('echo'))return `<iframe src="${safe}" allowfullscreen></iframe>`;if(type.includes('video')||String(url).match(/\.(mp4|webm|ogg)$/i))return `<video src="${safe}" controls preload="metadata" ${autoplay?'autoplay muted playsinline':''}></video>`;if(type.includes('image')||String(url).match(/\.(png|jpg|jpeg|gif|webp)$/i))return `<img src="${safe}" alt="">`;return `<p><a href="${safe}" target="_blank" rel="noopener">Open media</a></p>`}
-function wrapText(ctx,text,x,y,maxWidth,lineHeight,maxLines=8){const words=String(text||'').split(/\s+/);let line='',count=0;for(const w of words){const test=line+w+' ';if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,y);line=w+' ';y+=lineHeight;if(++count>=maxLines)return}else line=test}if(line)ctx.fillText(line,x,y)}
-
-function makeStatement(data,room,p){if(!['wall','both'].includes(data.statementDisplay))return;const c=document.createElement('canvas');c.width=768;c.height=420;const ctx=c.getContext('2d');ctx.fillStyle='rgba(250,250,245,.96)';ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle='#222';ctx.lineWidth=8;ctx.strokeRect(4,4,c.width-8,c.height-8);ctx.fillStyle='#111';ctx.font='bold 34px Arial';ctx.fillText(data.artist||'',30,54);ctx.font='24px Arial';wrapText(ctx,data.description||'',30,100,700,32,8);const tex=new THREE.CanvasTexture(c);const side=data.statementSide||'right';let sx=Number(data.x||0),sy=Number(data.y||3.1);const aw=Number(data.width||3),ah=Number(data.height||1.7),sw=Number(data.statementWidth||2.2),sh=Number(data.statementHeight||1.1);if(side==='left')sx-=aw/2+sw/2+.25;else if(side==='below')sy-=ah/2+sh/2+.25;else if(side==='above')sy+=ah/2+sh/2+.25;else sx+=aw/2+sw/2+.25;const sp=wallPosition(room,data.wall||'back',sx,sy,.09);addPlane(sw,sh,sp.pos,sp.rot,new THREE.MeshBasicMaterial({map:tex,transparent:true}))}
-function drawArtworkCard(ctx,data,type){const media=type.includes('video')||type.includes('youtube')||type.includes('vimeo')||type.includes('echo')||type.includes('soundcloud');ctx.fillStyle=media?'#111':'#f7f7f0';ctx.fillRect(0,0,1024,576);ctx.strokeStyle=media?'#e8e8e8':'#111';ctx.lineWidth=16;ctx.strokeRect(8,8,1008,560);ctx.fillStyle=media?'#fff':'#111';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 54px Arial';ctx.fillText(data.title||'Untitled',512,190);ctx.font='34px Arial';ctx.fillText(data.artist||'',512,250);ctx.font='28px Arial';ctx.fillText((type||'artwork').toUpperCase(),512,330);if(media){ctx.font='bold 86px Arial';ctx.fillText('▶',512,420)}}
-function drawPlayOverlay(ctx,label=''){ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';ctx.fillRect(0,0,1024,576);ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.arc(512,288,74,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,0,0,.72)';ctx.beginPath();ctx.moveTo(492,248);ctx.lineTo(492,328);ctx.lineTo(562,288);ctx.closePath();ctx.fill();ctx.font='bold 28px Arial';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=8;if(label)ctx.fillText(label,512,414);ctx.restore()}
-function makeArtworkTexture(data,type,url){const c=document.createElement('canvas');c.width=1024;c.height=576;const ctx=c.getContext('2d');drawArtworkCard(ctx,data,type);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const yt=youtubeId(url);const isImg=type.includes('image')||String(url||'').match(/\.(png|jpg|jpeg|gif|webp)(\?|$)/i);const isYT=type.includes('youtube')||yt;if(isYT&&yt){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{ctx.drawImage(img,0,0,1024,576);drawPlayOverlay(ctx,'Press E to play');tex.needsUpdate=true};img.onerror=()=>{drawPlayOverlay(ctx,'Press E to play');tex.needsUpdate=true};img.src=`https://img.youtube.com/vi/${yt}/hqdefault.jpg`;return tex}if(isImg&&url){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{ctx.fillStyle='#111';ctx.fillRect(0,0,1024,576);const ar=img.width/img.height,tar=1024/576;let dw=1024,dh=576,dx=0,dy=0;if(ar>tar){dh=1024/ar;dy=(576-dh)/2}else{dw=576*ar;dx=(1024-dw)/2}ctx.drawImage(img,dx,dy,dw,dh);tex.needsUpdate=true};img.src=url;return tex}if(type.includes('video')||type.includes('vimeo')||type.includes('echo')||type.includes('soundcloud'))drawPlayOverlay(ctx,'Press E to play');tex.needsUpdate=true;return tex}
-
-function artOverlapsDoorway(data,room,openings){
-  const wall=normalizeWall(data.wall||'back'), list=openings?.[room.id]?.[wall]||[];
-  const x=Number(data.x||0), y=Number(data.y||3.1), w=Number(data.width||3), h=Number(data.height||1.7);
-  const left=x-w/2, right=x+w/2, bottom=y-h/2, top=y+h/2;
-  return list.some(o=>{const ol=Number(o.offset||0)-Number(o.width||4)/2, or=Number(o.offset||0)+Number(o.width||4)/2;const doorTop=Number(o.height||4);return right>ol&&left<or&&top>0&&bottom<doorTop;});
+  routes.forEach(route=>makeStraightHall(route,layout));
 }
 
 function makePartitionWall(p){
