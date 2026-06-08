@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.9.6
+# 3D Student Gallery v9.9.7
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.9.6 - Simpler Orthogonal Hallway Connectors
+## Current Version: v9.9.7 - Curator Artwork Repositioning
 
 ### Latest changes
 
@@ -16,6 +16,8 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
   - Add/disable an artwork accent light contextually.
 - Added 3D world-positioned artwork records, allowing artwork placement on half walls and partitions from the live gallery view.
 - Continued active-gallery support so local galleries read consistently across editor, admin and 3D view.
+- Shrunk the visitor entry overlay while Curator Mode is active so artwork positioning is no longer blocked by a large centre panel.
+- Added a 3D Curator Mode **Move Artwork** action for repositioning existing artworks onto room walls or half walls from inside the gallery.
 
 ## Positioning artwork on half walls
 
@@ -28,6 +30,7 @@ In v9.9.0, the most intuitive method is the 3D gallery view:
 5. Use the admin or artwork editor to update title, artist, description and media URL.
 
 Right-clicking an existing artwork opens contextual options for duplicate, delete and artwork light controls.
+Choose **Move Artwork**, then click a new wall or half wall surface to reposition it from the 3D curator view.
 
 ## Files
 
@@ -98,3 +101,9 @@ After testing locally or in GitHub Pages preview, use the Publish page to export
 - Reused the existing hallway union/perimeter renderer so floor, ceiling, walls and collision bounds are generated from axis-aligned rectangles.
 - Updated the layout editor preview so hallway drawings match the 3D connector route.
 - Avoided angled hallway walls meeting rectangular doorway cuts, which was the main cause of recurring edge gaps and slivers.
+
+## v9.9.7 Curator Artwork Repositioning
+- Made the `Click to Enter Gallery` overlay compact when Curator Mode is active.
+- Added **Move Artwork** to the 3D artwork context menu.
+- Reused the existing 3D wall and half-wall hit testing so moved artworks save with the same room/wall/world placement data as newly added artworks.
+- Added Escape cancellation while an artwork move is in progress.
