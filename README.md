@@ -1,11 +1,15 @@
-# 3D Student Gallery v9.12.0
+# 3D Student Gallery v9.13.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.12.0 - Guided Tours and Formal Modes
+## Current Version: v9.13.0 - Shared Gallery State Normalization
 
 ### Latest changes
 
+- Added `gallery-state.js` as a shared normalization layer for gallery projects, active gallery IDs, layout drafts, and artwork drafts.
+- Normalized artwork records when they load/save through the Artwork Placement Editor and 3D Curator Mode.
+- Normalized gallery layout/settings records when loaded through Gallery Admin and the 3D gallery runtime.
+- Added a first shared-state checkpoint to reduce drift between `gallery-layout-draft`, `gallery-data-draft`, local gallery projects, and published JSON.
 - Added standard navigation links to the Gallery Admin page so it matches the rest of the workflow.
 - Consolidated the UI colour styling toward a CQU-inspired green/gold theme across HTML pages.
 - Added active-gallery selection and gallery renaming to the Gallery Admin page.
@@ -31,7 +35,8 @@ The next feature set should roll out as small, testable builds:
 1. **v9.10.0 Spatial Navigation Panel / Mini Map** - restored as a top-down floorplan with room labels, live visitor position, teleport markers, and an expanded modal view.
 2. **v9.11.0 Guided Tour Foundations** - added tour data structures, automatic artwork stops, artwork focus targets, and click-next presentation mode.
 3. **v9.12.0 Formal Modes and Unified Panels** - added Visitor, Curator, and Presentation modes and began consolidating 3D controls into consistent panels.
-4. **v9.13.0 Data Architecture Cleanup** - reduce localStorage drift and duplicated JSON responsibilities by moving toward clearer ID-based records.
+4. **v9.13.0 Data Architecture Cleanup** - added a shared normalization layer and began routing admin, artwork editor, and 3D runtime state through consistent layout/artwork/project records.
+5. **v9.14.0 Editor State Consolidation** - continue replacing page-local gallery/project helpers, especially in the layout editor and gallery manager.
 
 ## Positioning artwork on half walls
 
