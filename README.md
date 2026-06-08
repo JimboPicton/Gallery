@@ -1,11 +1,13 @@
-# 3D Student Gallery v9.16.0
+# 3D Student Gallery v9.17.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.16.0 - Viewer Entry Overlay and Mode Recovery
+## Current Version: v9.17.0 - Hallway Walkability and Movement Smoothing
 
 ### Latest changes
 
+- Removed tiny non-walkable cracks from hallway floor-cell bounds so segmented hallway joins no longer catch the viewer.
+- Smoothed 3D movement by resolving forward/back and sideways movement separately.
 - Restored the splash graphic and entry message on first load of the 3D gallery.
 - Hid Visitor / Curator / Presentation controls while the entry splash is visible.
 - Restored ESC behaviour so leaving pointer-lock viewing returns visitors to the splash overlay.
@@ -51,7 +53,8 @@ The next feature set should roll out as small, testable builds:
 5. **v9.14.0 Editor State Consolidation and Curator Workflow Fixes** - tightened hallway joins, added half-wall artwork placement support to the editor, and smoothed curator mode return behaviour.
 6. **v9.15.0 Remaining State Consolidation and Hallway Flush Join** - moved the main page, Gallery Manager, and Publish flow onto shared state helpers and fixed the slight hallway gap at doorway joins.
 7. **v9.16.0 Viewer Entry Overlay and Mode Recovery** - restored the intended entry splash and ESC recovery flow after the formal mode controls were added.
-8. **v9.17.0 Curator Placement Tools** - add more intuitive in-3D artwork positioning controls and reduce reliance on reload-based editing.
+8. **v9.17.0 Hallway Walkability and Movement Smoothing** - removed invisible movement catches at hallway floor joins and improved diagonal movement handling.
+9. **v9.18.0 Curator Placement Tools** - add more intuitive in-3D artwork positioning controls and reduce reliance on reload-based editing.
 
 ## Positioning artwork on half walls
 
