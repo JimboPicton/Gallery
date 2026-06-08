@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.9.7
+# 3D Student Gallery v9.9.8
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.9.7 - Curator Artwork Repositioning
+## Current Version: v9.9.8 - Flush Open Hallway Portals
 
 ### Latest changes
 
@@ -18,6 +18,16 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 - Continued active-gallery support so local galleries read consistently across editor, admin and 3D view.
 - Shrunk the visitor entry overlay while Curator Mode is active so artwork positioning is no longer blocked by a large centre panel.
 - Added a 3D Curator Mode **Move Artwork** action for repositioning existing artworks onto room walls or half walls from inside the gallery.
+- Fixed hallway entrances so the tube mouths stay open and connect flush with the room wall opening instead of protruding as solid plugs.
+
+## Sequential Feature Roadmap
+
+The next feature set should roll out as small, testable builds:
+
+1. **v9.10.0 Spatial Navigation Panel / Mini Map** - restore the minimap as a top-down floorplan with room labels, live visitor position, teleport markers, and an expanded modal view.
+2. **v9.11.0 Guided Tour Foundations** - add tour data structures, stop ordering, artwork focus targets, and click-next presentation mode before attempting auto-walkthrough movement.
+3. **v9.12.0 Formal Modes and Unified Panels** - separate Visitor, Curator, and Presentation modes and begin consolidating floating UI into consistent panels.
+4. **v9.13.0 Data Architecture Cleanup** - reduce localStorage drift and duplicated JSON responsibilities by moving toward clearer ID-based records.
 
 ## Positioning artwork on half walls
 
@@ -107,3 +117,9 @@ After testing locally or in GitHub Pages preview, use the Publish page to export
 - Added **Move Artwork** to the 3D artwork context menu.
 - Reused the existing 3D wall and half-wall hit testing so moved artworks save with the same room/wall/world placement data as newly added artworks.
 - Added Escape cancellation while an artwork move is in progress.
+
+## v9.9.8 Flush Open Hallway Portals
+- Stopped hallway connector geometry from pushing inward through the room wall plane by default.
+- Matched hallway render height to the doorway cutout height so the top and bottom edges do not protrude past the room wall opening.
+- Kept hallway end caps suppressed at the doorway so each connector behaves as an open rectangular tube/tunnel.
+- Documented the next sequential rollout path for minimap, guided tours, mode separation, and data cleanup.

@@ -180,13 +180,13 @@ function hallwayCenterline(h,rooms){
   const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
   const p1=getPortalVolume(a,fw,h.fromSlot||'center',width,height,.28);
   const p2=getPortalVolume(b,tw,h.toSlot||'center',width,height,.28);
-  // v9.8.4: expand the physical conduit slightly and push it through the wall plane.
-  // This hides the tiny daylight gaps caused by straight/angled hallways meeting axis-aligned room openings.
-  const overlap=.28;
+  // v9.9.8: keep the conduit mouth on the room wall plane. The wall renderer already
+  // cuts the doorway, so pushing the hallway inward creates a visible solid plug.
+  const overlap=Number(h.portalOverlap??0);
   const start={x:p1.x-p1.normal.x*overlap,z:p1.z-p1.normal.z*overlap};
   const end={x:p2.x-p2.normal.x*overlap,z:p2.z-p2.normal.z*overlap};
   const renderWidth=Math.max(width,p1.clearWidth,p2.clearWidth)+.14;
-  const renderHeight=height+.04;
+  const renderHeight=height;
   return {a,b,p1,p2,start,end,width:renderWidth,height:renderHeight,fw,tw};
 }
 function hallwayRoute(h,rooms){
