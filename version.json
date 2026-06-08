@@ -1,8 +1,8 @@
 {
-  "version": "v9.8.7",
+  "version": "v9.8.8",
   "label": "Context menu layering, 3D editor tools visibility and entry splash restore",
-  "build": "v9.8.7",
+  "build": "v9.8.8",
   "updated": "2026-06-08",
-  "name": "Context Menu and Entry Splash Restore",
-  "notes": "Layout editor context menu now works over rooms with contextual add options; 3D editor menus are preview-only; gallery entry splash/warning controls restored."
+  "name": "Gallery v9.8.8 Curator Workflow Polish",
+  "notes": "Semantic button colours, admin settings/password grouping, curator mode improvements, camera preservation, and artwork light presets."
 }
