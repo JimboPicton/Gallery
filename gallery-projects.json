@@ -68,5 +68,198 @@
       }
     },
     "data": []
+  },
+  {
+    "id": "gallery",
+    "name": "Jims Gallery 8th June",
+    "layout": {
+      "rooms": [
+        {
+          "id": "animation",
+          "title": "Animation",
+          "x": 0,
+          "z": 0,
+          "width": 20,
+          "depth": 14,
+          "height": 6,
+          "wallColor": "#6b3f2a",
+          "wallTexture": "",
+          "label": {
+            "text": "Animation",
+            "wall": "front",
+            "x": 0,
+            "y": 4.8
+          },
+          "wallColors": {
+            "front": "#2a2a33",
+            "back": "#2a2a33",
+            "left": "#2a2a33",
+            "right": "#2a2a33"
+          },
+          "wallTextures": {
+            "front": "",
+            "back": "",
+            "left": "",
+            "right": ""
+          }
+        },
+        {
+          "id": "games",
+          "title": "Game Design",
+          "x": 30,
+          "z": 0,
+          "width": 20,
+          "depth": 14,
+          "height": 6,
+          "wallColor": "#ffffff",
+          "wallTexture": "",
+          "label": {
+            "text": "Game Design",
+            "wall": "front",
+            "x": 0,
+            "y": 4.8
+          },
+          "wallColors": {
+            "front": "#2a2a33",
+            "back": "#2a2a33",
+            "left": "#2a2a33",
+            "right": "#2a2a33"
+          },
+          "wallTextures": {
+            "front": "",
+            "back": "",
+            "left": "",
+            "right": ""
+          }
+        }
+      ],
+      "hallways": [
+        {
+          "id": "hall1",
+          "from": "animation",
+          "to": "games",
+          "fromWall": "right",
+          "fromSlot": "center",
+          "toWall": "left",
+          "toSlot": "center",
+          "width": 4,
+          "height": 4,
+          "wallColor": "#ffffff"
+        }
+      ],
+      "settings": {
+        "floorColor": "#151515",
+        "ceilingColor": "#1c1c1c",
+        "floorTexture": "",
+        "ceilingTexture": "",
+        "autoArtworkLights": true,
+        "artworkLightIntensity": 0.9,
+        "defaultWallColor": "#6b3f2a",
+        "palette": [
+          "#2a2a33",
+          "#f5f0e8",
+          "#e8dcc2",
+          "#334155",
+          "#4338ca",
+          "#6b3f2a",
+          "#1f2937",
+          "#ffffff"
+        ],
+        "ambientLight": 1.1,
+        "directionalLight": 1.4,
+        "additionalLights": [
+          {
+            "id": "light1",
+            "x": 24.13,
+            "y": 5.5,
+            "z": -0.44,
+            "intensity": 1.8,
+            "color": "#ffffff",
+            "distance": 18
+          },
+          {
+            "id": "light2",
+            "x": 33.54,
+            "z": -0.44,
+            "y": 5.5,
+            "intensity": 1.5,
+            "color": "#ffffff",
+            "distance": 18
+          },
+          {
+            "id": "light1_copy1",
+            "x": 15.27,
+            "y": 5.5,
+            "z": -0.31,
+            "intensity": 1.8,
+            "color": "#ffffff",
+            "distance": 18
+          }
+        ],
+        "teleports": [
+          {
+            "id": "teleport1",
+            "label": "Jump to Games",
+            "x": 0,
+            "z": 3,
+            "size": 1.4,
+            "linkedTo": "",
+            "toX": 30,
+            "toZ": 0,
+            "destinationLabel": "Games & Interactive Media",
+            "triggerMode": "press",
+            "interaction": "press",
+            "radius": 2.2
+          }
+        ],
+        "audio": {
+          "enabled": false,
+          "masterVolume": 0.75,
+          "sources": [
+            {
+              "id": "ambient1",
+              "label": "Gallery Ambient Bed",
+              "kind": "ambient",
+              "type": "direct",
+              "url": "",
+              "x": 28.81,
+              "y": 1.8,
+              "z": -0.99,
+              "radius": 18,
+              "volume": 0.5,
+              "loop": true
+            }
+          ]
+        },
+        "hallwayColor": "#22222a"
+      },
+      "partitions": [
+        {
+          "id": "wall1",
+          "title": "Half Wall 1",
+          "x1": -4.69,
+          "z1": 7.25,
+          "x2": -4.79,
+          "z2": 1.87,
+          "height": 6,
+          "thickness": 0.22,
+          "wallColor": "#1f2937",
+          "wallTexture": ""
+        },
+        {
+          "id": "wall2",
+          "title": "Half Wall 2",
+          "x1": 35.1,
+          "z1": 7.15,
+          "x2": 35,
+          "z2": 2.07,
+          "height": 6,
+          "thickness": 0.22,
+          "wallColor": "#e8dcc2",
+          "wallTexture": ""
+        }
+      ]
+    },
+    "data": []
   }
 ]
