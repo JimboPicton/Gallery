@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.9.8
+# 3D Student Gallery v9.10.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.9.8 - Flush Open Hallway Portals
+## Current Version: v9.10.0 - Spatial Navigation Panel
 
 ### Latest changes
 
@@ -19,12 +19,13 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 - Shrunk the visitor entry overlay while Curator Mode is active so artwork positioning is no longer blocked by a large centre panel.
 - Added a 3D Curator Mode **Move Artwork** action for repositioning existing artworks onto room walls or half walls from inside the gallery.
 - Fixed hallway entrances so the tube mouths stay open and connect flush with the room wall opening instead of protruding as solid plugs.
+- Restored a compact/expanded 3D map panel with room labels, hallway footprint, teleports, artwork markers, current room highlighting and live visitor position.
 
 ## Sequential Feature Roadmap
 
 The next feature set should roll out as small, testable builds:
 
-1. **v9.10.0 Spatial Navigation Panel / Mini Map** - restore the minimap as a top-down floorplan with room labels, live visitor position, teleport markers, and an expanded modal view.
+1. **v9.10.0 Spatial Navigation Panel / Mini Map** - restored as a top-down floorplan with room labels, live visitor position, teleport markers, and an expanded modal view.
 2. **v9.11.0 Guided Tour Foundations** - add tour data structures, stop ordering, artwork focus targets, and click-next presentation mode before attempting auto-walkthrough movement.
 3. **v9.12.0 Formal Modes and Unified Panels** - separate Visitor, Curator, and Presentation modes and begin consolidating floating UI into consistent panels.
 4. **v9.13.0 Data Architecture Cleanup** - reduce localStorage drift and duplicated JSON responsibilities by moving toward clearer ID-based records.
@@ -123,3 +124,11 @@ After testing locally or in GitHub Pages preview, use the Publish page to export
 - Matched hallway render height to the doorway cutout height so the top and bottom edges do not protrude past the room wall opening.
 - Kept hallway end caps suppressed at the doorway so each connector behaves as an open rectangular tube/tunnel.
 - Documented the next sequential rollout path for minimap, guided tours, mode separation, and data cleanup.
+
+## v9.10.0 Spatial Navigation Panel
+- Restored a top-down mini map in the 3D gallery view.
+- Added compact and expanded map modes.
+- Draws rooms, orthogonal hallway connector footprints, half walls / partitions, teleport markers and artwork markers from the active layout/data.
+- Shows the visitor's live position and facing direction.
+- Highlights the current room while the visitor is inside a room footprint.
+- Lets teleport markers on the map activate the same teleport destinations used in the 3D scene.
