@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.9.1
+# 3D Student Gallery v9.9.2
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.9.1 - Room Materials and Hallway Conduit Update
+## Current Version: v9.9.2 - 3D Artwork Editor Bridge and Hallway Join Fix
 
 ### Latest changes
 
@@ -70,3 +70,9 @@ After testing locally or in GitHub Pages preview, use the Publish page to export
 - Preserved explicit per-wall colour overrides only when they differ from the room base colour.
 - Added hallway wall texture persistence and renderer support.
 - Kept hallways as straight hollow rectangular conduits between selected room wall nodes.
+
+## v9.9.2 3D Artwork Editor Bridge and Hallway Join Fix
+- Tagged 3D room-wall surfaces with room/wall metadata so new 3D artwork placements also appear in the artwork placement editor.
+- Preserved world-position data when artwork records pass through the artwork editor.
+- Added a 3D-placement note in the artwork editor for records positioned directly in the 3D gallery.
+- Extended hallway conduits slightly through portal openings to reduce visible edge gaps at room-wall joins.

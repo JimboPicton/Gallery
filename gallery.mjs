@@ -29,7 +29,7 @@ function getPortalVolume(room,wall,slot,width=4,height=4,depth=.36){
   return {...p,normal:n,width:w,height:h,depth:d,clearWidth:w+seam*2,half,clearHalf,xMin,xMax,zMin,zMax,wallPoint:{x:p.x,z:p.z},outerPoint:{x:p.x+n.x*d,z:p.z+n.z*d}};
 }
 function openingsByRoom(layout){const map={};(layout.rooms||[]).forEach(r=>map[r.id]={front:[],back:[],left:[],right:[]});(layout.hallways||[]).forEach(h=>{const a=layout.rooms.find(r=>r.id===h.from),b=layout.rooms.find(r=>r.id===h.to);if(!a||!b)return;const aw=normalizeWall(h.fromWall||'right'),bw=normalizeWall(h.toWall||'left');const av=getPortalVolume(a,aw,h.fromSlot,Number(h.width||4),Number(h.height||4));const bv=getPortalVolume(b,bw,h.toSlot,Number(h.width||4),Number(h.height||4));map[a.id]?.[aw]?.push({offset:av.offset,width:av.clearWidth,height:av.height,portal:av});map[b.id]?.[bw]?.push({offset:bv.offset,width:bv.clearWidth,height:bv.height,portal:bv});});return map}
-function addWallSegment(room,wall,center,width,yCenter,height,material){if(width<=.05||height<=.05)return;const p=wallPosition(room,wall,center,yCenter,.02);addPlane(width,height,p.pos,p.rot,material)}
+function addWallSegment(room,wall,center,width,yCenter,height,material){if(width<=.05||height<=.05)return;const p=wallPosition(room,wall,center,yCenter,.02);const mesh=addPlane(width,height,p.pos,p.rot,material);mesh.userData={type:'roomWall',room:room.id,wall,roomRef:room}}
 function makeWallWithOpenings(room,wall,openings,material){const span=(wall==='front'||wall==='back')?room.width:room.depth;const fullH=room.height;const sorted=(openings||[]).map(o=>({offset:Number(o.offset||0),width:Number(o.width||4),height:Number(o.height||4)})).sort((a,b)=>a.offset-b.offset);let cursor=-span/2;for(const o of sorted){const start=Math.max(-span/2,o.offset-o.width/2),end=Math.min(span/2,o.offset+o.width/2);addWallSegment(room,wall,(cursor+start)/2,start-cursor,fullH/2,fullH,material);addWallSegment(room,wall,(start+end)/2,end-start,(o.height+(fullH-o.height)/2),fullH-o.height,material);cursor=end}addWallSegment(room,wall,(cursor+span/2)/2,span/2-cursor,fullH/2,fullH,material)}
 function makeLabel(room){if(!room.label)return;const label=room.label||{};const main=label.text||room.title||'';const sub=label.subtitle||label.subheading||'';if(!main&&!sub)return;const c=document.createElement('canvas');c.width=1600;c.height=420;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.textAlign='center';ctx.textBaseline='middle';const font=String(label.font||'Noto Sans').replace(/[^a-zA-Z0-9 ,_-]/g,'');const size=Number(label.size||label.fontSize||92);const col=label.color||'#ffffff';ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=12;ctx.shadowOffsetY=5;ctx.fillStyle=col;ctx.font=`800 ${size}px ${font}, Roboto, Arial, sans-serif`;ctx.fillText(main,c.width/2,sub?c.height*.42:c.height*.5);if(sub){ctx.font=`400 ${Math.round(size*.42)}px ${font}, Roboto, Arial, sans-serif`;ctx.fillStyle=label.subtitleColor||col;ctx.fillText(sub,c.width/2,c.height*.64)}const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const aspect=c.width/c.height;const w=Number(label.width||6.6),h=w/aspect;const p=wallPosition(room,label.wall||'front',Number(label.x||0),Number(label.y||4.8),.11);addPlane(w,h,p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide}));}
 
@@ -281,15 +281,18 @@ function makeStraightHall(route,layout){
   const seg=route.segs?.[0]; if(!seg)return;
   const [a,b]=seg; const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz); if(len<=.05)return;
   const width=Number(route.width||4),height=Number(route.height||4);
-  const cx=(a.x+b.x)/2,cz=(a.z+b.z)/2,ang=Math.atan2(dz,dx);
+  const ux=dx/len,uz=dz/len,overlap=Number(h.portalOverlap??.42);
+  const ax=a.x-ux*overlap,az=a.z-uz*overlap,bx=b.x+ux*overlap,bz=b.z+uz*overlap;
+  const exdx=bx-ax,exdz=bz-az,exlen=Math.hypot(exdx,exdz);
+  const cx=(ax+bx)/2,cz=(az+bz)/2,ang=Math.atan2(exdz,exdx);
   const color=hallColor(h,layout), wallM=mat(color,h.wallTexture||h.texture||'');
   const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''), ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
-  addPlane(len,width,{x:cx,y:.012,z:cz},{x:-Math.PI/2,y:-ang},floorM);
-  addPlane(len,width,{x:cx,y:height,z:cz},{x:Math.PI/2,y:ang},ceilM);
+  addPlane(exlen,width,{x:cx,y:.012,z:cz},{x:-Math.PI/2,y:-ang},floorM);
+  addPlane(exlen,width,{x:cx,y:height,z:cz},{x:Math.PI/2,y:ang},ceilM);
   const nx=-Math.sin(ang), nz=Math.cos(ang);
-  addPlane(len,height,{x:cx+nx*width/2,y:height/2,z:cz+nz*width/2},{y:-ang+Math.PI},wallM);
-  addPlane(len,height,{x:cx-nx*width/2,y:height/2,z:cz-nz*width/2},{y:-ang},wallM);
-  addBound(cx,cz,Math.abs(dx)+width,Math.abs(dz)+width,.02);
+  addPlane(exlen,height,{x:cx+nx*width/2,y:height/2,z:cz+nz*width/2},{y:-ang+Math.PI},wallM);
+  addPlane(exlen,height,{x:cx-nx*width/2,y:height/2,z:cz-nz*width/2},{y:-ang},wallM);
+  addBound(cx,cz,Math.abs(exdx)+width,Math.abs(exdz)+width,.02);
 }
 
 function makeHallNetwork(hallways,rooms,layout){
