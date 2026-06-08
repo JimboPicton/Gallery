@@ -1,11 +1,15 @@
-# 3D Student Gallery v9.13.0
+# 3D Student Gallery v9.14.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.13.0 - Shared Gallery State Normalization
+## Current Version: v9.14.0 - Editor State Consolidation and Curator Workflow Fixes
 
 ### Latest changes
 
+- Trimmed hallway portal joins so side walls no longer visibly protrude past the room wall opening.
+- Added half-wall / partition entries to the Artwork Placement Editor wall selector for partitions inside the selected room.
+- Saved artwork placed on half walls from the Artwork Placement Editor as 3D-compatible world-positioned records.
+- Prevented 3D Curator Mode from returning to the splash/entry overlay when toggling out of edit mode.
 - Added `gallery-state.js` as a shared normalization layer for gallery projects, active gallery IDs, layout drafts, and artwork drafts.
 - Normalized artwork records when they load/save through the Artwork Placement Editor and 3D Curator Mode.
 - Normalized gallery layout/settings records when loaded through Gallery Admin and the 3D gallery runtime.
@@ -36,7 +40,8 @@ The next feature set should roll out as small, testable builds:
 2. **v9.11.0 Guided Tour Foundations** - added tour data structures, automatic artwork stops, artwork focus targets, and click-next presentation mode.
 3. **v9.12.0 Formal Modes and Unified Panels** - added Visitor, Curator, and Presentation modes and began consolidating 3D controls into consistent panels.
 4. **v9.13.0 Data Architecture Cleanup** - added a shared normalization layer and began routing admin, artwork editor, and 3D runtime state through consistent layout/artwork/project records.
-5. **v9.14.0 Editor State Consolidation** - continue replacing page-local gallery/project helpers, especially in the layout editor and gallery manager.
+5. **v9.14.0 Editor State Consolidation and Curator Workflow Fixes** - tightened hallway joins, added half-wall artwork placement support to the editor, and smoothed curator mode return behaviour.
+6. **v9.15.0 Remaining State Consolidation** - continue replacing page-local gallery/project helpers, especially in the gallery manager, publish flow, and main page.
 
 ## Positioning artwork on half walls
 
