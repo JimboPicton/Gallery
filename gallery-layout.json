@@ -50,7 +50,8 @@
       "toSlot": "center",
       "width": 4,
       "height": 4,
-      "wallColor": "#22222a"
+      "wallColor": "#22222a",
+      "wallTexture": ""
     }
   ],
   "settings": {

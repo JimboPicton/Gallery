@@ -217,7 +217,7 @@ function addHallPrismSegment(seg,width,height,layout,wallM){
 function makeHall(h,rooms,layout){
   const route=hallwayRoute(h,rooms);if(!route)return;
   const color=cleanColor(h.wallColor||h.wallColour||h.color||h.colour||layout.settings?.hallwayColor||layout.settings?.hallwayColour)||'#22222a';
-  const wallM=mat(color,'');
+  const wallM=mat(color,h.wallTexture||h.texture||'');
   // Build floor/ceiling as a union so elbow joins do not leave triangular or black gaps.
   const rects=route.segs.map(([u,v])=>rectFromSegment(u,v,route.width)).filter(r=>r.w>.04&&r.d>.04);
   if(!rects.length)return;
@@ -282,7 +282,7 @@ function makeStraightHall(route,layout){
   const [a,b]=seg; const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz); if(len<=.05)return;
   const width=Number(route.width||4),height=Number(route.height||4);
   const cx=(a.x+b.x)/2,cz=(a.z+b.z)/2,ang=Math.atan2(dz,dx);
-  const color=hallColor(h,layout), wallM=mat(color,'');
+  const color=hallColor(h,layout), wallM=mat(color,h.wallTexture||h.texture||'');
   const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''), ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
   addPlane(len,width,{x:cx,y:.012,z:cz},{x:-Math.PI/2,y:-ang},floorM);
   addPlane(len,width,{x:cx,y:height,z:cz},{x:Math.PI/2,y:ang},ceilM);
