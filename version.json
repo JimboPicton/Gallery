@@ -1,6 +1,8 @@
 {
-  "version": "9.8.5",
+  "version": "v9.8.6",
   "label": "CQU theme, admin navigation, gallery rename and 3D contextual artwork tools",
-  "build": "v9.8.5",
-  "updated": "2026-06-08"
+  "build": "v9.8.6",
+  "updated": "2026-06-08",
+  "name": "UI theme palette correction",
+  "notes": "CQU styling limited to page chrome; editor colour palettes restored to gallery materials; toolbar buttons use differentiated action colours."
 }
