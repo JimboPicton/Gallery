@@ -67,9 +67,13 @@ function rectFromSegment(a,b,width){
 function wallOutwardVector(w){w=normalizeWall(w);if(w==='front')return{x:0,z:1};if(w==='back')return{x:0,z:-1};if(w==='left')return{x:-1,z:0};return{x:1,z:0}}
 function addv(p,n,d){return{x:p.x+n.x*d,z:p.z+n.z*d}}
 function routeHallSegments(p1,p2,fw,tw,width){
-  // v9.8.4: hallways are strictly straight conduits. No auto L-shaped routes,
-  // elbows, or intermediate nodes are generated.
-  return [[p1,p2]];
+  const n1=wallOutwardVector(fw),n2=wallOutwardVector(tw),stub=Math.max(Number(width||4)*.7,.9);
+  const s1=addv(p1,n1,stub),e1=addv(p2,n2,stub);
+  const preferX=Math.abs(n1.x)+Math.abs(n2.x)>=Math.abs(n1.z)+Math.abs(n2.z);
+  const bend=preferX?{x:e1.x,z:s1.z}:{x:s1.x,z:e1.z};
+  const pts=[p1,s1,bend,e1,p2].filter((p,i,a)=>i===0||Math.hypot(p.x-a[i-1].x,p.z-a[i-1].z)>.05);
+  const segs=[];for(let i=0;i<pts.length-1;i++)segs.push([pts[i],pts[i+1]]);
+  return segs;
 }
 function addHallCellFloorCeil(cell,height,layout){
   const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
@@ -298,9 +302,9 @@ function makeStraightHall(route,layout){
 function makeHallNetwork(hallways,rooms,layout){
   const routes=collectHallwayNetwork(hallways,rooms);
   if(!routes.length)return;
-  // v9.8.4: render each hallway as one straight hollow rectangular conduit.
+  // v9.9.6: render each hallway as an orthogonal rectangular conduit union.
   window.__galleryLayoutForMaterials=layout;
-  routes.forEach(route=>makeStraightHall(route,layout));
+  (hallways||[]).forEach(h=>makeHall(h,rooms,layout));
 }
 
 function makePartitionWall(p){

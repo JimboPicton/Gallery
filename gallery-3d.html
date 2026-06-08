@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>3D Student Gallery v9.9.4</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<title>3D Student Gallery v9.9.6</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:'Noto Sans','Roboto',Arial,sans-serif;color:#fff}canvas{display:block}.hud{position:fixed;top:14px;left:14px;z-index:30;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;max-width:350px;font-size:14px}.hud a{color:#b8c4ff}.overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;text-align:center}.overlay div{pointer-events:auto;cursor:pointer;padding:26px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:rgba(0,0,0,.84);box-shadow:0 12px 60px rgba(0,0,0,.45)}.panel{position:fixed;top:14px;right:14px;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;z-index:35;display:none;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px}.panel h2{margin:.1rem 0 .3rem}.panel iframe,.panel img,.panel video{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}.statement3d{font-family:Arial}.panel button{float:right;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}.error{position:fixed;bottom:14px;left:14px;right:14px;background:#4c1515;border:1px solid #a94444;border-radius:12px;padding:12px;z-index:40}.teleportHint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:36;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;color:#fff;display:none}.audioHud{position:fixed;left:14px;bottom:14px;z-index:38;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.audioHud button{border:0;border-radius:8px;padding:6px 9px;cursor:pointer}.audioHud input[type=range]{width:100px}.audioHint{font-size:12px;color:#bbb}.reticle{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:34;pointer-events:none;width:34px;height:34px;border:2px solid rgba(255,255,255,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.18)}.reticle::after{content:"+";color:white;font-weight:bold}.ytAudioPanel{position:fixed;left:14px;bottom:62px;z-index:38;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px;display:none}.ytAudioPanel iframe{width:260px;height:146px;border:0;border-radius:8px;background:#000}.contextMenu{position:fixed;z-index:60;display:none;min-width:190px;background:rgba(7,19,11,.96);border:1px solid rgba(242,201,76,.45);border-radius:12px;padding:6px;box-shadow:0 12px 38px rgba(0,0,0,.45)}.contextMenu button{display:block;width:100%;margin:2px 0;text-align:left;background:transparent;color:#fff;border:0;border-radius:8px;padding:9px 10px;cursor:pointer}.contextMenu button:hover{background:rgba(242,201,76,.18)}.curatorBadge{position:fixed;right:14px;bottom:14px;z-index:39;background:rgba(0,0,0,.78);border:1px solid rgba(242,201,76,.45);border-radius:12px;padding:9px 12px;font-size:13px;color:#f2c94c;display:none}
 </style>
@@ -18,7 +18,7 @@ body{font-family:'Noto Sans','Roboto','Segoe UI',Arial,sans-serif!important}
 </style>
 </head>
 <body>
-<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.9.4</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
+<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.9.6</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
 <div id="overlay" class="overlay"><div id="entryCard"><h1 id="entryTitle">Click to Enter Gallery</h1><div id="entrySplash"></div><p id="entryWarning">Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
 <div id="reticle" class="reticle"></div><div id="curatorBadge" class="curatorBadge">Curator Mode: right-click to edit · F to return to navigation</div><div id="contextMenu" class="contextMenu"></div><div id="ytAudioPanel" class="ytAudioPanel"></div><div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioToggle">Turn sound on</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
 <script type="module">
@@ -97,10 +97,13 @@ function rectFromSegment(a,b,width){
 function wallOutwardVector(w){w=normalizeWall(w);if(w==='front')return{x:0,z:1};if(w==='back')return{x:0,z:-1};if(w==='left')return{x:-1,z:0};return{x:1,z:0}}
 function addv(p,n,d){return{x:p.x+n.x*d,z:p.z+n.z*d}}
 function routeHallSegments(p1,p2,fw,tw,width){
-  // v9.8.8: hallways are strictly straight conduits. No auto L-shaped routes,
-  // elbows, or intermediate nodes are generated. A hallway is a single hollow
-  // rectangular prism joining two portal openings.
-  return [[p1,p2]];
+  const n1=wallOutwardVector(fw),n2=wallOutwardVector(tw),stub=Math.max(Number(width||4)*.7,.9);
+  const s1=addv(p1,n1,stub),e1=addv(p2,n2,stub);
+  const preferX=Math.abs(n1.x)+Math.abs(n2.x)>=Math.abs(n1.z)+Math.abs(n2.z);
+  const bend=preferX?{x:e1.x,z:s1.z}:{x:s1.x,z:e1.z};
+  const pts=[p1,s1,bend,e1,p2].filter((p,i,a)=>i===0||Math.hypot(p.x-a[i-1].x,p.z-a[i-1].z)>.05);
+  const segs=[];for(let i=0;i<pts.length-1;i++)segs.push([pts[i],pts[i+1]]);
+  return segs;
 }
 function addHallCellFloorCeil(cell,height,layout){
   const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
@@ -330,11 +333,11 @@ function makeStraightHall(route,layout){
 function makeHallNetwork(hallways,rooms,layout){
   const routes=collectHallwayNetwork(hallways,rooms);
   if(!routes.length)return;
-  // v9.8.8: render each hallway as one straight hollow rectangular conduit.
-  // This avoids the previous axis-aligned union/elbow logic that generated phantom
-  // splits, sheared walls, and L-shaped corridors when rooms were moved apart.
+  // v9.9.6: hallways are rendered as orthogonal rectangular conduit unions.
+  // Free-angle hallway faces do not meet axis-aligned room doorway cuts cleanly,
+  // so this simpler sleeve/bridge model avoids recurring edge slivers.
   window.__galleryLayoutForMaterials=layout;
-  routes.forEach(route=>makeStraightHall(route,layout));
+  (hallways||[]).forEach(h=>makeHall(h,rooms,layout));
 }
 
 
@@ -448,7 +451,7 @@ function saveCameraState(){try{sessionStorage.setItem('gallery-camera-state',JSO
 function duplicateArtworkRecord(d){const copy=JSON.parse(JSON.stringify(d));copy.id=(d.id||'art')+'-copy-'+Date.now();copy.title=(d.title||'Artwork')+' Copy';if(copy.worldPosition){copy.worldPosition.x=Number(copy.worldPosition.x||0)+.35;copy.worldPosition.y=Number(copy.worldPosition.y||3);copy.worldPosition.z=Number(copy.worldPosition.z||0)+.02}else{copy.x=Number(copy.x||0)+.35}window.__galleryData.push(copy);reloadAfterEdit()}
 function deleteArtworkRecord(d){if(!confirm('Delete this artwork from the active gallery draft?'))return;const id=d.id;window.__galleryData=(window.__galleryData||[]).filter(a=>a!==d && (!id||a.id!==id));reloadAfterEdit()}
 function setArtworkLight(d,on=true){d.accentLight=on;reloadAfterEdit()}
-function artFromHit(hit){const rawPoint=hit.point.clone();const point=rawPoint.clone();const obj=hit.object;let rotY=obj.rotation?.y||0;point.add(new THREE.Vector3(Math.sin(rotY)*.08,0,Math.cos(rotY)*.08));const meta=obj.userData||{};const roomRec=meta.roomRef||(layout.rooms||[]).find(r=>r.id===meta.room);const surface={};if(meta.type==='roomWall'&&roomRec){surface.room=roomRec.id;surface.wall=meta.wall||'back';surface.y=+Math.max(1.4,Math.min(rawPoint.y,roomRec.height||4)).toFixed(3);surface.x=+(surface.wall==='front'||surface.wall==='back'?rawPoint.x-roomRec.x:rawPoint.z-roomRec.z).toFixed(3)}return {id:'art'+Date.now(),title:'New Artwork',artist:'Student Name',description:'',mediaType:'image',type:'image',media:'',image:'',tags:[],...surface,placement:'world',worldPosition:{x:+point.x.toFixed(3),y:+Math.max(1.4,Math.min(point.y,4)).toFixed(3),z:+point.z.toFixed(3)},rotY:+rotY.toFixed(4),width:3,height:1.7,statementDisplay:'popup',accentLight:true}}
+function artFromHit(hit){const rawPoint=hit.point.clone();const point=rawPoint.clone();const obj=hit.object;let normal=new THREE.Vector3(Math.sin(obj.rotation?.y||0),0,Math.cos(obj.rotation?.y||0));if(hit.face){normal=hit.face.normal.clone().transformDirection(obj.matrixWorld);normal.y=0;if(normal.lengthSq()<.0001)normal.set(Math.sin(obj.rotation?.y||0),0,Math.cos(obj.rotation?.y||0));normal.normalize()}let rotY=Math.atan2(normal.x,normal.z);point.add(normal.multiplyScalar(.14));const meta=obj.userData||{};const roomRec=meta.roomRef||(layout.rooms||[]).find(r=>r.id===meta.room);const surface={};if(meta.type==='roomWall'&&roomRec){surface.room=roomRec.id;surface.wall=meta.wall||'back';surface.y=+Math.max(1.4,Math.min(rawPoint.y,roomRec.height||4)).toFixed(3);surface.x=+(surface.wall==='front'||surface.wall==='back'?rawPoint.x-roomRec.x:rawPoint.z-roomRec.z).toFixed(3)}if(meta.type==='partition'){surface.surface='partition';surface.partitionId=meta.partition?.id||''}return {id:'art'+Date.now(),title:'New Artwork',artist:'Student Name',description:'',mediaType:'image',type:'image',media:'',image:'',tags:[],...surface,placement:'world',worldPosition:{x:+point.x.toFixed(3),y:+Math.max(1.4,Math.min(point.y,4)).toFixed(3),z:+point.z.toFixed(3)},rotY:+rotY.toFixed(4),width:3,height:1.7,statementDisplay:'popup',accentLight:true}}
 function handleEditorContext(e){
   if(!editorMode)return;
   e.preventDefault();

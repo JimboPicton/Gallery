@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.9.4
+# 3D Student Gallery v9.9.6
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.9.4 - World Placement Artwork Editor List
+## Current Version: v9.9.6 - Simpler Orthogonal Hallway Connectors
 
 ### Latest changes
 
@@ -86,3 +86,15 @@ After testing locally or in GitHub Pages preview, use the Publish page to export
 - Added a 3D / World Placements list to the artwork placement editor so artwork placed on half walls and partitions can be selected for metadata edits.
 - Kept world-only placements out of the ordinary wall canvas unless they have real room/wall metadata.
 - Preserved world-only placement coordinates when applying metadata changes from the artwork editor.
+
+## v9.9.5 Active Gallery and Half Wall Placement Fixes
+- Fixed Gallery Manager draft preview links so Set Active opens the selected local gallery rather than the published active gallery.
+- Added an Enter Active Gallery draft shortcut and Settings shortcut to Gallery Manager.
+- Let the main index use a local active gallery during curator testing while public visitors still use published gallery data.
+- Improved 3D half-wall/partition artwork placement by using the clicked face normal and offsetting artwork outward from the surface.
+
+## v9.9.6 Simpler Orthogonal Hallway Connectors
+- Replaced free-angle hallway rendering with orthogonal rectangular connector sleeves and bridge segments.
+- Reused the existing hallway union/perimeter renderer so floor, ceiling, walls and collision bounds are generated from axis-aligned rectangles.
+- Updated the layout editor preview so hallway drawings match the 3D connector route.
+- Avoided angled hallway walls meeting rectangular doorway cuts, which was the main cause of recurring edge gaps and slivers.
