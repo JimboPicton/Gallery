@@ -1,11 +1,14 @@
-# 3D Student Gallery v9.17.0
+# 3D Student Gallery v9.18.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.17.0 - Hallway Walkability and Movement Smoothing
+## Current Version: v9.18.0 - Tour Editor UI
 
 ### Latest changes
 
+- Added a Tour Editor tab in Gallery Admin for creating and editing Presentation Mode tours.
+- Added curator controls to choose artworks, reorder stops, rename stop titles, set durations, and write narration text.
+- Saved tour data into the active gallery layout as `settings.tours` so Publish exports it cleanly.
 - Removed tiny non-walkable cracks from hallway floor-cell bounds so segmented hallway joins no longer catch the viewer.
 - Smoothed 3D movement by resolving forward/back and sideways movement separately.
 - Restored the splash graphic and entry message on first load of the 3D gallery.
@@ -54,7 +57,14 @@ The next feature set should roll out as small, testable builds:
 6. **v9.15.0 Remaining State Consolidation and Hallway Flush Join** - moved the main page, Gallery Manager, and Publish flow onto shared state helpers and fixed the slight hallway gap at doorway joins.
 7. **v9.16.0 Viewer Entry Overlay and Mode Recovery** - restored the intended entry splash and ESC recovery flow after the formal mode controls were added.
 8. **v9.17.0 Hallway Walkability and Movement Smoothing** - removed invisible movement catches at hallway floor joins and improved diagonal movement handling.
-9. **v9.18.0 Curator Placement Tools** - add more intuitive in-3D artwork positioning controls and reduce reliance on reload-based editing.
+9. **v9.18.0 Tour Editor UI** - added Admin-based tour creation/editing with artwork stop ordering and narration text.
+10. **v9.19.0 Editor Zoom and Pan** - add proper canvas zoom, fit-to-gallery, zoom-to-selection, and pan mode for large-gallery editing.
+11. **v9.20.0 Unified Panel System** - standardise panel layout, button styling, spacing, and dock behaviour across the app.
+12. **v9.21.0 Adaptive Media Viewer** - restore centred lightbox media viewing and keep side panels for long text.
+13. **v9.22.0 Presentation Mode Upgrade** - add timed playback, optional narration/audio per stop, and smoother camera transitions.
+14. **v9.23.0 Performance and Stability** - lazy-load heavier media and reduce repeated geometry/material work.
+15. **v9.24.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
+16. **v9.25.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
 
 ## Positioning artwork on half walls
 
