@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.10.0
+# 3D Student Gallery v9.12.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.10.0 - Spatial Navigation Panel
+## Current Version: v9.12.0 - Guided Tours and Formal Modes
 
 ### Latest changes
 
@@ -20,14 +20,17 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 - Added a 3D Curator Mode **Move Artwork** action for repositioning existing artworks onto room walls or half walls from inside the gallery.
 - Fixed hallway entrances so the tube mouths stay open and connect flush with the room wall opening instead of protruding as solid plugs.
 - Restored a compact/expanded 3D map panel with room labels, hallway footprint, teleports, artwork markers, current room highlighting and live visitor position.
+- Added Guided Tour foundations with automatic artwork highlight tours and support for future `settings.tours` records.
+- Added formal Visitor, Curator and Presentation modes in the 3D gallery view.
+- Added a presentation panel with Previous / Next / Exit controls and camera focus per stop.
 
 ## Sequential Feature Roadmap
 
 The next feature set should roll out as small, testable builds:
 
 1. **v9.10.0 Spatial Navigation Panel / Mini Map** - restored as a top-down floorplan with room labels, live visitor position, teleport markers, and an expanded modal view.
-2. **v9.11.0 Guided Tour Foundations** - add tour data structures, stop ordering, artwork focus targets, and click-next presentation mode before attempting auto-walkthrough movement.
-3. **v9.12.0 Formal Modes and Unified Panels** - separate Visitor, Curator, and Presentation modes and begin consolidating floating UI into consistent panels.
+2. **v9.11.0 Guided Tour Foundations** - added tour data structures, automatic artwork stops, artwork focus targets, and click-next presentation mode.
+3. **v9.12.0 Formal Modes and Unified Panels** - added Visitor, Curator, and Presentation modes and began consolidating 3D controls into consistent panels.
 4. **v9.13.0 Data Architecture Cleanup** - reduce localStorage drift and duplicated JSON responsibilities by moving toward clearer ID-based records.
 
 ## Positioning artwork on half walls
@@ -132,3 +135,17 @@ After testing locally or in GitHub Pages preview, use the Publish page to export
 - Shows the visitor's live position and facing direction.
 - Highlights the current room while the visitor is inside a room footprint.
 - Lets teleport markers on the map activate the same teleport destinations used in the 3D scene.
+
+## v9.11.0 Guided Tour Foundations
+- Added tour data support for `layout.settings.tours` / `layout.tours`.
+- Added automatic Gallery Highlights tours from placed artwork records when no explicit tour is configured.
+- Added camera focus generation for wall-placed and world-positioned artworks.
+- Added click-next presentation navigation with Previous, Next and Exit controls.
+- Kept auto-walkthrough movement out of this build so the tour model can be tested first.
+
+## v9.12.0 Formal Modes and Unified Panels
+- Added explicit Visitor, Curator and Presentation mode controls in the 3D gallery view.
+- Kept Curator mode visible only in editor/draft preview contexts.
+- Added keyboard shortcuts: `P` for Presentation mode, `V` for Visitor mode and `E` to advance while presenting.
+- Moved tour controls into a consistent floating panel style aligned with the map/audio HUD.
+- Kept Presentation mode read-only for visitors while preserving Curator right-click tools in draft mode.
