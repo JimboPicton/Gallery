@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>3D Student Gallery v9.8.6</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<title>3D Student Gallery v9.8.7</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:'Noto Sans','Roboto',Arial,sans-serif;color:#fff}canvas{display:block}.hud{position:fixed;top:14px;left:14px;z-index:30;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;max-width:350px;font-size:14px}.hud a{color:#b8c4ff}.overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;text-align:center}.overlay div{pointer-events:auto;cursor:pointer;padding:26px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:rgba(0,0,0,.84);box-shadow:0 12px 60px rgba(0,0,0,.45)}.panel{position:fixed;top:14px;right:14px;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;z-index:35;display:none;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px}.panel h2{margin:.1rem 0 .3rem}.panel iframe,.panel img,.panel video{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}.statement3d{font-family:Arial}.panel button{float:right;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}.error{position:fixed;bottom:14px;left:14px;right:14px;background:#4c1515;border:1px solid #a94444;border-radius:12px;padding:12px;z-index:40}.teleportHint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:36;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;color:#fff;display:none}.audioHud{position:fixed;left:14px;bottom:14px;z-index:38;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.audioHud button{border:0;border-radius:8px;padding:6px 9px;cursor:pointer}.audioHud input[type=range]{width:100px}.audioHint{font-size:12px;color:#bbb}.reticle{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:34;pointer-events:none;width:34px;height:34px;border:2px solid rgba(255,255,255,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.18)}.reticle::after{content:"+";color:white;font-weight:bold}.ytAudioPanel{position:fixed;left:14px;bottom:62px;z-index:38;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px;display:none}.ytAudioPanel iframe{width:260px;height:146px;border:0;border-radius:8px;background:#000}.contextMenu{position:fixed;z-index:60;display:none;min-width:190px;background:rgba(7,19,11,.96);border:1px solid rgba(242,201,76,.45);border-radius:12px;padding:6px;box-shadow:0 12px 38px rgba(0,0,0,.45)}.contextMenu button{display:block;width:100%;margin:2px 0;text-align:left;background:transparent;color:#fff;border:0;border-radius:8px;padding:9px 10px;cursor:pointer}.contextMenu button:hover{background:rgba(242,201,76,.18)}
 </style>
@@ -18,8 +18,8 @@ body{font-family:'Noto Sans','Roboto','Segoe UI',Arial,sans-serif!important}
 </style>
 </head>
 <body>
-<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.8.6</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
-<div id="overlay" class="overlay"><div><h1>Click to Enter Gallery</h1><p>Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
+<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.8.7</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
+<div id="overlay" class="overlay"><div id="entryCard"><h1 id="entryTitle">Click to Enter Gallery</h1><div id="entrySplash"></div><p id="entryWarning">Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
 <div id="reticle" class="reticle"></div><div id="contextMenu" class="contextMenu"></div><div id="ytAudioPanel" class="ytAudioPanel"></div><div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioToggle">Turn sound on</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
 <script type="module">
 
@@ -30,9 +30,11 @@ const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1000);came
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);document.body.appendChild(renderer.domElement);
 const controls=new PointerLockControls(camera,document.body);const overlay=document.getElementById('overlay');overlay.querySelector('div').onclick=e=>{if(e.target.tagName!=='A')controls.lock()};controls.addEventListener('lock',()=>overlay.style.display='none');controls.addEventListener('unlock',()=>overlay.style.display='flex');
 const panel=document.getElementById('panel'),panelContent=document.getElementById('panelContent'),reticle=document.getElementById('reticle');function closePanel(){panel.style.display='none';panelContent.innerHTML='';overlay.style.display='flex'}document.getElementById('closePanel').onclick=closePanel;
+function applyEntrySplash(layout){const st=layout.settings||{};const card=document.getElementById('entryCard'),warn=document.getElementById('entryWarning'),splash=document.getElementById('entrySplash');if(warn)warn.textContent=st.entryWarning||'Use WASD and mouse look. Press ESC to use menu links.';if(splash){splash.innerHTML='';if(st.splashImage){const img=document.createElement('img');img.src=st.splashImage;img.alt='Gallery entry image';img.style.cssText='max-width:min(620px,70vw);max-height:36vh;display:block;margin:0 auto 14px;border-radius:12px;object-fit:cover';splash.appendChild(img)}}if(st.splashEnabled===false&&card){document.getElementById('overlay').style.display='none'}}
 const keys={},artMeshes=[],partitionMeshes=[],teleportMeshes=[],bounds=[];let activeTeleport=null,teleportCooldown=0;document.addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='KeyE'){e.preventDefault();if(!activateLookTarget())activateTeleport()}});document.addEventListener('keyup',e=>keys[e.code]=false);
 const loader=new THREE.TextureLoader();
-async function getJSON(path,fallback){const params=new URLSearchParams(location.search);const draft=params.get('draft')!=='0';const key=path.includes('layout')?'gallery-layout-draft':path.includes('data')?'gallery-data-draft':'';const galleryId=params.get('gallery')||localStorage.getItem('active-gallery-id')||'repo';if(galleryId&&galleryId!=='repo'){try{const gs=JSON.parse(localStorage.getItem('gallery-projects')||'[]');const g=gs.find(x=>x.id===galleryId);const val=path.includes('layout')?g?.layout:path.includes('data')?g?.data:null;if(val){console.info('Using active gallery '+galleryId+' for '+path);return val}}catch(e){console.warn(e)}}if(draft&&key){try{const d=localStorage.getItem(key);if(d){console.info('Using local draft for '+path);return JSON.parse(d)}}catch(e){console.warn(e)}}try{const r=await fetch(path,{cache:'no-cache'});if(!r.ok)throw Error(path);return await r.json()}catch(e){showError(`Could not load ${path}. Using fallback data.`);return fallback}}
+const __pageParams=new URLSearchParams(location.search);const editorMode=__pageParams.get('draft')==='1'||__pageParams.has('preview')||__pageParams.get('edit')==='1';
+async function getJSON(path,fallback){const params=new URLSearchParams(location.search);const __localEditorMode=params.get('draft')==='1'||params.has('preview')||params.get('edit')==='1';const draft=params.get('draft')!=='0';const key=path.includes('layout')?'gallery-layout-draft':path.includes('data')?'gallery-data-draft':'';const galleryId=params.get('gallery')||localStorage.getItem('active-gallery-id')||'repo';if(galleryId&&galleryId!=='repo'){try{const gs=JSON.parse(localStorage.getItem('gallery-projects')||'[]');const g=gs.find(x=>x.id===galleryId);const val=path.includes('layout')?g?.layout:path.includes('data')?g?.data:null;if(val){console.info('Using active gallery '+galleryId+' for '+path);return val}}catch(e){console.warn(e)}}if(draft&&key){try{const d=localStorage.getItem(key);if(d){console.info('Using local draft for '+path);return JSON.parse(d)}}catch(e){console.warn(e)}}try{const r=await fetch(path,{cache:'no-cache'});if(!r.ok)throw Error(path);return await r.json()}catch(e){showError(`Could not load ${path}. Using fallback data.`);return fallback}}
 function showError(msg){const d=document.createElement('div');d.className='error';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),9000)}
 function mat(color,texture){const m=new THREE.MeshStandardMaterial({color:new THREE.Color(color||'#2a2a33'),side:THREE.DoubleSide});if(texture){loader.load(texture,t=>{t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(4,2);m.map=t;m.needsUpdate=true})}return m}
 function addPlane(w,h,pos,rot,material){const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(pos.x,pos.y,pos.z);mesh.rotation.set(rot.x||0,rot.y||0,rot.z||0);scene.add(mesh);return mesh}
@@ -61,7 +63,7 @@ function makeLabel(room){if(!room.label)return;const label=room.label||{};const 
 function validColor(v){return typeof v==='string'&&/^#?[0-9a-f]{6}$/i.test(v.trim())}
 function cleanColor(v){if(!validColor(v))return '';v=v.trim();return v.startsWith('#')?v:'#'+v}
 function wallColourMap(room){
-  // v9.8.6: accept all editor/export naming variants so colours seen in the 2D editor
+  // v9.8.7: accept all editor/export naming variants so colours seen in the 2D editor
   // are the same colours used by the 3D renderer.
   const out={...(room.wallColors||{}),...(room.wallColours||{}),...(room.wallcolors||{}),...(room.wallcolours||{})};
   ['front','back','left','right'].forEach(w=>{
@@ -92,7 +94,7 @@ function rectFromSegment(a,b,width){
 function wallOutwardVector(w){w=normalizeWall(w);if(w==='front')return{x:0,z:1};if(w==='back')return{x:0,z:-1};if(w==='left')return{x:-1,z:0};return{x:1,z:0}}
 function addv(p,n,d){return{x:p.x+n.x*d,z:p.z+n.z*d}}
 function routeHallSegments(p1,p2,fw,tw,width){
-  // v9.8.6: hallways are strictly straight conduits. No auto L-shaped routes,
+  // v9.8.7: hallways are strictly straight conduits. No auto L-shaped routes,
   // elbows, or intermediate nodes are generated. A hallway is a single hollow
   // rectangular prism joining two portal openings.
   return [[p1,p2]];
@@ -111,7 +113,7 @@ function rectContainsCell(r,x1,x2,z1,z2){
 }
 function snapCoord(v){return Math.round(Number(v)*1000)/1000}
 function makeUnionCells(rects){
-  // v9.8.6: snap grid coordinates. Tiny floating-point differences after dragging
+  // v9.8.7: snap grid coordinates. Tiny floating-point differences after dragging
   // rooms were creating phantom one-cell boundaries that appeared as vertical walls.
   const xs=[...new Set(rects.flatMap(r=>[snapCoord(r.x-r.w/2),snapCoord(r.x+r.w/2)]))].sort((a,b)=>a-b);
   const zs=[...new Set(rects.flatMap(r=>[snapCoord(r.z-r.d/2),snapCoord(r.z+r.d/2)]))].sort((a,b)=>a-b);
@@ -202,7 +204,7 @@ function hallwayCenterline(h,rooms){
   const fw=normalizeWall(h.fromWall||'right'),tw=normalizeWall(h.toWall||'left');
   const p1=getPortalVolume(a,fw,h.fromSlot||'center',width,height,.28);
   const p2=getPortalVolume(b,tw,h.toSlot||'center',width,height,.28);
-  // v9.8.6: expand the physical conduit slightly and push it through the wall plane.
+  // v9.8.7: expand the physical conduit slightly and push it through the wall plane.
   // This hides the tiny daylight gaps caused by straight/angled hallways meeting axis-aligned room openings.
   const overlap=.28;
   const start={x:p1.x-p1.normal.x*overlap,z:p1.z-p1.normal.z*overlap};
@@ -322,7 +324,7 @@ function makeStraightHall(route,layout){
 function makeHallNetwork(hallways,rooms,layout){
   const routes=collectHallwayNetwork(hallways,rooms);
   if(!routes.length)return;
-  // v9.8.6: render each hallway as one straight hollow rectangular conduit.
+  // v9.8.7: render each hallway as one straight hollow rectangular conduit.
   // This avoids the previous axis-aligned union/elbow logic that generated phantom
   // splits, sheared walls, and L-shaped corridors when rooms were moved apart.
   window.__galleryLayoutForMaterials=layout;
@@ -423,7 +425,19 @@ function duplicateArtworkRecord(d){const copy=JSON.parse(JSON.stringify(d));copy
 function deleteArtworkRecord(d){if(!confirm('Delete this artwork from the active gallery draft?'))return;const id=d.id;window.__galleryData=(window.__galleryData||[]).filter(a=>a!==d && (!id||a.id!==id));reloadAfterEdit()}
 function setArtworkLight(d,on=true){d.accentLight=on;reloadAfterEdit()}
 function artFromHit(hit){const point=hit.point.clone();const obj=hit.object;let rotY=obj.rotation?.y||0;point.add(new THREE.Vector3(Math.sin(rotY)*.08,0,Math.cos(rotY)*.08));return {id:'art'+Date.now(),title:'New Artwork',artist:'Student Name',description:'',mediaType:'image',type:'image',media:'',image:'',tags:[],placement:'world',worldPosition:{x:+point.x.toFixed(3),y:+Math.max(1.4,Math.min(point.y,4)).toFixed(3),z:+point.z.toFixed(3)},rotY:+rotY.toFixed(4),width:3,height:1.7,statementDisplay:'popup',accentLight:true}}
-renderer.domElement.addEventListener('contextmenu',e=>{e.preventDefault();setMouse(e);const artHit=raycaster.intersectObjects(artMeshes,true)[0];if(artHit){const d=artHit.object.userData;showContextMenu(e.clientX,e.clientY,[{label:'Duplicate Artwork',action:()=>duplicateArtworkRecord(d)},{label:'Delete Artwork',action:()=>deleteArtworkRecord(d)},{label:(d.accentLight===false?'Add':'Refresh')+' Artwork Light',action:()=>setArtworkLight(d,true)},{label:'Disable Artwork Light',action:()=>setArtworkLight(d,false)}]);return}const hits=raycaster.intersectObjects(scene.children,true).filter(h=>h.object.type==='Mesh'&&!teleportMeshes.includes(h.object)&&h.object.geometry?.type!=='CircleGeometry');if(hits[0]){showContextMenu(e.clientX,e.clientY,[{label:'Add Artwork Here',action:()=>{window.__galleryData.push(artFromHit(hits[0]));reloadAfterEdit()}},{label:'Add Artwork Light Here',action:()=>{const a=artFromHit(hits[0]);a.title='Artwork with Light';a.accentLight=true;window.__galleryData.push(a);reloadAfterEdit()}}]);}});
+function handleEditorContext(e){
+  if(!editorMode)return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(controls.isLocked)controls.unlock();
+  setMouse(e);
+  const artHit=raycaster.intersectObjects(artMeshes,true)[0];
+  if(artHit){const d=artHit.object.userData;showContextMenu(e.clientX,e.clientY,[{label:'Duplicate Artwork',action:()=>duplicateArtworkRecord(d)},{label:'Delete Artwork',action:()=>deleteArtworkRecord(d)},{label:(d.accentLight===false?'Add':'Refresh')+' Artwork Light',action:()=>setArtworkLight(d,true)},{label:'Disable Artwork Light',action:()=>setArtworkLight(d,false)}]);return}
+  const hits=raycaster.intersectObjects(scene.children,true).filter(h=>h.object.type==='Mesh'&&!teleportMeshes.includes(h.object)&&h.object.geometry?.type!=='CircleGeometry'&&!artMeshes.includes(h.object));
+  if(hits[0]){showContextMenu(e.clientX,e.clientY,[{label:'Add Artwork Here',action:()=>{window.__galleryData.push(artFromHit(hits[0]));reloadAfterEdit()}},{label:'Add Artwork + Light Here',action:()=>{const a=artFromHit(hits[0]);a.title='Artwork with Light';a.accentLight=true;window.__galleryData.push(a);reloadAfterEdit()}}]);}
+}
+renderer.domElement.addEventListener('contextmenu',handleEditorContext);
+renderer.domElement.addEventListener('pointerdown',e=>{if(e.button===2)handleEditorContext(e)});
 document.addEventListener('click',e=>{if(!contextMenu.contains(e.target))hideContextMenu()});
 
 const audioState={enabled:false,muted:false,master:.75,sources:[]};
@@ -497,8 +511,8 @@ function updateAudioVolumes(){
   status.textContent=audioState.muted?'Muted':active?'Audio nearby':'Audio on';
 }
 
-const fallback={partitions:[],rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',floorTexture:'',ceilingTexture:'',autoArtworkLights:true,artworkLightIntensity:.9,defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
-const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);window.__galleryData=data;addLights(layout);addTeleports(layout);setupAudio(layout);window.__galleryLayoutForMaterials=layout;const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.partitions||layout.halfWalls||[]).forEach(makePartitionWall);makeHallNetwork(layout.hallways||[],layout.rooms||[],layout);camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
+const fallback={partitions:[],rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',floorTexture:'',ceilingTexture:'',autoArtworkLights:true,artworkLightIntensity:.9,splashEnabled:true,splashImage:'',entryWarning:'Use WASD and mouse look. Press ESC to use menu links.',defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
+const layout=await getJSON('./gallery-layout.json',fallback);applyEntrySplash(layout);if(editorMode){document.querySelector('.hud').innerHTML+=' <br><span style="color:#f2c94c">Editor preview: right-click walls/half walls/artwork for editing tools. Published visitors do not see these menus.</span>'}const data=await getJSON('./gallery-data.json',[]);window.__galleryData=data;addLights(layout);addTeleports(layout);setupAudio(layout);window.__galleryLayoutForMaterials=layout;const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.partitions||layout.halfWalls||[]).forEach(makePartitionWall);makeHallNetwork(layout.hallways||[],layout.rooms||[],layout);camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
 const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const delta=clock.getDelta();tryMove(delta);updateTeleportPrompt(delta);updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
 </script>

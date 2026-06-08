@@ -1,8 +1,8 @@
 {
-  "version": "v9.8.6",
-  "label": "CQU theme, admin navigation, gallery rename and 3D contextual artwork tools",
-  "build": "v9.8.6",
+  "version": "v9.8.7",
+  "label": "Context menu layering, 3D editor tools visibility and entry splash restore",
+  "build": "v9.8.7",
   "updated": "2026-06-08",
-  "name": "UI theme palette correction",
-  "notes": "CQU styling limited to page chrome; editor colour palettes restored to gallery materials; toolbar buttons use differentiated action colours."
+  "name": "Context Menu and Entry Splash Restore",
+  "notes": "Layout editor context menu now works over rooms with contextual add options; 3D editor menus are preview-only; gallery entry splash/warning controls restored."
 }

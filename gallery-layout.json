@@ -16,23 +16,18 @@
         "x": 0,
         "y": 4.8
       },
-      "wallColors": {
-        "front": "",
-        "back": "",
-        "left": "",
-        "right": ""
-      },
+      "wallColors": {},
       "wallTextures": {}
     },
     {
       "id": "games",
       "title": "Games & Interactive Media",
       "x": 30,
-      "z": -0.11,
+      "z": 0,
       "width": 20,
       "depth": 14,
       "height": 6,
-      "wallColor": "#ffffff",
+      "wallColor": "#2a2a33",
       "wallTexture": "",
       "label": {
         "text": "Games & Interactive Media",
@@ -40,18 +35,8 @@
         "x": 0,
         "y": 4.8
       },
-      "wallColors": {
-        "front": "#2a2a33",
-        "back": "#2a2a33",
-        "left": "#2a2a33",
-        "right": "#2a2a33"
-      },
-      "wallTextures": {
-        "front": "",
-        "back": "",
-        "left": "",
-        "right": ""
-      }
+      "wallColors": {},
+      "wallTextures": {}
     }
   ],
   "hallways": [
@@ -65,16 +50,23 @@
       "toSlot": "center",
       "width": 4,
       "height": 4,
-      "wallColor": "#ffffff"
+      "wallColor": "#22222a"
     }
   ],
   "settings": {
     "floorColor": "#151515",
     "ceilingColor": "#1c1c1c",
-    "floorTexture": "",
-    "ceilingTexture": "",
-    "autoArtworkLights": true,
-    "artworkLightIntensity": 0.9,
+    "ambientLight": 1.1,
+    "directionalLight": 1.4,
+    "additionalLights": [
+      {
+        "x": 0,
+        "y": 5.5,
+        "z": 0,
+        "intensity": 1.8,
+        "color": "#ffffff"
+      }
+    ],
     "defaultWallColor": "#2a2a33",
     "palette": [
       "#2a2a33",
@@ -86,19 +78,6 @@
       "#1f2937",
       "#ffffff"
     ],
-    "ambientLight": 1.1,
-    "directionalLight": 1.4,
-    "additionalLights": [
-      {
-        "id": "light1",
-        "x": 0,
-        "y": 5.5,
-        "z": 0,
-        "intensity": 1.8,
-        "color": "#ffffff",
-        "distance": 18
-      }
-    ],
     "teleports": [
       {
         "id": "teleport1",
@@ -106,11 +85,9 @@
         "x": 0,
         "z": 3,
         "size": 1.4,
-        "linkedTo": "",
         "toX": 30,
         "toZ": 0,
         "destinationLabel": "Games & Interactive Media",
-        "triggerMode": "press",
         "interaction": "press",
         "radius": 2.2
       }
@@ -133,32 +110,11 @@
           "loop": true
         }
       ]
-    }
-  },
-  "partitions": [
-    {
-      "id": "wall1",
-      "title": "Half Wall 1",
-      "x1": 40.1,
-      "z1": 2.05,
-      "x2": 32.8,
-      "z2": 2.07,
-      "height": 6,
-      "thickness": 0.22,
-      "wallColor": "#6b3f2a",
-      "wallTexture": ""
     },
-    {
-      "id": "wall2",
-      "title": "Half Wall 2",
-      "x1": -5,
-      "z1": 7.54,
-      "x2": -5,
-      "z2": 1.79,
-      "height": 6,
-      "thickness": 0.22,
-      "wallColor": "#6b3f2a",
-      "wallTexture": ""
-    }
-  ]
+    "floorTexture": "",
+    "ceilingTexture": "",
+    "autoArtworkLights": true,
+    "artworkLightIntensity": 0.9
+  },
+  "partitions": []
 }
