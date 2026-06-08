@@ -110,6 +110,11 @@
           "loop": true
         }
       ]
-    }
-  }
+    },
+    "floorTexture": "",
+    "ceilingTexture": "",
+    "autoArtworkLights": true,
+    "artworkLightIntensity": 0.9
+  },
+  "partitions": []
 }

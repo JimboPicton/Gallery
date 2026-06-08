@@ -1,6 +1,6 @@
 {
-  "version": "9.7.2",
-  "name": "Hallway State Rebuild and Material Sync",
-  "date": "2026-06-07",
-  "notes": "Fixes hallway phantom divider artefacts after room dragging, independent hallway colours, and editor-to-3D wall colour synchronisation."
+  "version": "9.8.0",
+  "name": "Half-wall gallery layout pivot",
+  "date": "2026-06-08",
+  "notes": "Adds first-pass half walls/partition planes, floor and ceiling texture fields, and optional artwork accent lights while hallway work remains available for later refinement."
 }

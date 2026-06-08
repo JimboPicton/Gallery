@@ -53,7 +53,7 @@ function wallMaterialFor(room,wall,layout){
   const texture=wt?.[wall]||room.wallTexture||room.texture||'';
   return mat(color,texture)
 }
-function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
+function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||'');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
 function rectFromSegment(a,b,width){
   const dx=b.x-a.x,dz=b.z-a.z;
   const join=.06; // small overlap so adjoining/elbow segments union cleanly after room dragging
@@ -86,7 +86,7 @@ function routeHallSegments(p1,p2,fw,tw,width){
   return segs;
 }
 function addHallCellFloorCeil(cell,height,layout){
-  const floorM=mat(layout.settings?.floorColor||'#151515',''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');
+  const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
   const w=cell.x2-cell.x1,d=cell.z2-cell.z1,x=(cell.x1+cell.x2)/2,z=(cell.z1+cell.z2)/2;
   addPlane(w,d,{x,y:0,z},{x:-Math.PI/2},floorM);
   addPlane(w,d,{x,y:height,z},{x:Math.PI/2},ceilM);
@@ -344,7 +344,31 @@ function artOverlapsDoorway(data,room,openings){
   const left=x-w/2, right=x+w/2, bottom=y-h/2, top=y+h/2;
   return list.some(o=>{const ol=Number(o.offset||0)-Number(o.width||4)/2, or=Number(o.offset||0)+Number(o.width||4)/2;const doorTop=Number(o.height||4);return right>ol&&left<or&&top>0&&bottom<doorTop;});
 }
-function createArt(data,rooms,i,openings={}){const room=rooms.find(r=>r.id===(data.room||rooms[0]?.id));if(!room)return;if(artOverlapsDoorway(data,room,openings)){console.warn('Artwork skipped because it overlaps a doorway opening:',data.title||data.id);return;}const type=String(data.mediaType||data.type||'artwork').toLowerCase();const url=data.media||data.image||data.url||'';const tex=makeArtworkTexture(data,type,url);const p=wallPosition(room,data.wall||'back',Number(data.x||0),Number(data.y||3.1));const mesh=addPlane(Number(data.width||3),Number(data.height||1.7),p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));mesh.userData=data;artMeshes.push(mesh);makeStatement(data,room,p)}
+
+function makePartitionWall(p){
+  const x1=Number(p.x1||0),z1=Number(p.z1||0),x2=Number(p.x2||0),z2=Number(p.z2||0);
+  const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz); if(len<.05)return;
+  const h=Number(p.height||6),th=Number(p.thickness||.22);
+  const m=mat(cleanColor(p.wallColor||p.color||p.colour)||'#f5f0e8',p.wallTexture||p.texture||'');
+  const core=new THREE.Mesh(new THREE.BoxGeometry(len,h,th),m);
+  core.position.set((x1+x2)/2,h/2,(z1+z2)/2);
+  core.rotation.y=-Math.atan2(dz,dx);
+  core.castShadow=core.receiveShadow=true;
+  scene.add(core);
+  addBound((x1+x2)/2,(z1+z2)/2,len,th,0);
+}
+function addArtworkAccentLight(artData,room,p){
+  if(window.__galleryLayoutForMaterials?.settings?.autoArtworkLights===false)return;
+  const intensity=Number(window.__galleryLayoutForMaterials?.settings?.artworkLightIntensity??.9);
+  if(intensity<=0)return;
+  const light=new THREE.PointLight(0xffffff,intensity,5.5);
+  light.position.copy(p.pos);
+  light.position.y+=Number(artData.height||1.7)/2+.45;
+  light.position.x+=Math.sin(p.rot.y||0)*.35;
+  light.position.z+=Math.cos(p.rot.y||0)*.35;
+  scene.add(light);
+}
+function createArt(data,rooms,i,openings={}){const room=rooms.find(r=>r.id===(data.room||rooms[0]?.id));if(!room)return;if(artOverlapsDoorway(data,room,openings)){console.warn('Artwork skipped because it overlaps a doorway opening:',data.title||data.id);return;}const type=String(data.mediaType||data.type||'artwork').toLowerCase();const url=data.media||data.image||data.url||'';const tex=makeArtworkTexture(data,type,url);const p=wallPosition(room,data.wall||'back',Number(data.x||0),Number(data.y||3.1));const mesh=addPlane(Number(data.width||3),Number(data.height||1.7),p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));mesh.userData=data;artMeshes.push(mesh);addArtworkAccentLight(data,room,p);makeStatement(data,room,p)}
 
 function teleportCanvas(label){
   const c=document.createElement('canvas');c.width=512;c.height=512;const ctx=c.getContext('2d');
@@ -440,6 +464,6 @@ function updateAudioVolumes(){
   status.textContent=audioState.muted?'Muted':active?'Audio nearby':'Audio on';
 }
 
-const fallback={rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
-const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));makeHallNetwork(layout.hallways||[],layout.rooms||[],layout);camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
+const fallback={partitions:[],rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',floorTexture:'',ceilingTexture:'',autoArtworkLights:true,artworkLightIntensity:.9,defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
+const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);window.__galleryLayoutForMaterials=layout;const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.partitions||layout.halfWalls||[]).forEach(makePartitionWall);makeHallNetwork(layout.hallways||[],layout.rooms||[],layout);camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
 const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);tryMove(clock.getDelta());updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});

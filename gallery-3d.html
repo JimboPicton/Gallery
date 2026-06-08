@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>3D Student Gallery v9.7.2</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<title>3D Student Gallery v9.8.0</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#101014;font-family:'Noto Sans','Roboto',Arial,sans-serif;color:#fff}canvas{display:block}.hud{position:fixed;top:14px;left:14px;z-index:30;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;max-width:350px;font-size:14px}.hud a{color:#b8c4ff}.overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;text-align:center}.overlay div{pointer-events:auto;cursor:pointer;padding:26px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:rgba(0,0,0,.84);box-shadow:0 12px 60px rgba(0,0,0,.45)}.panel{position:fixed;top:14px;right:14px;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;z-index:35;display:none;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px}.panel h2{margin:.1rem 0 .3rem}.panel iframe,.panel img,.panel video{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}.statement3d{font-family:Arial}.panel button{float:right;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}.error{position:fixed;bottom:14px;left:14px;right:14px;background:#4c1515;border:1px solid #a94444;border-radius:12px;padding:12px;z-index:40}.teleportHint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:36;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;color:#fff;display:none}.audioHud{position:fixed;left:14px;bottom:14px;z-index:38;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:8px;align-items:center}.audioHud button{border:0;border-radius:8px;padding:6px 9px;cursor:pointer}.audioHud input[type=range]{width:100px}.audioHint{font-size:12px;color:#bbb}.reticle{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:34;pointer-events:none;width:34px;height:34px;border:2px solid rgba(255,255,255,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.18)}.reticle::after{content:"+";color:white;font-weight:bold}.ytAudioPanel{position:fixed;left:14px;bottom:62px;z-index:38;background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px;display:none}.ytAudioPanel iframe{width:260px;height:146px;border:0;border-radius:8px;background:#000}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.179.1/build/three.module.js","three/addons/":"https://unpkg.com/three@0.179.1/examples/jsm/"}}</script>
 </head>
 <body>
-<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.7.2</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
+<div class="hud"><strong>3D Student Gallery</strong> <span style="opacity:.7">v9.8.0</span><br>Click to enter • WASD move • Mouse look • Click artwork to inspect • ESC releases cursor<br><a href="./index.html">Back to main page</a> &nbsp; <a href="./layout-editor.html">Gallery Layout Editor</a> &nbsp; <a href="./publish.html">Publish</a></div>
 <div id="overlay" class="overlay"><div><h1>Click to Enter Gallery</h1><p>Use WASD and mouse look. Press ESC to use the menu links.</p><p><a href="./index.html" style="color:#b8c4ff">Back to main page</a></p></div></div>
 <div id="reticle" class="reticle"></div><div id="ytAudioPanel" class="ytAudioPanel"></div><div id="panel" class="panel"><button id="closePanel">Close</button><div id="panelContent"></div></div><div id="teleportHint" class="teleportHint"></div><div class="audioHud"><button id="audioToggle">Turn sound on</button><label><input id="audioMute" type="checkbox"> Mute</label><label>Vol <input id="audioVolume" type="range" min="0" max="1" step="0.05" value="0.75"></label><span id="audioStatus" class="audioHint">Audio off</span></div>
 <script type="module">
@@ -53,7 +53,7 @@ function makeLabel(room){if(!room.label)return;const label=room.label||{};const 
 function validColor(v){return typeof v==='string'&&/^#?[0-9a-f]{6}$/i.test(v.trim())}
 function cleanColor(v){if(!validColor(v))return '';v=v.trim();return v.startsWith('#')?v:'#'+v}
 function wallColourMap(room){
-  // v9.7.2: accept all editor/export naming variants so colours seen in the 2D editor
+  // v9.8.0: accept all editor/export naming variants so colours seen in the 2D editor
   // are the same colours used by the 3D renderer.
   const out={...(room.wallColors||{}),...(room.wallColours||{}),...(room.wallcolors||{}),...(room.wallcolours||{})};
   ['front','back','left','right'].forEach(w=>{
@@ -70,7 +70,7 @@ function wallMaterialFor(room,wall,layout){
   const texture=wt?.[wall]||room.wallTexture||room.texture||'';
   return mat(color,texture)
 }
-function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515','');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
+function makeRoom(room,layout,openings){const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||'');const ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');makeWallWithOpenings(room,'front',openings?.front,wallMaterialFor(room,'front',layout));makeWallWithOpenings(room,'back',openings?.back,wallMaterialFor(room,'back',layout));makeWallWithOpenings(room,'left',openings?.left,wallMaterialFor(room,'left',layout));makeWallWithOpenings(room,'right',openings?.right,wallMaterialFor(room,'right',layout));addPlane(room.width,room.depth,{x:room.x,y:0,z:room.z},{x:-Math.PI/2},floorM);addPlane(room.width,room.depth,{x:room.x,y:room.height,z:room.z},{x:Math.PI/2},ceilM);addBound(room.x,room.z,room.width,room.depth,0);makeLabel(room)}
 function rectFromSegment(a,b,width){
   const dx=b.x-a.x,dz=b.z-a.z;
   const join=.06; // small overlap so adjoining/elbow segments union cleanly after room dragging
@@ -103,7 +103,7 @@ function routeHallSegments(p1,p2,fw,tw,width){
   return segs;
 }
 function addHallCellFloorCeil(cell,height,layout){
-  const floorM=mat(layout.settings?.floorColor||'#151515',''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c','');
+  const floorM=mat(layout.settings?.floorColor||'#151515',layout.settings?.floorTexture||''),ceilM=mat(layout.settings?.ceilingColor||'#1c1c1c',layout.settings?.ceilingTexture||'');
   const w=cell.x2-cell.x1,d=cell.z2-cell.z1,x=(cell.x1+cell.x2)/2,z=(cell.z1+cell.z2)/2;
   addPlane(w,d,{x,y:0,z},{x:-Math.PI/2},floorM);
   addPlane(w,d,{x,y:height,z},{x:Math.PI/2},ceilM);
@@ -116,7 +116,7 @@ function rectContainsCell(r,x1,x2,z1,z2){
 }
 function snapCoord(v){return Math.round(Number(v)*1000)/1000}
 function makeUnionCells(rects){
-  // v9.7.2: snap grid coordinates. Tiny floating-point differences after dragging
+  // v9.8.0: snap grid coordinates. Tiny floating-point differences after dragging
   // rooms were creating phantom one-cell boundaries that appeared as vertical walls.
   const xs=[...new Set(rects.flatMap(r=>[snapCoord(r.x-r.w/2),snapCoord(r.x+r.w/2)]))].sort((a,b)=>a-b);
   const zs=[...new Set(rects.flatMap(r=>[snapCoord(r.z-r.d/2),snapCoord(r.z+r.d/2)]))].sort((a,b)=>a-b);
@@ -361,7 +361,32 @@ function artOverlapsDoorway(data,room,openings){
   const left=x-w/2, right=x+w/2, bottom=y-h/2, top=y+h/2;
   return list.some(o=>{const ol=Number(o.offset||0)-Number(o.width||4)/2, or=Number(o.offset||0)+Number(o.width||4)/2;const doorTop=Number(o.height||4);return right>ol&&left<or&&top>0&&bottom<doorTop;});
 }
-function createArt(data,rooms,i,openings={}){const room=rooms.find(r=>r.id===(data.room||rooms[0]?.id));if(!room)return;if(artOverlapsDoorway(data,room,openings)){console.warn('Artwork skipped because it overlaps a doorway opening:',data.title||data.id);return;}const type=String(data.mediaType||data.type||'artwork').toLowerCase();const url=data.media||data.image||data.url||'';const tex=makeArtworkTexture(data,type,url);const p=wallPosition(room,data.wall||'back',Number(data.x||0),Number(data.y||3.1));const mesh=addPlane(Number(data.width||3),Number(data.height||1.7),p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));mesh.userData=data;artMeshes.push(mesh);makeStatement(data,room,p)}
+
+function makePartitionWall(p){
+  const x1=Number(p.x1||0),z1=Number(p.z1||0),x2=Number(p.x2||0),z2=Number(p.z2||0);
+  const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz); if(len<.05)return;
+  const h=Number(p.height||6),th=Number(p.thickness||.22);
+  const group=new THREE.Group();
+  const m=mat(cleanColor(p.wallColor||p.color||p.colour)||'#f5f0e8',p.wallTexture||p.texture||'');
+  const core=new THREE.Mesh(new THREE.BoxGeometry(len,h,th),m);
+  core.position.set((x1+x2)/2,h/2,(z1+z2)/2);
+  core.rotation.y=-Math.atan2(dz,dx);
+  core.castShadow=core.receiveShadow=true;
+  scene.add(core);
+  addBound((x1+x2)/2,(z1+z2)/2,len,th,0);
+}
+function addArtworkAccentLight(artData,room,p){
+  if(window.__galleryLayoutForMaterials?.settings?.autoArtworkLights===false)return;
+  const intensity=Number(window.__galleryLayoutForMaterials?.settings?.artworkLightIntensity??.9);
+  if(intensity<=0)return;
+  const light=new THREE.PointLight(0xffffff,intensity,5.5);
+  light.position.copy(p.pos);
+  light.position.y+=Number(artData.height||1.7)/2+.45;
+  light.position.x+=Math.sin(p.rot.y||0)*.35;
+  light.position.z+=Math.cos(p.rot.y||0)*.35;
+  scene.add(light);
+}
+function createArt(data,rooms,i,openings={}){const room=rooms.find(r=>r.id===(data.room||rooms[0]?.id));if(!room)return;if(artOverlapsDoorway(data,room,openings)){console.warn('Artwork skipped because it overlaps a doorway opening:',data.title||data.id);return;}const type=String(data.mediaType||data.type||'artwork').toLowerCase();const url=data.media||data.image||data.url||'';const tex=makeArtworkTexture(data,type,url);const p=wallPosition(room,data.wall||'back',Number(data.x||0),Number(data.y||3.1));const mesh=addPlane(Number(data.width||3),Number(data.height||1.7),p.pos,p.rot,new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));mesh.userData=data;artMeshes.push(mesh);addArtworkAccentLight(data,room,p);makeStatement(data,room,p)}
 
 function teleportCanvas(label){
   const c=document.createElement('canvas');c.width=512;c.height=512;const ctx=c.getContext('2d');
@@ -457,8 +482,8 @@ function updateAudioVolumes(){
   status.textContent=audioState.muted?'Muted':active?'Audio nearby':'Audio on';
 }
 
-const fallback={rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
-const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));makeHallNetwork(layout.hallways||[],layout.rooms||[],layout);camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
+const fallback={partitions:[],rooms:[{id:'animation',title:'Animation',x:0,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Animation',wall:'front',x:0,y:4.8}},{id:'games',title:'Games',x:30,z:0,width:20,depth:14,height:6,wallColor:'#2a2a33',label:{text:'Games',wall:'front',x:0,y:4.8}}],hallways:[{id:'hall1',from:'animation',to:'games',fromWall:'right',fromSlot:'center',toWall:'left',toSlot:'center',width:4,height:4,wallColor:'#22222a'}],settings:{ambientLight:1.1,directionalLight:1.4,floorColor:'#151515',ceilingColor:'#1c1c1c',floorTexture:'',ceilingTexture:'',autoArtworkLights:true,artworkLightIntensity:.9,defaultWallColor:'#2a2a33',palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],additionalLights:[{x:0,y:5.5,z:0,intensity:1.8,color:'#fff'}],teleports:[{id:'teleport1',label:'Jump to Games',x:0,z:3,toX:30,toZ:0,destinationLabel:'Games',triggerMode:'press',interaction:'press',radius:2.2}]}};
+const layout=await getJSON('./gallery-layout.json',fallback);const data=await getJSON('./gallery-data.json',[]);addLights(layout);addTeleports(layout);setupAudio(layout);window.__galleryLayoutForMaterials=layout;const openings=openingsByRoom(layout);(layout.rooms||[]).forEach(r=>makeRoom(r,layout,openings[r.id]));(layout.partitions||layout.halfWalls||[]).forEach(makePartitionWall);makeHallNetwork(layout.hallways||[],layout.rooms||[],layout);camera.position.set(layout.rooms?.[0]?.x||0,1.7,layout.rooms?.[0]?.z||0);data.forEach((d,i)=>createArt(d,layout.rooms||[],i,openings));
 const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);tryMove(clock.getDelta());updateAudioVolumes();renderer.render(scene,camera)}animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
 </script>
