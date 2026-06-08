@@ -3,26 +3,36 @@
     {
       "id": "animation",
       "title": "Animation",
-      "x": 0,
+      "x": 0.33,
       "z": 0,
       "width": 20,
       "depth": 14,
       "height": 6,
-      "wallColor": "#2a2a33",
+      "wallColor": "#6b3f2a",
       "wallTexture": "",
       "label": {
         "text": "Animation",
-        "wall": "front",
+        "wall": "back",
         "x": 0,
         "y": 4.8
       },
-      "wallColors": {},
-      "wallTextures": {}
+      "wallColors": {
+        "front": "#2a2a33",
+        "back": "#2a2a33",
+        "left": "#2a2a33",
+        "right": "#2a2a33"
+      },
+      "wallTextures": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+      }
     },
     {
       "id": "games",
-      "title": "Games & Interactive Media",
-      "x": 30,
+      "title": "Game Design",
+      "x": 31.21,
       "z": 0,
       "width": 20,
       "depth": 14,
@@ -30,13 +40,110 @@
       "wallColor": "#2a2a33",
       "wallTexture": "",
       "label": {
-        "text": "Games & Interactive Media",
-        "wall": "front",
+        "text": "Game Design",
+        "wall": "back",
         "x": 0,
         "y": 4.8
       },
-      "wallColors": {},
-      "wallTextures": {}
+      "wallColors": {
+        "front": "#6b3f2a",
+        "back": "#6b3f2a",
+        "left": "#6b3f2a",
+        "right": "#6b3f2a"
+      },
+      "wallTextures": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+      }
+    },
+    {
+      "id": "room3",
+      "title": "Graphic Design",
+      "x": -28.91,
+      "z": 0.03,
+      "width": 20,
+      "depth": 14,
+      "height": 6,
+      "wallColor": "#2a2a33",
+      "wallColors": {
+        "front": "#ffffff",
+        "back": "#ffffff",
+        "left": "#ffffff",
+        "right": "#ffffff"
+      },
+      "wallTexture": "",
+      "wallTextures": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+      },
+      "label": {
+        "text": "Graphic Design",
+        "wall": "front",
+        "x": 0,
+        "y": 4.8
+      }
+    },
+    {
+      "id": "room4",
+      "title": "3D Models",
+      "x": 0.34,
+      "z": 26.73,
+      "width": 20,
+      "depth": 14,
+      "height": 6,
+      "wallColor": "#6b3f2a",
+      "wallColors": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": "#2a2a33"
+      },
+      "wallTexture": "",
+      "wallTextures": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+      },
+      "label": {
+        "text": "3D MOdels",
+        "wall": "front",
+        "x": 0,
+        "y": 4.8
+      }
+    },
+    {
+      "id": "room1",
+      "title": "Graphic Design",
+      "x": 68.86,
+      "z": 0.03,
+      "width": 20,
+      "depth": 14,
+      "height": 6,
+      "wallColor": "#2a2a33",
+      "wallColors": {
+        "front": "#4338ca",
+        "back": "#4338ca",
+        "left": "#4338ca",
+        "right": "#4338ca"
+      },
+      "wallTexture": "",
+      "wallTextures": {
+        "front": "",
+        "back": "",
+        "left": "",
+        "right": ""
+      },
+      "label": {
+        "text": "Graphic Design",
+        "wall": "front",
+        "x": 0,
+        "y": 4.8
+      }
     }
   ],
   "hallways": [
@@ -50,25 +157,57 @@
       "toSlot": "center",
       "width": 4,
       "height": 4,
-      "wallColor": "#22222a",
+      "wallColor": "#ffffff",
+      "wallTexture": ""
+    },
+    {
+      "id": "hall2",
+      "from": "animation",
+      "to": "room3",
+      "fromWall": "left",
+      "fromSlot": "center",
+      "toWall": "right",
+      "toSlot": "center",
+      "width": 4,
+      "height": 4,
+      "wallColor": "#ffffff",
+      "wallTexture": ""
+    },
+    {
+      "id": "hall3",
+      "from": "animation",
+      "to": "room4",
+      "fromWall": "front",
+      "fromSlot": "center",
+      "toWall": "back",
+      "toSlot": "center",
+      "width": 4,
+      "height": 4,
+      "wallColor": "#ffffff",
+      "wallTexture": ""
+    },
+    {
+      "id": "hall4",
+      "from": "games",
+      "to": "room1",
+      "fromWall": "right",
+      "fromSlot": "center",
+      "toWall": "left",
+      "toSlot": "center",
+      "width": 4,
+      "height": 4,
+      "wallColor": "#4338ca",
       "wallTexture": ""
     }
   ],
   "settings": {
     "floorColor": "#151515",
     "ceilingColor": "#1c1c1c",
-    "ambientLight": 1.1,
-    "directionalLight": 1.4,
-    "additionalLights": [
-      {
-        "x": 0,
-        "y": 5.5,
-        "z": 0,
-        "intensity": 1.8,
-        "color": "#ffffff"
-      }
-    ],
-    "defaultWallColor": "#2a2a33",
+    "floorTexture": "",
+    "ceilingTexture": "",
+    "autoArtworkLights": true,
+    "artworkLightIntensity": 0.9,
+    "defaultWallColor": "#6b3f2a",
     "palette": [
       "#2a2a33",
       "#f5f0e8",
@@ -79,16 +218,109 @@
       "#1f2937",
       "#ffffff"
     ],
+    "ambientLight": 1.1,
+    "directionalLight": 1.4,
+    "additionalLights": [
+      {
+        "id": "light1",
+        "x": 32.77,
+        "y": 5.5,
+        "z": -0.99,
+        "intensity": 1.8,
+        "color": "#ffffff",
+        "distance": 18
+      },
+      {
+        "id": "light2",
+        "x": -0.08,
+        "y": 5.5,
+        "z": -0.66,
+        "intensity": 1.5,
+        "color": "#ffffff",
+        "distance": 18
+      },
+      {
+        "id": "light1_copy1",
+        "x": 68.41,
+        "y": 5.5,
+        "z": -0.29,
+        "intensity": 1.8,
+        "color": "#ffffff",
+        "distance": 18
+      },
+      {
+        "id": "light3",
+        "x": -36.64,
+        "y": 5.5,
+        "z": 0.19,
+        "intensity": 1.5,
+        "color": "#ffffff",
+        "distance": 18
+      },
+      {
+        "id": "light5",
+        "x": -0.44,
+        "y": 5.5,
+        "z": 27.89,
+        "intensity": 1.5,
+        "color": "#ffffff",
+        "distance": 18
+      }
+    ],
     "teleports": [
       {
         "id": "teleport1",
-        "label": "Jump to Games",
-        "x": 0,
-        "z": 3,
+        "label": "Jump to 3D Models",
+        "x": 7.7,
+        "z": 4.21,
         "size": 1.4,
+        "linkedTo": "teleport3",
         "toX": 30,
         "toZ": 0,
-        "destinationLabel": "Games & Interactive Media",
+        "destinationLabel": "Jump to 3D",
+        "triggerMode": "press",
+        "interaction": "press",
+        "radius": 2.2
+      },
+      {
+        "id": "teleport1_copy1",
+        "label": "Jump to Games",
+        "x": 75.6,
+        "z": 4.15,
+        "size": 1.4,
+        "linkedTo": "teleport1_copy1_copy1",
+        "toX": 30,
+        "toZ": 0,
+        "destinationLabel": "Jump to Games",
+        "triggerMode": "press",
+        "interaction": "press",
+        "radius": 2.2
+      },
+      {
+        "id": "teleport3",
+        "label": "Jump to Animation",
+        "x": 7.5,
+        "z": 31.62,
+        "size": 1.4,
+        "linkedTo": "teleport1",
+        "toX": 0,
+        "toZ": 0,
+        "destinationLabel": "Jump to Animation",
+        "triggerMode": "press",
+        "interaction": "press",
+        "radius": 2.2
+      },
+      {
+        "id": "teleport1_copy1_copy1",
+        "label": "Jump to Graphic Design",
+        "x": 39.76,
+        "z": -4.45,
+        "size": 1.4,
+        "linkedTo": "teleport1_copy1",
+        "toX": 30,
+        "toZ": 0,
+        "destinationLabel": "Jump to Graphic Design",
+        "triggerMode": "press",
         "interaction": "press",
         "radius": 2.2
       }
@@ -103,19 +335,47 @@
           "kind": "ambient",
           "type": "direct",
           "url": "",
-          "x": 0,
+          "x": -0.07,
           "y": 1.8,
-          "z": 0,
-          "radius": 18,
+          "z": 0.11,
+          "radius": 9,
           "volume": 0.5,
           "loop": true
         }
       ]
     },
-    "floorTexture": "",
-    "ceilingTexture": "",
-    "autoArtworkLights": true,
-    "artworkLightIntensity": 0.9
+    "hallwayColor": "#22222a",
+    "visibility": "password",
+    "password": "Password1",
+    "galleryPassword": "Password1",
+    "splashEnabled": true,
+    "splashImage": "https://cdn.brandfetch.io/idVBrs4C1B/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1772606085645",
+    "entryWarning": "Welcome to the CQU Creative Media Gallery. Use WASD and mouse look. Press ESC to use menu links."
   },
-  "partitions": []
+  "partitions": [
+    {
+      "id": "wall1",
+      "title": "Half Wall 1",
+      "x1": -4.69,
+      "z1": 7.25,
+      "x2": -4.79,
+      "z2": 1.87,
+      "height": 6,
+      "thickness": 0.22,
+      "wallColor": "#1f2937",
+      "wallTexture": ""
+    },
+    {
+      "id": "wall2",
+      "title": "Half Wall 2",
+      "x1": 35.1,
+      "z1": 7.15,
+      "x2": 35,
+      "z2": 2.07,
+      "height": 6,
+      "thickness": 0.22,
+      "wallColor": "#e8dcc2",
+      "wallTexture": ""
+    }
+  ]
 }
