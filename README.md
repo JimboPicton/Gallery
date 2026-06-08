@@ -1,11 +1,15 @@
-# 3D Student Gallery v9.15.0
+# 3D Student Gallery v9.16.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.15.0 - Remaining State Consolidation and Hallway Flush Join
+## Current Version: v9.16.0 - Viewer Entry Overlay and Mode Recovery
 
 ### Latest changes
 
+- Restored the splash graphic and entry message on first load of the 3D gallery.
+- Hid Visitor / Curator / Presentation controls while the entry splash is visible.
+- Restored ESC behaviour so leaving pointer-lock viewing returns visitors to the splash overlay.
+- Kept Curator controls gated to draft, preview, or edit mode so published visitors do not see editing controls.
 - Restored hallway side-wall edges to butt against the room wall plane so doorway joins do not expose the space behind.
 - Routed the Gallery Manager through `GalleryState` for project load/save and active gallery selection.
 - Routed the main page gallery picker through `GalleryState` for local active-gallery selection.
@@ -46,7 +50,8 @@ The next feature set should roll out as small, testable builds:
 4. **v9.13.0 Data Architecture Cleanup** - added a shared normalization layer and began routing admin, artwork editor, and 3D runtime state through consistent layout/artwork/project records.
 5. **v9.14.0 Editor State Consolidation and Curator Workflow Fixes** - tightened hallway joins, added half-wall artwork placement support to the editor, and smoothed curator mode return behaviour.
 6. **v9.15.0 Remaining State Consolidation and Hallway Flush Join** - moved the main page, Gallery Manager, and Publish flow onto shared state helpers and fixed the slight hallway gap at doorway joins.
-7. **v9.16.0 Curator Placement Tools** - add more intuitive in-3D artwork positioning controls and reduce reliance on reload-based editing.
+7. **v9.16.0 Viewer Entry Overlay and Mode Recovery** - restored the intended entry splash and ESC recovery flow after the formal mode controls were added.
+8. **v9.17.0 Curator Placement Tools** - add more intuitive in-3D artwork positioning controls and reduce reliance on reload-based editing.
 
 ## Positioning artwork on half walls
 
