@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.23.1
+# 3D Student Gallery v9.24.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.23.1 - Presentation/Artwork Placement Hotfix
+## Current Version: v9.24.0 - Performance and Stability
 
 ### Latest changes
 
@@ -93,9 +93,18 @@ The next feature set should roll out as small, testable builds:
 13. **v9.22.0 Audio Playback Foundations** - added interactive 3D audio markers, YouTube/SoundCloud/Echo playback, and quieter distance-aware direct audio.
 14. **v9.23.0 Presentation Mode Upgrade** - added timed playback, optional narration/audio per stop, and smoother camera transitions.
 15. **v9.23.1 Presentation/Artwork Placement Hotfix** - clamps Gallery Highlights stops to walkable floor space, adds artist labels and clickable statement icons, and makes new artwork frames default to square proportions.
-15. **v9.24.0 Performance and Stability** - lazy-load heavier media and reduce repeated geometry/material work.
-16. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
-17. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
+16. **v9.24.0 Performance and Stability** - lazy-load artwork thumbnails near the viewer, cap renderer pixel ratio, and reduce repeated material/geometry creation.
+17. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
+18. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
+
+## Future design notes
+
+These ideas are parked for the next appropriate roadmap build rather than being implemented immediately.
+
+- **Artwork frame builder:** add a standalone panel in `artwork-editor.html` for configurable frames. Likely controls: frame width, material, texture, colour swatches, mat on/off, floating frame on/off, and a live preview. The saved artwork record should store frame metadata separately from artwork size so curators can change framing without moving the work.
+- **Artist statement wall treatment:** support a refined wall statement mode with stronger contrast, larger heading text, smaller body text, and clean spacing. The current clickable icon is useful for compact galleries; a wall-text option should remain available for exhibition spaces where the statement is intentionally part of the display.
+- **Gallery style presets:** consider reusable room/space presets for lighting, floor materials, wall colour, ceiling treatments, plinth/display-object layouts, and simple exhibition atmospheres. These would fit naturally with Layout Editor theme defaults and the Lighting Polish roadmap work.
+- **Media asset upload:** add drag/drop or local upload support later so image, audio, and video assets can be committed into appropriate repository folders for GitHub Pages streaming rather than relying only on external URLs.
 
 ## Positioning artwork on half walls
 
