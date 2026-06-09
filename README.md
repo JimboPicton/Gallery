@@ -1,11 +1,16 @@
-# 3D Student Gallery v9.24.2
+# 3D Student Gallery v9.25.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.24.2 - Artwork Frame Fit Hotfix
+## Current Version: v9.25.0 - Lighting Polish
 
 ### Latest changes
 
+- Added gallery lighting presets, including Soft Gallery, Bright Studio, Moody Exhibition, and Neutral White.
+- Added softer published gallery defaults using lower ambient/directional values, hemisphere fill, and warm ceiling spot lights.
+- Added Layout Editor controls for light type, beam angle, softness, decay, wash width, hemisphere fill, and exposure.
+- Enabled tone mapping, sRGB output, soft shadows, and less glossy wall/floor materials in the 3D runtime.
+- Tuned artwork picture lights and ceiling spots to be softer and less harsh.
 - Added Play/Pause timed playback to Presentation Mode tours.
 - Added smooth camera transitions between tour stops instead of instant jumps.
 - Added optional narration/audio URL and type fields to each Tour Editor stop.

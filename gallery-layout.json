@@ -206,7 +206,7 @@
     "floorTexture": "",
     "ceilingTexture": "",
     "autoArtworkLights": true,
-    "artworkLightIntensity": 0.9,
+    "artworkLightIntensity": 0.85,
     "defaultWallColor": "#6b3f2a",
     "palette": [
       "#2a2a33",
@@ -218,53 +218,76 @@
       "#1f2937",
       "#ffffff"
     ],
-    "ambientLight": 1.1,
-    "directionalLight": 1.4,
+    "lightingPreset": "soft-gallery",
+    "ambientLight": 0.85,
+    "directionalLight": 0.95,
+    "hemisphereLight": 0.35,
+    "lightingExposure": 1.02,
     "additionalLights": [
       {
         "id": "light1",
         "x": 32.77,
         "y": 5.5,
         "z": -0.99,
-        "intensity": 1.8,
-        "color": "#ffffff",
-        "distance": 18
+        "kind": "spot",
+        "intensity": 1.25,
+        "color": "#fff4df",
+        "distance": 18,
+        "angle": 0.62,
+        "penumbra": 0.72,
+        "decay": 1.2
       },
       {
         "id": "light2",
         "x": -0.08,
         "y": 5.5,
         "z": -0.66,
-        "intensity": 1.5,
-        "color": "#ffffff",
-        "distance": 18
+        "kind": "spot",
+        "intensity": 1.15,
+        "color": "#fff4df",
+        "distance": 18,
+        "angle": 0.62,
+        "penumbra": 0.72,
+        "decay": 1.2
       },
       {
         "id": "light1_copy1",
         "x": 68.41,
         "y": 5.5,
         "z": -0.29,
-        "intensity": 1.8,
-        "color": "#ffffff",
-        "distance": 18
+        "kind": "spot",
+        "intensity": 1.25,
+        "color": "#fff4df",
+        "distance": 18,
+        "angle": 0.62,
+        "penumbra": 0.72,
+        "decay": 1.2
       },
       {
         "id": "light3",
         "x": -36.64,
         "y": 5.5,
         "z": 0.19,
-        "intensity": 1.5,
-        "color": "#ffffff",
-        "distance": 18
+        "kind": "spot",
+        "intensity": 1.15,
+        "color": "#fff4df",
+        "distance": 18,
+        "angle": 0.62,
+        "penumbra": 0.72,
+        "decay": 1.2
       },
       {
         "id": "light5",
         "x": -0.44,
         "y": 5.5,
         "z": 27.89,
-        "intensity": 1.5,
-        "color": "#ffffff",
-        "distance": 18
+        "kind": "spot",
+        "intensity": 1.15,
+        "color": "#fff4df",
+        "distance": 18,
+        "angle": 0.62,
+        "penumbra": 0.72,
+        "decay": 1.2
       }
     ],
     "teleports": [
