@@ -13,8 +13,10 @@
     defaultWallColor:'#2a2a33',
     hallwayColor:'#22222a',
     palette:['#2a2a33','#f5f0e8','#e8dcc2','#334155','#4338ca','#6b3f2a','#1f2937','#ffffff'],
-    ambientLight:1.1,
-    directionalLight:1.4,
+    lightingPreset:'soft-gallery',
+    ambientLight:.85,
+    directionalLight:.95,
+    hemisphereLight:.35,
     additionalLights:[],
     teleports:[],
     audio:{enabled:false,masterVolume:.75,sources:[]},
@@ -111,9 +113,12 @@
     settings.autoArtworkLights=settings.autoArtworkLights!==false;
     settings.artworkLightIntensity=num(settings.artworkLightIntensity,.9);
     settings.palette=arr(settings.palette).length?settings.palette:DEFAULT_SETTINGS.palette.slice();
+    settings.lightingPreset=settings.lightingPreset||DEFAULT_SETTINGS.lightingPreset;
+    settings.hemisphereLight=num(settings.hemisphereLight,DEFAULT_SETTINGS.hemisphereLight);
     settings.additionalLights=arr(settings.additionalLights).map((l,i)=>({
       ...l,id:l.id||'light'+(i+1),x:num(l.x,0),y:num(l.y,5.5),z:num(l.z,0),
-      intensity:num(l.intensity,1.5),color:l.color||'#ffffff',distance:num(l.distance,18)
+      kind:l.kind||l.type||'point',intensity:num(l.intensity,1.5),color:l.color||'#ffffff',
+      distance:num(l.distance,18),angle:num(l.angle,.62),penumbra:num(l.penumbra,.65),decay:num(l.decay,1.2)
     }));
     settings.teleports=arr(settings.teleports).map((t,i)=>({
       ...t,id:t.id||'teleport'+(i+1),label:t.label||'Teleport '+(i+1),x:num(t.x,0),z:num(t.z,0),
