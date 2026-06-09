@@ -1,11 +1,14 @@
-# 3D Student Gallery v9.26.0
+# 3D Student Gallery v9.26.1
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.26.0 - Visitor Presence Prototype
+## Current Version: v9.26.1 - Lighting Visibility Hotfix
 
 ### Latest changes
 
+- Added a lighting visibility hotfix for v9.25/v9.26 galleries where architectural room surfaces could render near-black while artwork stayed visible.
+- Added minimum safe ambient, hemisphere, directional, and exposure values in the 3D runtime so older local drafts with stale or zeroed light values do not black out the gallery.
+- Added a subtle runtime-only visibility lift to dark wall, floor, ceiling, hallway, and half-wall materials while preserving the saved gallery colour data.
 - Added a browser-local visitor presence prototype to the 3D gallery.
 - Added a compact visitor counter showing active local sessions for the current gallery.
 - Added optional anonymous mini-map markers for other active local sessions in the same browser profile.
@@ -111,6 +114,7 @@ The next feature set should roll out as small, testable builds:
 18. **v9.24.2 Artwork Frame Fit Hotfix** - fit loaded image planes to the image aspect ratio and prevent statement icons overlapping artist labels.
 19. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
 20. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
+21. **v9.26.1 Lighting Visibility Hotfix** - prevent dark or stale lighting settings from making the gallery architecture disappear.
 
 ## Future design notes
 
