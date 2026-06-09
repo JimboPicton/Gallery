@@ -1,10 +1,16 @@
-# 3D Student Gallery v9.25.0
+# 3D Student Gallery v9.26.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.25.0 - Lighting Polish
+## Current Version: v9.26.0 - Visitor Presence Prototype
 
 ### Latest changes
+
+- Added a browser-local visitor presence prototype to the 3D gallery.
+- Added a compact visitor counter showing active local sessions for the current gallery.
+- Added optional anonymous mini-map markers for other active local sessions in the same browser profile.
+- Scoped presence data per gallery and automatically expires stale sessions.
+- Kept the implementation GitHub Pages-friendly; this is a local prototype, not a cross-device real-time multiplayer service.
 
 - Added gallery lighting presets, including Soft Gallery, Bright Studio, Moody Exhibition, and Neutral White.
 - Added softer published gallery defaults using lower ambient/directional values, hemisphere fill, and warm ceiling spot lights.
