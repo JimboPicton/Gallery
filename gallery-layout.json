@@ -32,8 +32,8 @@
     {
       "id": "games",
       "title": "Game Design",
-      "x": 31.21,
-      "z": 0,
+      "x": 28.44,
+      "z": -0.04,
       "width": 20,
       "depth": 14,
       "height": 6,
@@ -119,8 +119,8 @@
     {
       "id": "room1",
       "title": "Graphic Design",
-      "x": 68.86,
-      "z": -0.1,
+      "x": 67.9,
+      "z": -0.04,
       "width": 20,
       "depth": 14,
       "height": 6,
@@ -335,9 +335,9 @@
           "kind": "ambient",
           "type": "youtube",
           "url": "https://youtu.be/S8DGyscGlKE?si=XU8ahdOaS1AGJwg0",
-          "x": 2.19,
+          "x": 4.42,
           "y": 1.8,
-          "z": -0.46,
+          "z": -0.95,
           "radius": 9,
           "volume": 1,
           "loop": true
