@@ -20,6 +20,7 @@
 - Added a Layout Editor `Panel` toggle in the View group so the right inspector/palette can be hidden while arranging rooms on a wider map canvas.
 - The Layout Editor remembers the inspector visibility preference locally in the browser.
 - Reworked Gallery Manager gallery-card actions into a stable responsive button grid so Preview, Layout, Settings, Active, and Delete controls no longer wrap awkwardly.
+- Fixed a `gallery-3d.html` startup syntax error caused by the legacy artwork panel handler sharing the same `openArtworkPanel` name as the adaptive media viewer handler.
 - Bumped active build labels and `version.json` to `v9.21.0`.
 
 ## Notes
