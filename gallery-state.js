@@ -44,6 +44,35 @@
     return ['front','back','left','right'].includes(w)?w:'front';
   }
   function isWorldArtwork(a){return a&&((a.placement==='world')||!!a.worldPosition)}
+  function pct(value,fallback=65){
+    const n=num(value,NaN);
+    if(!Number.isFinite(n))return fallback;
+    return Math.max(0,Math.min(200,n<=2?n*100:n));
+  }
+  function ratio(value,fallback=.65){
+    const n=num(value,NaN);
+    if(!Number.isFinite(n))return fallback;
+    return Math.max(0,Math.min(2,n>2?n/100:n));
+  }
+  function lightAngleDeg(l={}){
+    const deg=num(l.angleDeg,NaN);
+    if(Number.isFinite(deg))return Math.max(3,Math.min(120,deg));
+    const a=num(l.angle,NaN);
+    return Number.isFinite(a)?Math.max(3,Math.min(120,a>Math.PI?a:a*180/Math.PI)):36;
+  }
+  function normalizeLight(l,i){
+    const angleDeg=lightAngleDeg(l),softnessPct=pct(l.softnessPct??l.penumbra,65);
+    const decayPct=l.decayPct!==undefined?pct(l.decayPct,60):Math.max(0,Math.min(200,num(l.decay,1.2)/2*100));
+    const washWidthPct=l.washWidthPct!==undefined?pct(l.washWidthPct,100):Math.max(10,Math.min(200,num(l.width,6)/6*100));
+    const width=num(l.width,Math.max(1,ratio(washWidthPct,1)*6));
+    const kind=String(l.kind||l.type||'point').toLowerCase();
+    return {
+      ...l,id:l.id||'light'+(i+1),x:num(l.x,0),y:num(l.y,5.5),z:num(l.z,0),kind,type:kind,
+      intensity:num(l.intensity,1.5),color:l.color||'#ffffff',distance:num(l.distance,18),
+      angleDeg,angle:angleDeg*Math.PI/180,softnessPct,penumbra:ratio(softnessPct,.65),
+      decayPct,decay:Math.max(.05,ratio(decayPct,.6)*2),washWidthPct,width,height:num(l.height,Math.max(.6,width*.58))
+    };
+  }
 
   function normalizeRoom(room,i,settings){
     const r={...room};
@@ -115,11 +144,7 @@
     settings.palette=arr(settings.palette).length?settings.palette:DEFAULT_SETTINGS.palette.slice();
     settings.lightingPreset=settings.lightingPreset||DEFAULT_SETTINGS.lightingPreset;
     settings.hemisphereLight=num(settings.hemisphereLight,DEFAULT_SETTINGS.hemisphereLight);
-    settings.additionalLights=arr(settings.additionalLights).map((l,i)=>({
-      ...l,id:l.id||'light'+(i+1),x:num(l.x,0),y:num(l.y,5.5),z:num(l.z,0),
-      kind:l.kind||l.type||'point',intensity:num(l.intensity,1.5),color:l.color||'#ffffff',
-      distance:num(l.distance,18),angle:num(l.angle,.62),penumbra:num(l.penumbra,.65),decay:num(l.decay,1.2)
-    }));
+    settings.additionalLights=arr(settings.additionalLights).map(normalizeLight);
     settings.teleports=arr(settings.teleports).map((t,i)=>({
       ...t,id:t.id||'teleport'+(i+1),label:t.label||'Teleport '+(i+1),x:num(t.x,0),z:num(t.z,0),
       size:num(t.size,1.4),linkedTo:t.linkedTo||'',toX:t.toX??0,toZ:t.toZ??0,
