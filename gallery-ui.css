@@ -1,0 +1,57 @@
+:root{
+  --cqu-conifer:#c7dc5d;
+  --cqu-te-papa:#1e4041;
+  --cqu-te-papa-2:#2b5b5d;
+  --cqu-white:#ffffff;
+  --cqu-dark:#071314;
+  --cqu-bg:#101014;
+  --cqu-panel:#142829;
+  --cqu-panel-2:#1b3738;
+  --cqu-text:#ffffff;
+  --cqu-muted:#d6e4e1;
+  --cqu-border:rgba(199,220,93,.32);
+  --ui-nav:#334155;
+  --ui-create:#1e4041;
+  --ui-tool:#2b5b5d;
+  --ui-save:#d97706;
+  --ui-publish:#059669;
+  --ui-danger:#b83d52;
+  --ui-neutral:#475569;
+}
+*{box-sizing:border-box}
+body{font-family:'Noto Sans','Roboto','Segoe UI',Arial,sans-serif}
+.appbar,.top{
+  background:linear-gradient(135deg,var(--cqu-te-papa),var(--cqu-te-papa-2));
+  border-bottom:3px solid var(--cqu-conifer)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.24);
+}
+.appbar{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:16px 20px}
+.brand h1,.appbar h1{margin:0;font-size:1.35rem}
+.brand p,.appbar p{margin:4px 0 0;color:rgba(255,255,255,.88);font-size:.9rem}
+.wrap{max-width:1160px;margin:22px auto;padding:0 18px}
+.panel,.card,.side,.group{
+  border-color:var(--cqu-border)!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.16);
+}
+.panel,.card{border-radius:14px}
+.card.active{border-color:#86efac!important;box-shadow:0 0 0 2px rgba(134,239,172,.35),0 12px 32px rgba(0,0,0,.16)}
+.nav,.actions,.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,.btn,a.btn,.nav a,.top a,.top button,.side button{
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:9px;
+  color:#fff;
+  cursor:pointer;
+  font-weight:700;
+  text-decoration:none;
+}
+button:hover,.btn:hover,a.btn:hover,.nav a:hover,.top a:hover,.top button:hover,.side button:hover{filter:brightness(1.08)}
+.btnNav,.secondary,.nav a,a.secondary{background:var(--ui-nav)!important}
+.btnCreate{background:var(--ui-create)!important}
+.btnTool{background:var(--ui-tool)!important}
+.btnSave,.save{background:var(--ui-save)!important;color:#fff!important}
+.btnPublish,.publish,.primary-action{background:var(--ui-publish)!important;color:#fff!important}
+.btnDanger,.danger,.warn{background:var(--ui-danger)!important;color:#fff!important}
+.btnNeutral{background:var(--ui-neutral)!important;color:#fff!important}
+.gold,.btnGold{background:var(--cqu-conifer)!important;color:var(--cqu-dark)!important}
+.status,.hint a,.group-title,.groupTitle,.card strong{color:var(--cqu-conifer)!important}
+input,select,textarea{font-family:inherit}

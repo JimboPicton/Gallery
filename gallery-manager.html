@@ -1,9 +1,66 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Gallery Manager</title><link rel="icon" href="./favicon.svg" type="image/svg+xml"><style>body{margin:0;background:#101014;color:#eee;font-family:Arial,sans-serif}.wrap{max-width:1050px;margin:24px auto;padding:0 18px}.panel,.card{background:#171722;border:1px solid #333;border-radius:16px;padding:16px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}input,textarea,select{width:100%;background:#0b0b10;color:#fff;border:1px solid #444;border-radius:9px;padding:9px}button,a.btn{background:#667eea;color:#fff;border:0;border-radius:9px;padding:9px 12px;text-decoration:none;cursor:pointer;margin:4px}.secondary{background:#333a55}.active{border-color:#86efac}</style>
-<style id="cqu-theme-overrides">
-:root{--cqu-green:#006b3f;--cqu-green-2:#0a7d4f;--cqu-gold:#f2c94c;--cqu-dark:#07130b;--cqu-panel:#10231b;--cqu-border:rgba(242,201,76,.28)}
-body{font-family:'Noto Sans','Roboto','Segoe UI',Arial,sans-serif!important}
-.top,.appbar,header.hero{border-bottom:3px solid var(--cqu-gold)!important}
-.panel,.card,.side,.group{border-color:var(--cqu-border)!important}
-.status,.hint a,.group-title,.groupTitle,.card strong{color:var(--cqu-gold)!important}
-</style>
-</head><body><main class="wrap"><h1>Gallery Manager</h1><p><a class="btn secondary" href="./index.html?preview=1">Main</a><a id="enterActive" class="btn secondary" href="./gallery-3d.html?draft=1">Enter Active Gallery</a><a class="btn secondary" href="./admin.html">Admin</a><a class="btn secondary" href="./publish.html">Publish</a></p><section class="panel"><h2>Create Gallery</h2><label>Name</label><input id="name"><label>ID</label><input id="gid" placeholder="auto-generated if blank"><button onclick="createGallery()">Create</button></section><section class="panel"><h2>Available Galleries</h2><div id="list" class="grid"></div></section></main><script src="./gallery-state.js"></script><script>function galleries(){return window.GalleryState?GalleryState.loadProjects():JSON.parse(localStorage.getItem('gallery-projects')||'[]')}function save(gs){if(window.GalleryState)GalleryState.saveProjects(gs);else{localStorage.setItem('gallery-projects',JSON.stringify(gs,null,2));localStorage.setItem('gallery-projects-dirty','1')}}function slug(s){return String(s||'gallery').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gallery'}function all(){return [{id:'repo',name:'Repository Gallery',repo:true},...galleries().filter(g=>g.id!=='repo')]}function q(id){return encodeURIComponent(id)}function activeId(){return window.GalleryState?GalleryState.activeGalleryId():(localStorage.getItem('active-gallery-id')||'repo')}function render(){const active=activeId();enterActive.href='./gallery-3d.html?draft=1&gallery='+q(active)+'&preview='+Date.now();list.innerHTML=all().map(g=>`<div class="card ${g.id===active?'active':''}"><h3>${g.name||g.id}</h3><p>${g.id}</p><button onclick="setActive('${g.id}')">${g.id===active?'Active':'Set Active'}</button><a class="btn secondary" href="./gallery-3d.html?draft=1&gallery=${q(g.id)}&preview=${Date.now()}">Preview Draft</a><a class="btn secondary" href="./layout-editor.html?gallery=${q(g.id)}">Layout</a><a class="btn secondary" href="./admin.html?gallery=${q(g.id)}">Settings</a>${g.repo?'':`<button onclick="del('${g.id}')">Delete</button>`}</div>`).join('')}function setActive(id){if(window.GalleryState)GalleryState.setActiveGalleryId(id);else localStorage.setItem('active-gallery-id',id);localStorage.setItem('active-gallery',id);render()}function createGallery(){const id=slug(gid.value||name.value);const gs=galleries().filter(g=>g.id!==id);gs.push({id,name:name.value||id,layout:null,data:[]});save(gs);setActive(id)}function del(id){if(confirm('Delete local gallery?')){save(galleries().filter(g=>g.id!==id));if(activeId()===id)setActive('repo');else render()}}render();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Gallery Manager v9.20.0</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./gallery-ui.css">
+  <style>
+    body{margin:0;background:#101014;color:#eee;font-family:'Noto Sans','Segoe UI',Arial,sans-serif}
+    .wrap{max-width:1050px;margin:24px auto;padding:0 18px}
+    .panel,.card{background:#171722;border:1px solid #333;padding:16px;margin:14px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    label{display:block;margin:10px 0 5px;font-weight:700}
+    input,textarea,select{width:100%;background:#0b0b10;color:#fff;border:1px solid #444;border-radius:9px;padding:9px}
+    button,a.btn{padding:9px 12px;margin:4px}
+    .card h3{margin-top:0}
+  </style>
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand">
+      <h1>Gallery Manager <span style="opacity:.72;font-size:12px">v9.20.0</span></h1>
+      <p>Create, select and preview local gallery drafts.</p>
+    </div>
+    <nav class="nav">
+      <a class="btnNav" href="./index.html?preview=1">Main</a>
+      <a id="enterActive" class="btnPublish" href="./gallery-3d.html?draft=1">Enter Active Gallery</a>
+      <a class="btnNav" href="./admin.html">Admin</a>
+      <a class="btnPublish" href="./publish.html">Publish</a>
+    </nav>
+  </header>
+  <main class="wrap">
+    <section class="panel">
+      <h2>Create Gallery</h2>
+      <label>Name</label>
+      <input id="name">
+      <label>ID</label>
+      <input id="gid" placeholder="auto-generated if blank">
+      <button class="btnCreate" onclick="createGallery()">Create Gallery</button>
+    </section>
+    <section class="panel">
+      <h2>Available Galleries</h2>
+      <div id="list" class="grid"></div>
+    </section>
+  </main>
+  <script src="./gallery-state.js"></script>
+  <script>
+    function galleries(){return window.GalleryState?GalleryState.loadProjects():JSON.parse(localStorage.getItem('gallery-projects')||'[]')}
+    function save(gs){if(window.GalleryState)GalleryState.saveProjects(gs);else{localStorage.setItem('gallery-projects',JSON.stringify(gs,null,2));localStorage.setItem('gallery-projects-dirty','1')}}
+    function slug(s){return String(s||'gallery').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gallery'}
+    function all(){return [{id:'repo',name:'Repository Gallery',repo:true},...galleries().filter(g=>g.id!=='repo')]}
+    function q(id){return encodeURIComponent(id)}
+    function activeId(){return window.GalleryState?GalleryState.activeGalleryId():(localStorage.getItem('active-gallery-id')||'repo')}
+    function render(){
+      const active=activeId();
+      enterActive.href='./gallery-3d.html?draft=1&gallery='+q(active)+'&preview='+Date.now();
+      list.innerHTML=all().map(g=>`<div class="card ${g.id===active?'active':''}"><h3>${g.name||g.id}</h3><p>${g.id}</p><button class="${g.id===active?'btnGold':'btnSave'}" onclick="setActive('${g.id}')">${g.id===active?'Active':'Set Active'}</button><a class="btn btnPublish" href="./gallery-3d.html?draft=1&gallery=${q(g.id)}&preview=${Date.now()}">Preview Draft</a><a class="btn btnNav" href="./layout-editor.html?gallery=${q(g.id)}">Layout</a><a class="btn btnNav" href="./admin.html?gallery=${q(g.id)}">Settings</a>${g.repo?'':`<button class="btnDanger" onclick="del('${g.id}')">Delete</button>`}</div>`).join('')
+    }
+    function setActive(id){if(window.GalleryState)GalleryState.setActiveGalleryId(id);else localStorage.setItem('active-gallery-id',id);localStorage.setItem('active-gallery',id);render()}
+    function createGallery(){const id=slug(gid.value||name.value);const gs=galleries().filter(g=>g.id!==id);gs.push({id,name:name.value||id,layout:null,data:[]});save(gs);setActive(id)}
+    function del(id){if(confirm('Delete local gallery?')){save(galleries().filter(g=>g.id!==id));if(activeId()===id)setActive('repo');else render()}}
+    render();
+  </script>
+</body>
+</html>
