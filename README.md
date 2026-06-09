@@ -18,6 +18,8 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 - Added modal close behaviour via Close, outside click, and Escape.
 - Improved Layout Editor toolbar responsiveness so navigation panels wrap cleanly at normal browser zoom/window sizes.
 - Changed Layout Editor create actions to a blue colour family to distinguish them from amber save/export actions.
+- Added a Layout Editor Panel toggle so the right inspector can be hidden and the map can use the full workspace while arranging rooms.
+- Reworked Gallery Manager gallery-card actions into a responsive button grid so the lower controls align cleanly.
 - Restyled Gallery Manager to use the same appbar, panel, card and action-button system as the other tools.
 - Standardised button meaning across active pages: navigation neutral, create/tool Te Papa Green, save/export amber, publish/enter green, and reset/delete red.
 - Updated Admin, Artwork Placement, Publish, Layout, Gallery Manager and 3D entry points to share the same build identity.

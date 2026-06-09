@@ -15,6 +15,13 @@
     input,textarea,select{width:100%;background:#0b0b10;color:#fff;border:1px solid #444;border-radius:9px;padding:9px}
     button,a.btn{padding:9px 12px;margin:4px}
     .card h3{margin-top:0}
+    .gallery-card{display:flex;flex-direction:column;gap:12px;min-height:220px}
+    .gallery-card h3{margin:0}
+    .gallery-card p{margin:0;color:rgba(255,255,255,.76);font-weight:700;word-break:break-word}
+    .gallery-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:auto}
+    .gallery-actions button,.gallery-actions a.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:40px;margin:0;text-align:center;line-height:1.15}
+    .gallery-actions .span2{grid-column:1/-1}
+    @media(max-width:620px){.gallery-actions{grid-template-columns:1fr}.gallery-actions .span2{grid-column:auto}}
   </style>
 </head>
 <body>
@@ -55,7 +62,7 @@
     function render(){
       const active=activeId();
       enterActive.href='./gallery-3d.html?draft=1&gallery='+q(active)+'&preview='+Date.now();
-      list.innerHTML=all().map(g=>`<div class="card ${g.id===active?'active':''}"><h3>${g.name||g.id}</h3><p>${g.id}</p><button class="${g.id===active?'btnGold':'btnSave'}" onclick="setActive('${g.id}')">${g.id===active?'Active':'Set Active'}</button><a class="btn btnPublish" href="./gallery-3d.html?draft=1&gallery=${q(g.id)}&preview=${Date.now()}">Preview Draft</a><a class="btn btnNav" href="./layout-editor.html?gallery=${q(g.id)}">Layout</a><a class="btn btnNav" href="./admin.html?gallery=${q(g.id)}">Settings</a>${g.repo?'':`<button class="btnDanger" onclick="del('${g.id}')">Delete</button>`}</div>`).join('')
+      list.innerHTML=all().map(g=>`<div class="card gallery-card ${g.id===active?'active':''}"><div><h3>${g.name||g.id}</h3><p>${g.id}</p></div><div class="gallery-actions"><button class="${g.id===active?'btnGold':'btnSave'}" onclick="setActive('${g.id}')">${g.id===active?'Active':'Set Active'}</button><a class="btn btnPublish" href="./gallery-3d.html?draft=1&gallery=${q(g.id)}&preview=${Date.now()}">Preview Draft</a><a class="btn btnNav" href="./layout-editor.html?gallery=${q(g.id)}">Layout</a><a class="btn btnNav" href="./admin.html?gallery=${q(g.id)}">Settings</a>${g.repo?'':`<button class="btnDanger span2" onclick="del('${g.id}')">Delete</button>`}</div></div>`).join('')
     }
     function setActive(id){if(window.GalleryState)GalleryState.setActiveGalleryId(id);else localStorage.setItem('active-gallery-id',id);localStorage.setItem('active-gallery',id);render()}
     function createGallery(){const id=slug(gid.value||name.value);const gs=galleries().filter(g=>g.id!==id);gs.push({id,name:name.value||id,layout:null,data:[]});save(gs);setActive(id)}

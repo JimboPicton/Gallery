@@ -17,6 +17,9 @@
   - Escape key
 - Added responsive Layout Editor toolbar behaviour so the navigation/create/draft/publish panels wrap based on available browser width instead of forcing the title panel into a narrow column.
 - Recoloured Layout Editor create actions to a blue family so they no longer share the amber save/export colour.
+- Added a Layout Editor `Panel` toggle in the View group so the right inspector/palette can be hidden while arranging rooms on a wider map canvas.
+- The Layout Editor remembers the inspector visibility preference locally in the browser.
+- Reworked Gallery Manager gallery-card actions into a stable responsive button grid so Preview, Layout, Settings, Active, and Delete controls no longer wrap awkwardly.
 - Bumped active build labels and `version.json` to `v9.21.0`.
 
 ## Notes
