@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.24.1
+# 3D Student Gallery v9.24.2
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.24.1 - Reticle Interaction Hotfix
+## Current Version: v9.24.2 - Artwork Frame Fit Hotfix
 
 ### Latest changes
 
@@ -73,6 +73,8 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 - Added Guided Tour foundations with automatic artwork highlight tours and support for future `settings.tours` records.
 - Added formal Visitor, Curator and Presentation modes in the 3D gallery view.
 - Added a presentation panel with Previous / Next / Exit controls and camera focus per stop.
+- Fitted loaded image artwork planes to the actual image aspect ratio so portrait images no longer carry black side padding.
+- Repositioned artist labels and statement icons around the fitted image bounds to avoid overlap.
 
 ## Sequential Feature Roadmap
 
@@ -95,8 +97,9 @@ The next feature set should roll out as small, testable builds:
 15. **v9.23.1 Presentation/Artwork Placement Hotfix** - clamps Gallery Highlights stops to walkable floor space, adds artist labels and clickable statement icons, and makes new artwork frames default to square proportions.
 16. **v9.24.0 Performance and Stability** - lazy-load artwork thumbnails near the viewer, cap renderer pixel ratio, and reduce repeated material/geometry creation.
 17. **v9.24.1 Reticle Interaction Hotfix** - route primary mouse clicks through the same reticle interaction path as the E key for artwork, statement, audio and teleport targets.
-18. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
-19. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
+18. **v9.24.2 Artwork Frame Fit Hotfix** - fit loaded image planes to the image aspect ratio and prevent statement icons overlapping artist labels.
+19. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
+20. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
 
 ## Future design notes
 
