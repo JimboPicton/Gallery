@@ -1,11 +1,16 @@
-# 3D Student Gallery v9.26.3
+# 3D Student Gallery v9.27.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.26.3 - Lighting Editor Persistence Hotfix
+## Current Version: v9.27.0 - Layout Editor Artwork Foundations
 
 ### Latest changes
 
+- Added a Layout Editor Artwork tab for selected-room artwork review and basic metadata editing.
+- Added artwork source status so curators can see whether artwork data is coming from the active gallery project, browser draft, or published `gallery-data.json`.
+- Added room-aware artwork lists using explicit room IDs and world-position bounds for 3D-placed artwork.
+- Added a direct fallback link from the Layout Editor Artwork tab to the full `artwork-editor.html` workflow.
+- Updated lighting semantics: Point Fill keeps the visible downlight model, Soft Area Wash keeps its lighting but no longer displays a fixture model, and Ceiling Cove uses a ceiling-edge glow model with brighter room illumination.
 - Fixed a lighting editor persistence bug where selected light type and advanced settings could revert to Point Fill after returning to `layout-editor.html`.
 - Added human-readable light controls in the Layout Editor: beam angle in degrees, plus softness, decay, and wash width as percentages.
 - Added a compact selected-light badge on the layout diagram so the active light type and main values are visible when a light object is clicked.
@@ -124,7 +129,7 @@ The next feature set should roll out as small, testable builds:
 20. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
 21. **v9.26.1 Lighting Visibility Hotfix** - prevent dark or stale lighting settings from making the gallery architecture disappear.
 22. **v9.26.2 Artwork Overlay and Gallery Light Hotfix** - restore wall-mounted overlay visibility and improve light fixture aesthetics.
-23. **v9.26.3 Lighting Editor Persistence Hotfix** - preserve light type/settings, add degree/percentage controls, and make configured lights emit from fixture heads.
+23. **v9.27.0 Lighting Editor Persistence Hotfix** - preserve light type/settings, add degree/percentage controls, and make configured lights emit from fixture heads.
 
 ## Future design notes
 - **Layout Editor artwork management integration**: bring room/wall artwork lists and metadata editing into the right-hand Layout Editor panel as a larger feature build, while keeping `artwork-editor.html` as a focused fallback/editing page.
