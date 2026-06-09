@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.20.0
+# 3D Student Gallery v9.21.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.20.0 - Unified Panel System
+## Current Version: v9.21.0 - Adaptive Media Viewer
 
 ### Latest changes
 
@@ -12,6 +12,12 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 - Added `gallery-ui.css` as a shared CQU UI layer for active gallery pages.
 - Updated the shared UI palette to CQU Conifer `#C7DC5D`, Te Papa Green `#1E4041`, and White `#FFFFFF`.
 - Standardised page typography around Noto Sans.
+- Added a centred adaptive media viewer in the 3D gallery for images, direct video, YouTube, Echo-style embeds, and SoundCloud links.
+- Kept the side panel path for link-only or text-heavy records where reading is the primary task.
+- Added an optional right-hand detail rail for long artist statements so media remains large and centred.
+- Added modal close behaviour via Close, outside click, and Escape.
+- Improved Layout Editor toolbar responsiveness so navigation panels wrap cleanly at normal browser zoom/window sizes.
+- Changed Layout Editor create actions to a blue colour family to distinguish them from amber save/export actions.
 - Restyled Gallery Manager to use the same appbar, panel, card and action-button system as the other tools.
 - Standardised button meaning across active pages: navigation neutral, create/tool Te Papa Green, save/export amber, publish/enter green, and reset/delete red.
 - Updated Admin, Artwork Placement, Publish, Layout, Gallery Manager and 3D entry points to share the same build identity.
@@ -70,7 +76,7 @@ The next feature set should roll out as small, testable builds:
 9. **v9.18.0 Tour Editor UI** - added Admin-based tour creation/editing with artwork stop ordering and narration text.
 10. **v9.19.0 Editor Zoom and Pan** - added canvas zoom, fit-to-gallery, zoom-to-selection, and pan mode for large-gallery editing.
 11. **v9.20.0 Unified Panel System** - added shared CQU UI tokens, standard panel/button styling, and a refreshed Gallery Manager page.
-12. **v9.21.0 Adaptive Media Viewer** - restore centred lightbox media viewing and keep side panels for long text.
+12. **v9.21.0 Adaptive Media Viewer** - added centred media viewing with adaptive statement layout and side-panel fallback for non-previewable media.
 13. **v9.22.0 Presentation Mode Upgrade** - add timed playback, optional narration/audio per stop, and smoother camera transitions.
 14. **v9.23.0 Performance and Stability** - lazy-load heavier media and reduce repeated geometry/material work.
 15. **v9.24.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
