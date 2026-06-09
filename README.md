@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.23.0
+# 3D Student Gallery v9.23.1
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.23.0 - Presentation Mode Upgrade
+## Current Version: v9.23.1 - Presentation/Artwork Placement Hotfix
 
 ### Latest changes
 
@@ -92,6 +92,7 @@ The next feature set should roll out as small, testable builds:
 12. **v9.21.0 Adaptive Media Viewer** - added centred media viewing with adaptive statement layout and side-panel fallback for non-previewable media.
 13. **v9.22.0 Audio Playback Foundations** - added interactive 3D audio markers, YouTube/SoundCloud/Echo playback, and quieter distance-aware direct audio.
 14. **v9.23.0 Presentation Mode Upgrade** - added timed playback, optional narration/audio per stop, and smoother camera transitions.
+15. **v9.23.1 Presentation/Artwork Placement Hotfix** - clamps Gallery Highlights stops to walkable floor space, adds artist labels and clickable statement icons, and makes new artwork frames default to square proportions.
 15. **v9.24.0 Performance and Stability** - lazy-load heavier media and reduce repeated geometry/material work.
 16. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
 17. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
