@@ -1,10 +1,14 @@
-# 3D Student Gallery v9.28.0
+# 3D Student Gallery v9.28.1
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.28.0 - Curator Entry State Hotfix
+## Current Version: v9.28.1 - Pointer Lock Gesture Hotfix
 
 ### Latest changes
+
+- Fixed the post-Curator-edit reload path so it no longer requests Pointer Lock during page load.
+- Added a guarded pointer-lock request helper so failed browser pointer-lock requests are handled instead of surfacing as uncaught promise errors.
+- Kept Curator edit returns splash-free while requiring the next pointer-lock request to come from a user click or key gesture.
 
 - Fixed entry overlay state so the full branded gallery splash remains the first-entry experience instead of the smaller curator/navigation panel.
 - Fixed Curator mode reloads after adding, moving, duplicating, lighting, or deleting artwork so the gallery returns to the working view without automatically reopening the entry splash.
@@ -135,6 +139,7 @@ The next feature set should roll out as small, testable builds:
 23. **v9.26.3 Lighting Editor Persistence Hotfix** - preserve light type/settings, add degree/percentage controls, and make configured lights emit from fixture heads.
 24. **v9.27.0 Layout Editor Artwork Foundations** - begin consolidating artwork placement and metadata workflows into the layout editing surface.
 25. **v9.28.0 Curator Entry State Hotfix** - keep the branded splash for entry, prevent curator edit reloads from showing the mini splash, and make F a reliable curator toggle.
+26. **v9.28.1 Pointer Lock Gesture Hotfix** - prevent automatic pointer-lock requests after edit reloads and keep pointer-lock requests tied to user gestures.
 
 ## Future design notes
 - **Layout Editor artwork management integration**: bring room/wall artwork lists and metadata editing into the right-hand Layout Editor panel as a larger feature build, while keeping `artwork-editor.html` as a focused fallback/editing page.
