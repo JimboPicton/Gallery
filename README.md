@@ -1,11 +1,14 @@
-# 3D Student Gallery v9.26.1
+# 3D Student Gallery v9.26.2
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.26.1 - Lighting Visibility Hotfix
+## Current Version: v9.26.2 - Artwork Overlay and Gallery Light Hotfix
 
 ### Latest changes
 
+- Restored reliable visibility for wall-mounted artwork, artist labels, and statement icons by pinning them forward from wall surfaces and giving them overlay render priority.
+- Replaced the dark circular ceiling-light fixture with a lighter, gallery-style track/spot fixture so ceiling lights no longer read as black blobs.
+- Nudged picture-light fixtures farther forward from the wall and changed them to a quieter neutral gallery finish.
 - Added a lighting visibility hotfix for v9.25/v9.26 galleries where architectural room surfaces could render near-black while artwork stayed visible.
 - Added minimum safe ambient, hemisphere, directional, and exposure values in the 3D runtime so older local drafts with stale or zeroed light values do not black out the gallery.
 - Added a subtle runtime-only visibility lift to dark wall, floor, ceiling, hallway, and half-wall materials while preserving the saved gallery colour data.
@@ -115,6 +118,7 @@ The next feature set should roll out as small, testable builds:
 19. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
 20. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
 21. **v9.26.1 Lighting Visibility Hotfix** - prevent dark or stale lighting settings from making the gallery architecture disappear.
+22. **v9.26.2 Artwork Overlay and Gallery Light Hotfix** - restore wall-mounted overlay visibility and improve light fixture aesthetics.
 
 ## Future design notes
 
