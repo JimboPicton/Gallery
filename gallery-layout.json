@@ -18,7 +18,7 @@
       },
       "wallColors": {
         "front": "",
-        "back": "",
+        "back": "#a83fd9",
         "left": "#ff6905",
         "right": ""
       },
@@ -90,7 +90,7 @@
     {
       "id": "room4",
       "title": "3D Models",
-      "x": 0.5,
+      "x": 0.6,
       "z": 23.91,
       "width": 20,
       "depth": 14,
@@ -110,7 +110,7 @@
         "right": ""
       },
       "label": {
-        "text": "3D MOdels",
+        "text": "3D Models",
         "wall": "front",
         "x": 0,
         "y": 4.8
@@ -119,7 +119,7 @@
     {
       "id": "room1",
       "title": "Graphic Design",
-      "x": 67.9,
+      "x": 57.3,
       "z": -0.04,
       "width": 20,
       "depth": 14,
@@ -155,8 +155,8 @@
       "fromSlot": "center",
       "toWall": "left",
       "toSlot": "center",
-      "width": 4,
-      "height": 4,
+      "width": 5.9,
+      "height": 6,
       "wallColor": "#f5f0e8",
       "wallTexture": ""
     },
@@ -169,7 +169,7 @@
       "toWall": "right",
       "toSlot": "center",
       "width": 4,
-      "height": 4,
+      "height": 6,
       "wallColor": "#dd560e",
       "wallTexture": ""
     },
@@ -182,7 +182,7 @@
       "toWall": "back",
       "toSlot": "center",
       "width": 4,
-      "height": 4,
+      "height": 6,
       "wallColor": "#ffffff",
       "wallTexture": ""
     },
@@ -195,7 +195,7 @@
       "toWall": "left",
       "toSlot": "center",
       "width": 4,
-      "height": 4,
+      "height": 6,
       "wallColor": "#f5f0e8",
       "wallTexture": ""
     }
@@ -243,11 +243,11 @@
       },
       {
         "id": "light1_copy1",
-        "x": 68.41,
+        "x": 57.11,
         "y": 5.5,
-        "z": -0.29,
+        "z": -0.09,
         "intensity": 1.25,
-        "color": "#fff4df",
+        "color": "#062def",
         "distance": 18,
         "kind": "wash",
         "angle": 0.6283185307179586,
@@ -363,9 +363,9 @@
       },
       {
         "id": "light2_copy1_copy1",
-        "x": 28.22,
+        "x": 28.12,
         "y": 5.5,
-        "z": -0.16,
+        "z": 0.14,
         "intensity": 1.15,
         "color": "#fff4df",
         "distance": 18,
@@ -400,8 +400,8 @@
       {
         "id": "teleport1_copy1",
         "label": "Teleport 4",
-        "x": 75.6,
-        "z": 4.15,
+        "x": 64.4,
+        "z": 3.75,
         "size": 1.4,
         "linkedTo": "teleport1_copy1_copy1",
         "toX": 30,
@@ -414,8 +414,8 @@
       {
         "id": "teleport3",
         "label": "Teleport 2",
-        "x": 7.38,
-        "z": 29.11,
+        "x": -6.52,
+        "z": 27.91,
         "size": 1.4,
         "linkedTo": "teleport1",
         "toX": 0,
@@ -428,8 +428,8 @@
       {
         "id": "teleport1_copy1_copy1",
         "label": "Teleport 3",
-        "x": 37.67,
-        "z": -4.12,
+        "x": 35.27,
+        "z": -4.22,
         "size": 1.4,
         "linkedTo": "teleport1_copy1",
         "toX": 30,
@@ -460,7 +460,7 @@
       ]
     },
     "hallwayColor": "#22222a",
-    "lightingPreset": "soft-gallery",
+    "lightingPreset": "moody-exhibition",
     "hemisphereLight": 0.35,
     "tours": [],
     "lightingExposure": 1.02,
