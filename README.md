@@ -11,6 +11,8 @@ A static, GitHub Pages-friendly virtual exhibition platform for Creative Media s
 - Kept external audio opt-in so YouTube/SoundCloud/Echo links do not autoplay unexpectedly as visitors move through the gallery.
 - Kept direct MP3/OGG/WAV/M4A sources distance-faded, with only the nearest direct sources audible to avoid overpowering the space.
 - Stopped embedded/external audio when another media panel takes focus or when sound is turned off.
+- Converted the Layout Editor inspector into an overlay drawer so the map keeps the full editing width.
+- Improved the 3D gallery sound button contrast.
 - Added layout-editor zoom in/out controls with a live zoom percentage.
 - Added Fit and Selection view controls for large gallery layouts.
 - Added Pan mode and Ctrl+mouse-wheel zoom around the cursor.

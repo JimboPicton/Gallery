@@ -12,6 +12,8 @@
 - Kept direct MP3/OGG/WAV/M4A sources distance-faded through the existing master audio controls.
 - Limited direct spatial playback to the nearest direct sources so gallery audio does not become overpowering.
 - Closed external audio embeds when other media panels take focus or when gallery audio is turned off.
+- Converted the Layout Editor inspector into a right-side overlay drawer so the map keeps the full editing width even when the panel is open.
+- Improved contrast on the 3D gallery sound toggle button.
 - Bumped active build labels and `version.json` to `v9.22.0`.
 
 ## Notes
