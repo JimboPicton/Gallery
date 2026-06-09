@@ -1,11 +1,16 @@
-# 3D Student Gallery v9.21.0
+# 3D Student Gallery v9.22.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points.
 
-## Current Version: v9.21.0 - Adaptive Media Viewer
+## Current Version: v9.22.0 - Audio Playback Foundations
 
 ### Latest changes
 
+- Added visible, interactive audio markers in the 3D gallery for audio sources created in the Layout Editor.
+- Added YouTube, SoundCloud and Echo-style external audio playback from 3D audio markers using look-at + `E` interaction.
+- Kept external audio opt-in so YouTube/SoundCloud/Echo links do not autoplay unexpectedly as visitors move through the gallery.
+- Kept direct MP3/OGG/WAV/M4A sources distance-faded, with only the nearest direct sources audible to avoid overpowering the space.
+- Stopped embedded/external audio when another media panel takes focus or when sound is turned off.
 - Added layout-editor zoom in/out controls with a live zoom percentage.
 - Added Fit and Selection view controls for large gallery layouts.
 - Added Pan mode and Ctrl+mouse-wheel zoom around the cursor.
@@ -79,10 +84,11 @@ The next feature set should roll out as small, testable builds:
 10. **v9.19.0 Editor Zoom and Pan** - added canvas zoom, fit-to-gallery, zoom-to-selection, and pan mode for large-gallery editing.
 11. **v9.20.0 Unified Panel System** - added shared CQU UI tokens, standard panel/button styling, and a refreshed Gallery Manager page.
 12. **v9.21.0 Adaptive Media Viewer** - added centred media viewing with adaptive statement layout and side-panel fallback for non-previewable media.
-13. **v9.22.0 Presentation Mode Upgrade** - add timed playback, optional narration/audio per stop, and smoother camera transitions.
-14. **v9.23.0 Performance and Stability** - lazy-load heavier media and reduce repeated geometry/material work.
-15. **v9.24.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
-16. **v9.25.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
+13. **v9.22.0 Audio Playback Foundations** - added interactive 3D audio markers, YouTube/SoundCloud/Echo playback, and quieter distance-aware direct audio.
+14. **v9.23.0 Presentation Mode Upgrade** - add timed playback, optional narration/audio per stop, and smoother camera transitions.
+15. **v9.24.0 Performance and Stability** - lazy-load heavier media and reduce repeated geometry/material work.
+16. **v9.25.0 Lighting Polish** - improve spotlight presets, softer defaults, and optional emissive signage/bloom.
+17. **v9.26.0 Visitor Presence Prototype** - start with a simple visitor counter, then optional anonymous presence markers.
 
 ## Positioning artwork on half walls
 
