@@ -140,6 +140,11 @@ The next feature set should roll out as small, testable builds:
 24. **v9.27.0 Layout Editor Artwork Foundations** - begin consolidating artwork placement and metadata workflows into the layout editing surface.
 25. **v9.28.0 Curator Entry State Hotfix** - keep the branded splash for entry, prevent curator edit reloads from showing the mini splash, and make F a reliable curator toggle.
 26. **v9.28.1 Pointer Lock Gesture Hotfix** - prevent automatic pointer-lock requests after edit reloads and keep pointer-lock requests tied to user gestures.
+27. **v9.29.0 3D Model Artwork Foundations** - add `mediaType: model` records, GLB/GLTF loading, model placeholders, and basic model metadata fields for web-friendly 3D artwork.
+28. **v9.30.0 Model Placement and Curator Controls** - add scale, rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
+29. **v9.31.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
+30. **v9.32.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
+31. **v9.33.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
 
 ## Future design notes
 - **Layout Editor artwork management integration**: bring room/wall artwork lists and metadata editing into the right-hand Layout Editor panel as a larger feature build, while keeping `artwork-editor.html` as a focused fallback/editing page.
@@ -150,6 +155,7 @@ These ideas are parked for the next appropriate roadmap build rather than being 
 - **Artist statement wall treatment:** support a refined wall statement mode with stronger contrast, larger heading text, smaller body text, and clean spacing. The current clickable icon is useful for compact galleries; a wall-text option should remain available for exhibition spaces where the statement is intentionally part of the display.
 - **Gallery style presets:** consider reusable room/space presets for lighting, floor materials, wall colour, ceiling treatments, plinth/display-object layouts, and simple exhibition atmospheres. These would fit naturally with Layout Editor theme defaults and the Lighting Polish roadmap work.
 - **Media asset upload:** add drag/drop or local upload support later so image, audio, and video assets can be committed into appropriate repository folders for GitHub Pages streaming rather than relying only on external URLs.
+- **VR painting / Open Brush model support:** support web-friendly `.glb`/`.gltf` artworks exported from Open Brush, Tilt Brush, or similar VR-painting workflows. This should include model-specific metadata, scale/rotation/anchor controls, lazy loading, material/emissive handling, thumbnails or video fallbacks, and clear optimisation guidance so large brush-stroke exports do not overwhelm browser performance.
 
 ## Positioning artwork on half walls
 
