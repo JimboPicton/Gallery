@@ -1,10 +1,14 @@
-# 3D Student Gallery v9.28.2
+# 3D Student Gallery v9.29.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.28.2 - 3D Curator Artwork Workflow Hotfix
+## Current Version: v9.29.0 - 3D Model Artwork Foundations
 
 ### Latest changes
+
+- Added native GLB/GLTF model artwork loading through Three.js `GLTFLoader`.
+- Added distance-aware lazy model loading, visible loading/error placeholders, automatic model normalization, shadows, thumbnail/fallback metadata, and model attribution fields.
+- Added `model` media controls across Admin, Artwork Editor, Layout Editor, and 3D Curator metadata workflows.
 
 - Fixed the post-Curator-edit reload path so it no longer requests Pointer Lock during page load.
 - Added a guarded pointer-lock request helper so failed browser pointer-lock requests are handled instead of surfacing as uncaught promise errors.
@@ -141,7 +145,7 @@ The next feature set should roll out as small, testable builds:
 25. **v9.28.0 Curator Entry State Hotfix** - keep the branded splash for entry, prevent curator edit reloads from showing the mini splash, and make F a reliable curator toggle.
 26. **v9.28.1 Pointer Lock Gesture Hotfix** - prevent automatic pointer-lock requests after edit reloads and keep pointer-lock requests tied to user gestures.
 27. **v9.28.2 3D Curator Artwork Workflow Hotfix** - add in-gallery artwork metadata editing, existing-media selection, thumbnail support, visual frame fitting, and half-wall side tracking.
-28. **v9.29.0 3D Model Artwork Foundations** - add `mediaType: model` records, GLB/GLTF loading, model placeholders, and basic model metadata fields for web-friendly 3D artwork.
+28. **v9.29.0 3D Model Artwork Foundations** - completed: native `mediaType: model` records, GLB/GLTF loading, lazy loading, model placeholders, normalized display sizing, fallbacks, and shared model metadata fields.
 29. **v9.30.0 Model Placement and Curator Controls** - add scale, rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
 30. **v9.31.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
 31. **v9.32.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
