@@ -1,6 +1,6 @@
 (function(){
   const nodes=[...document.querySelectorAll('[data-gallery-version]')];
-  const fallback=(nodes[0]?.textContent||'v9.30.6').trim();
+  const fallback=(nodes[0]?.textContent||'v9.30.7').trim();
   function apply(value){
     const version=String(value||fallback).replace(/^v/i,'');
     const label='v'+version;

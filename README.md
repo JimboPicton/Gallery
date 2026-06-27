@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.30.6
+# 3D Student Gallery v9.30.7
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.30.6 - Viewer Wall Collision Hotfix
+## Current Version: v9.30.7 - Post-Edit Movement Resume Hotfix
 
 ### Latest changes
 
@@ -157,10 +157,11 @@ The next feature set should roll out as small, testable builds:
 33. **v9.30.4 Shared Version Display Hotfix** - completed: make version.json authoritative across the homepage, Gallery Manager, Admin, Layout Editor, and 3D Gallery.
 34. **v9.30.5 Media Viewer Focus and Movement Hotfix** - completed: move focus before hiding media, use inert for the closed viewer, and resume movement from the close gesture with an overlay fallback.
 35. **v9.30.6 Viewer Wall Collision Hotfix** - completed: add a viewer footprint, swept movement collision, explicit half-wall colliders, and safe teleport destinations.
-36. **v9.30.0B Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
-37. **v9.31.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
-38. **v9.32.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
-39. **v9.33.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
+36. **v9.30.7 Post-Edit Movement Resume Hotfix** - completed: replace the post-edit pointer-lock dead state with a compact, gesture-safe click-to-resume prompt.
+37. **v9.30.0B Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
+38. **v9.31.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
+39. **v9.32.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
+40. **v9.33.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
 
 ## Future design notes
 - **Layout Editor artwork management integration**: bring room/wall artwork lists and metadata editing into the right-hand Layout Editor panel as a larger feature build, while keeping `artwork-editor.html` as a focused fallback/editing page.
