@@ -97,3 +97,25 @@ input,select,textarea{font-family:inherit}
 .curatorMain{min-width:0;min-height:100vh}.curatorMain>.appbar,.curatorMain>.top{border-top:0!important}.curatorMain>.wrap{max-width:calc(100vw - 260px)}
 body.curator-shell-page{margin:0}
 @media(max-width:960px){.curatorShell{display:block}.curatorSidebar{position:relative;height:auto;display:block;border-right:0;border-bottom:3px solid var(--cqu-conifer)}.curatorNav{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px}.curatorNav p{grid-column:1/-1;margin-top:10px}.curatorDataNote{display:none}.curatorMain>.wrap{max-width:none}}
+
+
+/* v9.31.2 management header cleanup */
+.curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{
+  display:grid!important;
+  grid-template-columns:minmax(260px,1fr) auto;
+  align-items:start;
+  gap:16px 22px;
+  padding:16px 18px!important;
+}
+.curatorMain>.pageHeader,.curatorMain>.top{background:linear-gradient(135deg,var(--cqu-te-papa),var(--cqu-te-papa-2));border-bottom:3px solid var(--cqu-conifer)!important;box-shadow:0 8px 28px rgba(0,0,0,.24)}
+.curatorMain>.top .brand,.curatorMain>.appbar .brand,.pageHeader .brand{min-width:240px}
+.curatorMain>.top .toolbar,.curatorMain>.appbar .nav,.pageHeader .toolbar{justify-content:flex-end;align-items:flex-start}
+.pageKicker{display:inline-flex;align-items:center;gap:6px;margin-bottom:5px;color:var(--cqu-conifer);font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em}
+.toolbarStack{display:grid;gap:9px;justify-items:end}
+.toolbarRow{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.actionGroupLabel,.groupTitle{align-self:center;white-space:nowrap}
+.fullscreenLink::after{content:' ↗';font-weight:900;color:var(--cqu-conifer)}
+.curatorMain .top.compactActions .toolbar{display:grid;grid-template-columns:repeat(2,minmax(220px,max-content));gap:9px;justify-content:end}
+.curatorMain .top.compactActions .group{margin:0}
+@media(max-width:1180px){.curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{grid-template-columns:1fr}.curatorMain>.top .toolbar,.curatorMain>.appbar .nav,.pageHeader .toolbar,.toolbarStack,.toolbarRow{justify-content:flex-start;justify-items:start}.curatorMain .top.compactActions .toolbar{grid-template-columns:1fr}}
+@media(max-width:680px){.curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{padding:14px 12px!important}.toolbarRow,.curatorMain>.appbar .nav,.curatorMain>.top .toolbar{display:grid!important;grid-template-columns:1fr;width:100%}.toolbarRow a,.toolbarRow button,.curatorMain>.appbar .nav a,.curatorMain>.top .toolbar a,.curatorMain>.top .toolbar button{width:100%;justify-content:center;text-align:center}}

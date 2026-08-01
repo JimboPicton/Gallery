@@ -1,10 +1,10 @@
 {
-  "version": "9.31.1",
-  "name": "Unified Curator Console Shell",
+  "version": "9.31.2",
+  "name": "Management Header and Launch Cleanup",
   "date": "2026-08-01",
   "notes": [
-    "Adds a shared left-hand Curator Console navigation shell to the management pages.",
-    "Removes the one-page-only Admin rail so pages share the same management structure.",
-    "Adds Admin hash routing for direct links to Submissions and Tours."
+    "Standardises top page headers and action grouping across the curator management pages.",
+    "Reduces duplicated navigation now that the shared left-hand Curator Console is present.",
+    "Opens fullscreen 3D Preview and Public View destinations in a separate browser tab or window."
   ]
 }
