@@ -1,14 +1,14 @@
-# 3D Student Gallery v9.35.1
+# 3D Student Gallery v9.35.2
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.35.1 - Layout Alignment and Wall Snap Tools
+## Current Version: v9.35.2 - Layout Pan and Undo Tools
 
-- Added a Media Library Browser to the Media Dashboard Add Media workflow.
-- Local file selection now previews media, infers media type, and generates repository media paths.
-- Hosted URL handling supports personal hosting, CQU links, Google Drive direct links, and existing managed-media reuse.
-- Optional GitHub file upload can place selected media into repository media folders using a Contents write token.
-- Direct audio file records are now supported in the metadata flow and 3D viewer.
+- Pan mode now lets curators drag anywhere on the layout map, including over rooms, half walls, nodes and selected areas.
+- Holding Space and dragging temporarily pans the map without changing the current tool.
+- Middle mouse / wheel-button dragging also pans, leaving right-click available for context menus.
+- Added a five-step Undo action for common Layout Editor edits, including movement, add/save/delete, align/snap, hallway creation, teleport pairing and spawn placement.
+- Pan drags now suppress the follow-up click so the current selection is not accidentally cleared.
 
 
 ## Sequential Feature Roadmap
@@ -62,10 +62,11 @@ The next feature set should roll out as small, testable builds:
 45. **v9.34.0 Submission Checklist, Room Assignment and Auto-Placement** - completed: expanded the checklist with bulk selection, room/wall assignment, automatic wall-slot placement and file information.
 46. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - completed: added video thumbnail helpers, Echo360 poster guidance and curator-only 3D frame-code overlays.
 47. **v9.35.1 Layout Alignment and Wall Snap Tools** - completed: added Layout Editor multi-select alignment controls and half-wall snap-to-join behaviour.
-48. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
-49. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
-50. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
-51. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
+48. **v9.35.2 Layout Pan and Undo Tools** - completed: added drag-anywhere Pan mode, Space/middle-mouse temporary panning, and a five-step Layout Editor undo stack.
+49. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
+50. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
+51. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
+52. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
 
 
 ## Future design notes
