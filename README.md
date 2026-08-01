@@ -1,13 +1,14 @@
-# 3D Student Gallery v9.32.0
+# 3D Student Gallery v9.33.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.32.0 - Public Private Publishing Model
+## Current Version: v9.33.0 - Media Library Browser and Hosted URL Handling
 
-- Added a read-only public JSON export flow in Publish Tools.
-- Public visitors now use plain gallery URLs while curator work stays behind draft/preview URLs.
-- Private/Draft Only galleries are blocked from the public 3D visitor build.
-- The public home page filters private galleries from public selection.
+- Added a Media Library Browser to the Media Dashboard Add Media workflow.
+- Local file selection now previews media, infers media type, and generates repository media paths.
+- Hosted URL handling supports personal hosting, CQU links, Google Drive direct links, and existing managed-media reuse.
+- Optional GitHub file upload can place selected media into repository media folders using a Contents write token.
+- Direct audio file records are now supported in the metadata flow and 3D viewer.
 
 
 ## Sequential Feature Roadmap
@@ -57,7 +58,7 @@ The next feature set should roll out as small, testable builds:
 41. **v9.31.4 Navigation Naming Alignment** - completed: align menu labels with page headers, tab names and destination language.
 42. **v9.31.5 Layout Spawn Point** - completed: add a draggable, editable viewer spawn marker and use it as the 3D gallery entry point.
 43. **v9.32.0 Public/Private Publishing Model** - completed: generate a read-only public build and keep curator-only controls gated to draft/preview workflows.
-44. **v9.33.0 Media Library Browser and Hosted URL Handling** - add managed media browsing and simpler hosted URL selection for gallery records.
+44. **v9.33.0 Media Library Browser and Hosted URL Handling** - completed: add managed media browsing, browser file selection, hosted URL construction and optional GitHub media upload for gallery records.
 45. **v9.34.0 Submission Checklist, Room Assignment and Auto-Placement** - expand the existing submission checklist with room assignment and frame-placement helpers.
 46. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - add video thumbnail workflows plus curator-only frame codes/overlays for easier placement.
 47. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.

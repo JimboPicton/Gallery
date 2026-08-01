@@ -1,10 +1,10 @@
 {
-  "version": "9.32.0",
-  "name": "Public Private Publishing Model",
+  "version": "9.33.0",
+  "name": "Media Library Browser and Hosted URL Handling",
   "date": "2026-08-01",
   "notes": [
-    "Added a read-only public JSON export flow in Publish Tools.",
-    "Blocked private galleries from the public 3D visitor build while preserving draft/preview curator workflows.",
-    "Cleaned public gallery links so visitor URLs do not include draft parameters or curator navigation."
+    "Added a media browser to the Media Dashboard intake workflow for local file selection, hosted URL construction and managed-media reuse.",
+    "Added optional GitHub media file upload from the browser using the existing personal access token workflow.",
+    "Extended artwork/media records with file metadata and direct audio file support."
   ]
 }
