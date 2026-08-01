@@ -99,7 +99,7 @@ body.curator-shell-page{margin:0}
 @media(max-width:960px){.curatorShell{display:block}.curatorSidebar{position:relative;height:auto;display:block;border-right:0;border-bottom:3px solid var(--cqu-conifer)}.curatorNav{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px}.curatorNav p{grid-column:1/-1;margin-top:10px}.curatorDataNote{display:none}.curatorMain>.wrap{max-width:none}}
 
 
-/* v9.31.2 management header cleanup */
+/* v9.31.3 management header cleanup */
 .curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{
   display:grid!important;
   grid-template-columns:minmax(260px,1fr) auto;
@@ -119,3 +119,100 @@ body.curator-shell-page{margin:0}
 .curatorMain .top.compactActions .group{margin:0}
 @media(max-width:1180px){.curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{grid-template-columns:1fr}.curatorMain>.top .toolbar,.curatorMain>.appbar .nav,.pageHeader .toolbar,.toolbarStack,.toolbarRow{justify-content:flex-start;justify-items:start}.curatorMain .top.compactActions .toolbar{grid-template-columns:1fr}}
 @media(max-width:680px){.curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{padding:14px 12px!important}.toolbarRow,.curatorMain>.appbar .nav,.curatorMain>.top .toolbar{display:grid!important;grid-template-columns:1fr;width:100%}.toolbarRow a,.toolbarRow button,.curatorMain>.appbar .nav a,.curatorMain>.top .toolbar a,.curatorMain>.top .toolbar button{width:100%;justify-content:center;text-align:center}}
+
+
+/* v9.31.3 curator visual consistency */
+body.curator-shell-page{
+  margin:0!important;
+  padding:0!important;
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--cqu-dark),#0b231b)!important;
+  color:var(--cqu-text)!important;
+}
+.curatorMain{
+  background:linear-gradient(135deg,var(--cqu-dark),#0b231b)!important;
+  color:var(--cqu-text)!important;
+}
+.curatorMain main,.curatorMain .wrap,.curatorMain .section{
+  color:var(--cqu-text)!important;
+}
+.curatorMain .hero{
+  max-width:none!important;
+  margin:0!important;
+  border-radius:0!important;
+  padding:42px 26px 34px!important;
+  background:linear-gradient(135deg,var(--cqu-te-papa),var(--cqu-te-papa-2))!important;
+  border-bottom:3px solid var(--cqu-conifer)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.24)!important;
+}
+.curatorMain .hero h1{
+  letter-spacing:0!important;
+}
+.curatorMain .section{
+  max-width:1180px!important;
+  margin:24px auto!important;
+  padding:0 18px!important;
+}
+.curatorMain .card,.curatorMain .note{
+  background:rgba(16,35,27,.92)!important;
+  color:var(--cqu-text)!important;
+  border:1px solid var(--cqu-border)!important;
+  border-radius:14px!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.16)!important;
+}
+.curatorMain .card.primary{
+  background:linear-gradient(135deg,var(--cqu-te-papa),var(--cqu-te-papa-2))!important;
+}
+.curatorMain .card span,.curatorMain .note,.curatorMain footer{
+  color:var(--cqu-muted)!important;
+}
+.curatorMain .card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(199,220,93,.62)!important;
+}
+.curatorMain .gallery-picker select{
+  border:1px solid rgba(199,220,93,.45)!important;
+  border-radius:9px!important;
+  background:#071314!important;
+  color:#fff!important;
+  padding:9px 12px!important;
+}
+.curatorMain .small-btn,.curatorMain .pageHeader a,.curatorMain .pageHeader button,.curatorMain .toolbarRow a,.curatorMain .toolbarRow button,.curatorMain .tabs button,.curatorMain .group a,.curatorMain .group button{
+  border:1px solid rgba(255,255,255,.16)!important;
+  border-radius:9px!important;
+  color:#fff!important;
+  cursor:pointer;
+  font-weight:800!important;
+  text-decoration:none!important;
+  padding:9px 12px!important;
+}
+.curatorMain .small-btn,.curatorMain .pageHeader a:not(.btnCreate):not(.btnSave):not(.btnPublish):not(.btnDanger):not(.btnGold),.curatorMain .pageHeader button:not(.btnCreate):not(.btnSave):not(.btnPublish):not(.btnDanger):not(.btnGold),.curatorMain .toolbarRow a:not(.btnCreate):not(.btnSave):not(.btnPublish):not(.btnDanger):not(.btnGold),.curatorMain .toolbarRow button:not(.btnCreate):not(.btnSave):not(.btnPublish):not(.btnDanger):not(.btnGold){
+  background:var(--ui-nav)!important;
+}
+.curatorMain .tabs button,.curatorMain .tab{
+  background:var(--ui-tool)!important;
+}
+.curatorMain .tabs button.active,.curatorMain .tab.active{
+  outline:3px solid var(--cqu-conifer)!important;
+  outline-offset:0;
+}
+.curatorMain a.btnPublish,.curatorMain button.btnPublish{
+  background:var(--ui-publish)!important;
+}
+.curatorMain a.btnSave,.curatorMain button.btnSave,.curatorMain .save{
+  background:var(--ui-save)!important;
+}
+.curatorMain a.btnCreate,.curatorMain button.btnCreate{
+  background:var(--ui-create)!important;
+}
+.curatorMain a.btnDanger,.curatorMain button.btnDanger,.curatorMain .danger,.curatorMain .warn{
+  background:var(--ui-danger)!important;
+}
+.curatorMain footer{
+  text-align:center;
+  margin:34px 0 20px!important;
+}
+@media(max-width:680px){
+  .curatorMain .hero{padding:28px 16px!important}
+  .curatorMain .current,.curatorMain .gallery-picker{width:100%;justify-content:center}
+}

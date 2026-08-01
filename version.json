@@ -1,10 +1,10 @@
 {
-  "version": "9.31.2",
-  "name": "Management Header and Launch Cleanup",
+  "version": "9.31.3",
+  "name": "Curator UI Consistency Hotfix",
   "date": "2026-08-01",
   "notes": [
-    "Standardises top page headers and action grouping across the curator management pages.",
-    "Reduces duplicated navigation now that the shared left-hand Curator Console is present.",
-    "Opens fullscreen 3D Preview and Public View destinations in a separate browser tab or window."
+    "Restyles the main page to use the same dark CQU curator console surface as the other management pages.",
+    "Extends the shared button conventions so page headers, toolbar groups, tabs and homepage actions follow the Layout Editor colour system.",
+    "Fixes Admin sidebar Submissions and Tours links so they route to the Submission Checklist and Tour Editor panels even when already on Admin."
   ]
 }
