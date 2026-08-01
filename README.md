@@ -1,14 +1,14 @@
-# 3D Student Gallery v9.35.2
+# 3D Student Gallery v9.35.3
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.35.2 - Layout Pan and Undo Tools
+## Current Version: v9.35.3 - Half Wall Rotation Context Menu
 
-- Pan mode now lets curators drag anywhere on the layout map, including over rooms, half walls, nodes and selected areas.
-- Holding Space and dragging temporarily pans the map without changing the current tool.
-- Middle mouse / wheel-button dragging also pans, leaving right-click available for context menus.
-- Added a five-step Undo action for common Layout Editor edits, including movement, add/save/delete, align/snap, hallway creation, teleport pairing and spawn placement.
-- Pan drags now suppress the follow-up click so the current selection is not accidentally cleared.
+- Added right-click rotation tools for selected half walls in the Layout Editor.
+- Half walls can now rotate 15 degrees left/right for fine adjustment.
+- Half walls can also rotate 90 degrees left/right for quick perpendicular placement.
+- Rotation pivots around the wall centre and preserves the wall length.
+- Rotations are captured by the five-step Undo stack from v9.35.2.
 
 
 ## Sequential Feature Roadmap
@@ -63,10 +63,11 @@ The next feature set should roll out as small, testable builds:
 46. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - completed: added video thumbnail helpers, Echo360 poster guidance and curator-only 3D frame-code overlays.
 47. **v9.35.1 Layout Alignment and Wall Snap Tools** - completed: added Layout Editor multi-select alignment controls and half-wall snap-to-join behaviour.
 48. **v9.35.2 Layout Pan and Undo Tools** - completed: added drag-anywhere Pan mode, Space/middle-mouse temporary panning, and a five-step Layout Editor undo stack.
-49. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
-50. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
-51. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
-52. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
+49. **v9.35.3 Half Wall Rotation Context Menu** - completed: added centre-pivot half-wall rotation actions to the Layout Editor right-click menu.
+50. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
+51. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
+52. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
+53. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
 
 
 ## Future design notes
