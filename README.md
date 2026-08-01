@@ -1,125 +1,14 @@
-# 3D Student Gallery v9.31.5
+# 3D Student Gallery v9.32.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.31.5 - Layout Spawn Point
-- Added an optional viewer spawn point to the Layout Editor.
-- Added a draggable red map-pin marker, right-click placement, coordinate editing, facing direction, and deletion.
-- Updated the 3D gallery to start visitors at the saved spawn point, with first-room fallback when no spawn is set.
+## Current Version: v9.32.0 - Public Private Publishing Model
 
-### Latest changes
+- Added a read-only public JSON export flow in Publish Tools.
+- Public visitors now use plain gallery URLs while curator work stays behind draft/preview URLs.
+- Private/Draft Only galleries are blocked from the public 3D visitor build.
+- The public home page filters private galleries from public selection.
 
-- Consolidated the top-left 3D controls into a compact collapsible dock with clear Visitor, Curator and Presentation mode selection.
-- Fixed circular runtime-data serialization that prevented curator scale and related context-menu actions from persisting.
-- Added live artwork/model scaling, guarded context actions, visible success/error feedback, and a shared 1.8 metre viewer eye height.
-
-- Added native GLB/GLTF model artwork loading through Three.js `GLTFLoader`.
-- Added distance-aware lazy model loading, visible loading/error placeholders, automatic model normalization, shadows, thumbnail/fallback metadata, and model attribution fields.
-- Added `model` media controls across Admin, Artwork Editor, Layout Editor, and 3D Curator metadata workflows.
-
-- Fixed the post-Curator-edit reload path so it no longer requests Pointer Lock during page load.
-- Added a guarded pointer-lock request helper so failed browser pointer-lock requests are handled instead of surfacing as uncaught promise errors.
-- Kept Curator edit returns splash-free while requiring the next pointer-lock request to come from a user click or key gesture.
-
-- Fixed entry overlay state so the full branded gallery splash remains the first-entry experience instead of the smaller curator/navigation panel.
-- Fixed Curator mode reloads after adding, moving, duplicating, lighting, or deleting artwork so the gallery returns to the working view without automatically reopening the entry splash.
-- Fixed the `F` key curator toggle so pressing `F` again exits Curator mode and returns to normal movement/viewing mode.
-- Added a Layout Editor Artwork tab for selected-room artwork review and basic metadata editing.
-- Added artwork source status so curators can see whether artwork data is coming from the active gallery project, browser draft, or published `gallery-data.json`.
-- Added room-aware artwork lists using explicit room IDs and world-position bounds for 3D-placed artwork.
-- Added a direct fallback link from the Layout Editor Artwork tab to the full `artwork-editor.html` workflow.
-- Updated lighting semantics: Point Fill keeps the visible downlight model, Soft Area Wash keeps its lighting but no longer displays a fixture model, and Ceiling Cove uses a ceiling-edge glow model with brighter room illumination.
-- Fixed a lighting editor persistence bug where selected light type and advanced settings could revert to Point Fill after returning to `layout-editor.html`.
-- Added human-readable light controls in the Layout Editor: beam angle in degrees, plus softness, decay, and wash width as percentages.
-- Added a compact selected-light badge on the layout diagram so the active light type and main values are visible when a light object is clicked.
-- Adjusted 3D configured lights so the light source originates from the visible fixture head rather than from the ceiling surface.
-- Confirmed the repository `gallery-data.json` still contains existing artwork records; if a gallery appears empty, the likely cause is an active local draft/project state mismatch rather than the published JSON being wiped.
-- Restored reliable visibility for wall-mounted artwork, artist labels, and statement icons by pinning them forward from wall surfaces and giving them overlay render priority.
-- Replaced the dark circular ceiling-light fixture with a lighter, gallery-style track/spot fixture so ceiling lights no longer read as black blobs.
-- Nudged picture-light fixtures farther forward from the wall and changed them to a quieter neutral gallery finish.
-- Added a lighting visibility hotfix for v9.25/v9.26 galleries where architectural room surfaces could render near-black while artwork stayed visible.
-- Added minimum safe ambient, hemisphere, directional, and exposure values in the 3D runtime so older local drafts with stale or zeroed light values do not black out the gallery.
-- Added a subtle runtime-only visibility lift to dark wall, floor, ceiling, hallway, and half-wall materials while preserving the saved gallery colour data.
-- Added a browser-local visitor presence prototype to the 3D gallery.
-- Added a compact visitor counter showing active local sessions for the current gallery.
-- Added optional anonymous mini-map markers for other active local sessions in the same browser profile.
-- Scoped presence data per gallery and automatically expires stale sessions.
-- Kept the implementation GitHub Pages-friendly; this is a local prototype, not a cross-device real-time multiplayer service.
-
-- Added gallery lighting presets, including Soft Gallery, Bright Studio, Moody Exhibition, and Neutral White.
-- Added softer published gallery defaults using lower ambient/directional values, hemisphere fill, and warm ceiling spot lights.
-- Added Layout Editor controls for light type, beam angle, softness, decay, wash width, hemisphere fill, and exposure.
-- Enabled tone mapping, sRGB output, soft shadows, and less glossy wall/floor materials in the 3D runtime.
-- Tuned artwork picture lights and ceiling spots to be softer and less harsh.
-- Added Play/Pause timed playback to Presentation Mode tours.
-- Added smooth camera transitions between tour stops instead of instant jumps.
-- Added optional narration/audio URL and type fields to each Tour Editor stop.
-- Added tour-stop narration playback support for direct audio and external embed links.
-- Added visible, interactive audio markers in the 3D gallery for audio sources created in the Layout Editor.
-- Added YouTube, SoundCloud and Echo-style external audio playback from 3D audio markers using look-at + `E` interaction.
-- Kept external audio opt-in so YouTube/SoundCloud/Echo links do not autoplay unexpectedly as visitors move through the gallery.
-- Kept direct MP3/OGG/WAV/M4A sources distance-faded, with only the nearest direct sources audible to avoid overpowering the space.
-- Stopped embedded/external audio when another media panel takes focus or when sound is turned off.
-- Converted the Layout Editor inspector into an overlay drawer so the map keeps the full editing width.
-- Improved the 3D gallery sound button contrast.
-- Added layout-editor zoom in/out controls with a live zoom percentage.
-- Added Fit and Selection view controls for large gallery layouts.
-- Added Pan mode and Ctrl+mouse-wheel zoom around the cursor.
-- Added `gallery-ui.css` as a shared CQU UI layer for active gallery pages.
-- Updated the shared UI palette to CQU Conifer `#C7DC5D`, Te Papa Green `#1E4041`, and White `#FFFFFF`.
-- Standardised page typography around Noto Sans.
-- Added a centred adaptive media viewer in the 3D gallery for images, direct video, YouTube, Echo-style embeds, and SoundCloud links.
-- Kept the side panel path for link-only or text-heavy records where reading is the primary task.
-- Added an optional right-hand detail rail for long artist statements so media remains large and centred.
-- Added modal close behaviour via Close, outside click, and Escape.
-- Improved Layout Editor toolbar responsiveness so navigation panels wrap cleanly at normal browser zoom/window sizes.
-- Changed Layout Editor create actions to a blue colour family to distinguish them from amber save/export actions.
-- Added a Layout Editor Panel toggle so the right inspector can be hidden and the map can use the full workspace while arranging rooms.
-- Reworked Gallery Manager gallery-card actions into a responsive button grid so the lower controls align cleanly.
-- Restyled Gallery Manager to use the same appbar, panel, card and action-button system as the other tools.
-- Standardised button meaning across active pages: navigation neutral, create/tool Te Papa Green, save/export amber, publish/enter green, and reset/delete red.
-- Updated Admin, Artwork Placement, Publish, Layout, Gallery Manager and 3D entry points to share the same build identity.
-- Preserved existing page workflows while consolidating the visual system.
-- Added a Tour Editor tab in Gallery Admin for creating and editing Presentation Mode tours.
-- Added curator controls to choose artworks, reorder stops, rename stop titles, set durations, and write narration text.
-- Saved tour data into the active gallery layout as `settings.tours` so Publish exports it cleanly.
-- Removed tiny non-walkable cracks from hallway floor-cell bounds so segmented hallway joins no longer catch the viewer.
-- Smoothed 3D movement by resolving forward/back and sideways movement separately.
-- Restored the splash graphic and entry message on first load of the 3D gallery.
-- Hid Visitor / Curator / Presentation controls while the entry splash is visible.
-- Restored ESC behaviour so leaving pointer-lock viewing returns visitors to the splash overlay.
-- Kept Curator controls gated to draft, preview, or edit mode so published visitors do not see editing controls.
-- Restored hallway side-wall edges to butt against the room wall plane so doorway joins do not expose the space behind.
-- Routed the Gallery Manager through `GalleryState` for project load/save and active gallery selection.
-- Routed the main page gallery picker through `GalleryState` for local active-gallery selection.
-- Normalized layout, artwork data, and project records during Publish exports.
-- Trimmed hallway portal joins so side walls no longer visibly protrude past the room wall opening.
-- Added half-wall / partition entries to the Artwork Placement Editor wall selector for partitions inside the selected room.
-- Saved artwork placed on half walls from the Artwork Placement Editor as 3D-compatible world-positioned records.
-- Prevented 3D Curator Mode from returning to the splash/entry overlay when toggling out of edit mode.
-- Added `gallery-state.js` as a shared normalization layer for gallery projects, active gallery IDs, layout drafts, and artwork drafts.
-- Normalized artwork records when they load/save through the Artwork Placement Editor and 3D Curator Mode.
-- Normalized gallery layout/settings records when loaded through Gallery Admin and the 3D gallery runtime.
-- Added a first shared-state checkpoint to reduce drift between `gallery-layout-draft`, `gallery-data-draft`, local gallery projects, and published JSON.
-- Added standard navigation links to the Gallery Admin page so it matches the rest of the workflow.
-- Consolidated the UI colour styling toward a CQU-inspired green/gold theme across HTML pages.
-- Added active-gallery selection and gallery renaming to the Gallery Admin page.
-- Added contextual 3D right-click artwork tools:
-  - Add Artwork Here on a wall or half wall / partition.
-  - Duplicate Artwork when right-clicking an existing artwork.
-  - Delete Artwork when right-clicking an existing artwork.
-  - Add/disable an artwork accent light contextually.
-- Added 3D world-positioned artwork records, allowing artwork placement on half walls and partitions from the live gallery view.
-- Continued active-gallery support so local galleries read consistently across editor, admin and 3D view.
-- Shrunk the visitor entry overlay while Curator Mode is active so artwork positioning is no longer blocked by a large centre panel.
-- Added a 3D Curator Mode **Move Artwork** action for repositioning existing artworks onto room walls or half walls from inside the gallery.
-- Fixed hallway entrances so the tube mouths stay open and connect flush with the room wall opening instead of protruding as solid plugs.
-- Restored a compact/expanded 3D map panel with room labels, hallway footprint, teleports, artwork markers, current room highlighting and live visitor position.
-- Added Guided Tour foundations with automatic artwork highlight tours and support for future `settings.tours` records.
-- Added formal Visitor, Curator and Presentation modes in the 3D gallery view.
-- Added a presentation panel with Previous / Next / Exit controls and camera focus per stop.
-- Fitted loaded image artwork planes to the actual image aspect ratio so portrait images no longer carry black side padding.
-- Repositioned artist labels and statement icons around the fitted image bounds to avoid overlap.
 
 ## Sequential Feature Roadmap
 
@@ -167,7 +56,7 @@ The next feature set should roll out as small, testable builds:
 40. **v9.31.3 Curator UI Consistency Hotfix** - completed: align the main page with the dark curator shell, enforce shared button conventions, and repair Admin Submissions/Tours hash routing.
 41. **v9.31.4 Navigation Naming Alignment** - completed: align menu labels with page headers, tab names and destination language.
 42. **v9.31.5 Layout Spawn Point** - completed: add a draggable, editable viewer spawn marker and use it as the 3D gallery entry point.
-43. **v9.32.0 Public/Private Publishing Model** - generate a clearly read-only public build and keep curator-only controls gated to draft/preview workflows.
+43. **v9.32.0 Public/Private Publishing Model** - completed: generate a read-only public build and keep curator-only controls gated to draft/preview workflows.
 44. **v9.33.0 Media Library Browser and Hosted URL Handling** - add managed media browsing and simpler hosted URL selection for gallery records.
 45. **v9.34.0 Submission Checklist, Room Assignment and Auto-Placement** - expand the existing submission checklist with room assignment and frame-placement helpers.
 46. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - add video thumbnail workflows plus curator-only frame codes/overlays for easier placement.
