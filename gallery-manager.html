@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Gallery Manager v9.31.0</title>
+  <title>Gallery Manager v9.31.1</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gallery-ui.css">
   <style>
@@ -24,10 +24,10 @@
     @media(max-width:620px){.gallery-actions{grid-template-columns:1fr}.gallery-actions .span2{grid-column:auto}}
   </style>
 </head>
-<body>
+<body><div class="curatorShell"><aside class="curatorSidebar"><div class="curatorBrand"><strong>CQU Gallery</strong><span>Curator console</span><em data-gallery-version>v9.31.1</em></div><nav class="curatorNav"><p>Home</p><a class="" href="./index.html?preview=1"><span>Overview</span></a><a class="active" href="./gallery-manager.html"><span>Galleries</span></a><p>Build</p><a class="" href="./layout-editor.html"><span>Layout Editor</span></a><a class="" href="./artwork-editor.html"><span>Artwork Placement</span></a><a class="" href="./gallery-3d.html?draft=1"><span>3D Preview</span></a><p>Media</p><a class="" href="./admin.html"><span>Media Dashboard</span></a><a class="" href="./admin.html#manage"><span>Submissions</span></a><a class="" href="./admin.html#tours"><span>Tours</span></a><p>Publish</p><a class="" href="./publish.html"><span>Publish Tools</span></a><a class="" href="./gallery-3d.html"><span>Public View</span></a></nav><div class="curatorDataNote"><strong>Your data</strong><span>Drafts are stored in this browser until exported or saved.</span></div></aside><div class="curatorMain">
   <header class="appbar">
     <div class="brand">
-      <h1>Gallery Manager <span data-gallery-version style="opacity:.72;font-size:12px">v9.31.0</span></h1>
+      <h1>Gallery Manager <span data-gallery-version style="opacity:.72;font-size:12px">v9.31.1</span></h1>
       <p>Create, select and preview local gallery drafts.</p>
     </div>
     <nav class="nav">
@@ -70,5 +70,5 @@
     function del(id){if(confirm('Delete local gallery?')){save(galleries().filter(g=>g.id!==id));if(activeId()===id)setActive('repo');else render()}}
     render();
   </script>
-</body>
+</div></div></body>
 </html>
