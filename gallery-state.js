@@ -158,6 +158,7 @@
       type:a.type||'direct',url:a.url||'',x:num(a.x,0),y:num(a.y,1.8),z:num(a.z,0),
       radius:num(a.radius,18),volume:num(a.volume,.5),loop:a.loop!==false
     }));
+    const rawSpawn=settings.spawnPoint||j.spawnPoint;if(rawSpawn){const x=num(rawSpawn.x,NaN),z=num(rawSpawn.z,NaN);if(Number.isFinite(x)&&Number.isFinite(z)){let rotY=num(rawSpawn.rotY??rawSpawn.rotationY??rawSpawn.rotation,0);settings.spawnPoint={id:'spawn',label:rawSpawn.label||'Viewer spawn',x,z,rotY};}else delete settings.spawnPoint;}else delete settings.spawnPoint;
     settings.tours=arr(settings.tours);
     j.settings=settings;
     j.rooms=arr(j.rooms).map((r,i)=>normalizeRoom(r,i,settings));
