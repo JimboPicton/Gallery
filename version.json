@@ -1,10 +1,10 @@
 {
-  "version": "9.33.0",
-  "name": "Media Library Browser and Hosted URL Handling",
+  "version": "9.35.0",
+  "name": "Echo360 Thumbnail Workflow and Curator Frame IDs",
   "date": "2026-08-01",
   "notes": [
-    "Added a media browser to the Media Dashboard intake workflow for local file selection, hosted URL construction and managed-media reuse.",
-    "Added optional GitHub media file upload from the browser using the existing personal access token workflow.",
-    "Extended artwork/media records with file metadata and direct audio file support."
+    "Expanded the submission checklist with room assignment, selection controls and automatic wall-slot placement.",
+    "Added curator frame codes that flow through artwork records, artwork placement and the 3D curator view.",
+    "Added YouTube thumbnail extraction plus Echo360/protected-video poster helpers for media intake."
   ]
 }

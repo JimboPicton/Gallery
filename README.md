@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.33.0
+# 3D Student Gallery v9.35.0
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.33.0 - Media Library Browser and Hosted URL Handling
+## Current Version: v9.35.0 - Echo360 Thumbnail Workflow and Curator Frame IDs
 
 - Added a Media Library Browser to the Media Dashboard Add Media workflow.
 - Local file selection now previews media, infers media type, and generates repository media paths.
@@ -59,8 +59,8 @@ The next feature set should roll out as small, testable builds:
 42. **v9.31.5 Layout Spawn Point** - completed: add a draggable, editable viewer spawn marker and use it as the 3D gallery entry point.
 43. **v9.32.0 Public/Private Publishing Model** - completed: generate a read-only public build and keep curator-only controls gated to draft/preview workflows.
 44. **v9.33.0 Media Library Browser and Hosted URL Handling** - completed: add managed media browsing, browser file selection, hosted URL construction and optional GitHub media upload for gallery records.
-45. **v9.34.0 Submission Checklist, Room Assignment and Auto-Placement** - expand the existing submission checklist with room assignment and frame-placement helpers.
-46. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - add video thumbnail workflows plus curator-only frame codes/overlays for easier placement.
+45. **v9.34.0 Submission Checklist, Room Assignment and Auto-Placement** - completed: expanded the checklist with bulk selection, room/wall assignment, automatic wall-slot placement and file information.
+46. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - completed: added video thumbnail helpers, Echo360 poster guidance and curator-only 3D frame-code overlays.
 47. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
 48. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
 49. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
