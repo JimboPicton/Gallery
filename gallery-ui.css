@@ -55,3 +55,30 @@ button:hover,.btn:hover,a.btn:hover,.nav a:hover,.top a:hover,.top button:hover,
 .gold,.btnGold{background:var(--cqu-conifer)!important;color:var(--cqu-dark)!important}
 .status,.hint a,.group-title,.groupTitle,.card strong{color:var(--cqu-conifer)!important}
 input,select,textarea{font-family:inherit}
+
+
+/* v9.31.0 management workspace */
+.managementWorkspace{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}
+.managementRail{position:sticky;top:18px;background:rgba(7,19,20,.78);border:1px solid var(--cqu-border);border-radius:16px;padding:14px;box-shadow:0 16px 36px rgba(0,0,0,.18)}
+.managementRail h2{margin:0 0 6px;font-size:1rem;color:var(--cqu-conifer)}
+.managementRail p{margin:0 0 12px;color:var(--cqu-muted);font-size:.86rem;line-height:1.42}
+.railLinks{display:grid;gap:8px}.railLinks a,.railLinks button{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;margin:0;padding:10px 11px}
+.workspaceMain{min-width:0}.metricGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.metricCard{background:rgba(255,255,255,.05);border:1px solid rgba(199,220,93,.24);border-radius:14px;padding:14px}
+.metricCard strong{display:block;color:var(--cqu-conifer);font-size:1.65rem;line-height:1}
+.metricCard span{display:block;margin-top:6px;color:var(--cqu-muted);font-size:.86rem}
+.workflowGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.workflowCard{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px}
+.workflowCard h3{margin:0 0 8px;color:#fff}.workflowCard p{margin:0 0 12px;color:var(--cqu-muted);font-size:.9rem;line-height:1.45}
+.filterBar{display:grid;grid-template-columns:minmax(180px,1.4fr) minmax(130px,.7fr) minmax(150px,.8fr) auto;gap:10px;align-items:end;margin:12px 0}
+.dataTableWrap{overflow:auto;border:1px solid rgba(199,220,93,.24);border-radius:14px;background:rgba(0,0,0,.16)}
+.dataTable{width:100%;border-collapse:collapse;min-width:860px}
+.dataTable th,.dataTable td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top;text-align:left}
+.dataTable th{position:sticky;top:0;background:#102829;color:var(--cqu-conifer);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;z-index:1}
+.dataTable tr:hover td{background:rgba(255,255,255,.035)}
+.tableActions{display:flex;gap:7px;flex-wrap:wrap}.tableActions a,.tableActions button{margin:0;padding:7px 9px;font-size:.82rem}
+.statusPill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 8px;font-size:.78rem;font-weight:800;border:1px solid rgba(255,255,255,.18)}
+.statusPlaced{background:rgba(5,150,105,.16);color:#bbf7d0}.statusUnplaced{background:rgba(217,119,6,.18);color:#fed7aa}.statusDraft{background:rgba(37,99,235,.16);color:#bfdbfe}
+.fileMeta{color:var(--cqu-muted);font-size:.82rem;word-break:break-word;line-height:1.35}.checkCell{text-align:center!important}.emptyState{border:1px dashed rgba(199,220,93,.35);border-radius:14px;padding:18px;color:var(--cqu-muted);background:rgba(255,255,255,.035)}
+@media(max-width:980px){.managementWorkspace{grid-template-columns:1fr}.managementRail{position:static}.filterBar{grid-template-columns:1fr 1fr}.filterBar .wide{grid-column:1/-1}}
+@media(max-width:620px){.filterBar{grid-template-columns:1fr}.metricGrid,.workflowGrid{grid-template-columns:1fr}}

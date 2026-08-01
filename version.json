@@ -1,4 +1,10 @@
 {
-  "version": "9.30.7",
-  "name": "Post-Edit Movement Resume Hotfix"
+  "version": "9.31.0",
+  "name": "Curator Management Workspace",
+  "date": "2026-08-01",
+  "notes": [
+    "Consolidates management pages into a curator dashboard workflow.",
+    "Turns Admin submissions into a checklist that deep-links into the existing Artwork Placement Editor.",
+    "Adds shared management workspace/table styles for consistent dense curator interfaces."
+  ]
 }
