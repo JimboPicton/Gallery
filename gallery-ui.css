@@ -99,7 +99,7 @@ body.curator-shell-page{margin:0}
 @media(max-width:960px){.curatorShell{display:block}.curatorSidebar{position:relative;height:auto;display:block;border-right:0;border-bottom:3px solid var(--cqu-conifer)}.curatorNav{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px}.curatorNav p{grid-column:1/-1;margin-top:10px}.curatorDataNote{display:none}.curatorMain>.wrap{max-width:none}}
 
 
-/* v9.31.3 management header cleanup */
+/* v9.31.4 management header cleanup */
 .curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{
   display:grid!important;
   grid-template-columns:minmax(260px,1fr) auto;
@@ -121,7 +121,7 @@ body.curator-shell-page{margin:0}
 @media(max-width:680px){.curatorMain>.appbar,.curatorMain>.top,.curatorMain>.pageHeader{padding:14px 12px!important}.toolbarRow,.curatorMain>.appbar .nav,.curatorMain>.top .toolbar{display:grid!important;grid-template-columns:1fr;width:100%}.toolbarRow a,.toolbarRow button,.curatorMain>.appbar .nav a,.curatorMain>.top .toolbar a,.curatorMain>.top .toolbar button{width:100%;justify-content:center;text-align:center}}
 
 
-/* v9.31.3 curator visual consistency */
+/* v9.31.4 curator visual consistency */
 body.curator-shell-page{
   margin:0!important;
   padding:0!important;

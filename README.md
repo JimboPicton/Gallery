@@ -1,11 +1,11 @@
-# 3D Student Gallery v9.31.3
+# 3D Student Gallery v9.31.4
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.31.3 - Curator UI Consistency Hotfix
-- Restyled the main page to match the dark CQU curator console used by the other management screens.
-- Extended the Layout Editor button colour conventions across page headers, toolbar groups, tabs and homepage actions.
-- Fixed Admin sidebar routing so Submissions opens the Submission Checklist and Tours opens the Tour Editor reliably.
+## Current Version: v9.31.4 - Navigation Naming Alignment
+- Aligned the Curator Console menu labels with the page titles and tab names they open.
+- Renamed Submissions to Submission Checklist and Tours to Tour Editor across the shared sidebar.
+- Standardised page header kickers to the sidebar section names: Home, Build, Media and Publish.
 - Kept the next functional rollout focused on the public/private publishing model, media library browsing, submission assignment, and video thumbnail workflow.
 
 ### Latest changes
@@ -166,14 +166,15 @@ The next feature set should roll out as small, testable builds:
 38. **v9.31.1 Unified Curator Console Shell** - completed: apply a common left-hand management shell across the curator pages and add Admin hash routing.
 39. **v9.31.2 Management Header and Launch Cleanup** - completed: standardise curator page headers/toolbars and open fullscreen gallery views separately.
 40. **v9.31.3 Curator UI Consistency Hotfix** - completed: align the main page with the dark curator shell, enforce shared button conventions, and repair Admin Submissions/Tours hash routing.
-41. **v9.32.0 Public/Private Publishing Model** - generate a clearly read-only public build and keep curator-only controls gated to draft/preview workflows.
-42. **v9.33.0 Media Library Browser and Hosted URL Handling** - add managed media browsing and simpler hosted URL selection for gallery records.
-43. **v9.34.0 Submission Checklist, Room Assignment and Auto-Placement** - expand the existing submission checklist with room assignment and frame-placement helpers.
-44. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - add video thumbnail workflows plus curator-only frame codes/overlays for easier placement.
-45. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
-46. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
-47. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
-48. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
+41. **v9.31.4 Navigation Naming Alignment** - completed: align menu labels with page headers, tab names and destination language.
+42. **v9.32.0 Public/Private Publishing Model** - generate a clearly read-only public build and keep curator-only controls gated to draft/preview workflows.
+43. **v9.33.0 Media Library Browser and Hosted URL Handling** - add managed media browsing and simpler hosted URL selection for gallery records.
+44. **v9.34.0 Submission Checklist, Room Assignment and Auto-Placement** - expand the existing submission checklist with room assignment and frame-placement helpers.
+45. **v9.35.0 Echo360 Thumbnail and Curator Frame IDs** - add video thumbnail workflows plus curator-only frame codes/overlays for easier placement.
+46. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
+47. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
+48. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
+49. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
 
 
 ## Future design notes

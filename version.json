@@ -1,10 +1,10 @@
 {
-  "version": "9.31.3",
-  "name": "Curator UI Consistency Hotfix",
+  "version": "9.31.4",
+  "name": "Navigation Naming Alignment",
   "date": "2026-08-01",
   "notes": [
-    "Restyles the main page to use the same dark CQU curator console surface as the other management pages.",
-    "Extends the shared button conventions so page headers, toolbar groups, tabs and homepage actions follow the Layout Editor colour system.",
-    "Fixes Admin sidebar Submissions and Tours links so they route to the Submission Checklist and Tour Editor panels even when already on Admin."
+    "Aligns curator sidebar labels with the page titles and in-page tab names they open.",
+    "Renames Submissions to Submission Checklist and Tours to Tour Editor across the shared menu.",
+    "Standardises page header kickers to use the sidebar section names: Home, Build, Media and Publish."
   ]
 }
