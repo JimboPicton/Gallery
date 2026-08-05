@@ -1,12 +1,12 @@
-# 3D Student Gallery v9.35.7
+# 3D Student Gallery v9.35.8
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.35.7 - Portable Relative Media Paths
+## Current Version: v9.35.8 - Submission Placement Surface Fix
 
-- Expanded the Layout Editor canvas vertically so Pan mode can move the map up and down after zooming.
-- Added dynamic top/bottom canvas padding based on layout bounds, including layouts with negative Z positions.
-- Preserved the existing horizontal pan behaviour, zoom controls and five-step Undo stack.
+- Added active-layout half-wall faces to the Media Dashboard Submission Checklist target-wall picker.
+- Fixed bulk auto-placement so half-wall targets save the partition-side and 3D world-position fields used by the gallery renderer.
+- Clarified the Media Dashboard workflow order for adding files, applying relative paths, reviewing submissions, and fine-tuning placement.
 
 
 ## Sequential Feature Roadmap
@@ -66,10 +66,11 @@ The next feature set should roll out as small, testable builds:
 51. **v9.35.5 Layout Vertical Pan Extent Hotfix** - completed: expanded the Layout Editor scroll canvas so Pan mode works vertically as well as horizontally after zooming.
 52. **v9.35.6 Artwork Media Preview and Upload URL Guard** - completed: added placement-editor media previews, URL checking, and clearer uploaded-file publishing status.
 53. **v9.35.7 Portable Relative Media Paths** - completed: kept local uploaded gallery media portable by storing relative paths instead of GitHub Pages URLs, while retaining public preview guidance.
-54. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
-55. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
-56. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
-57. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
+54. **v9.35.8 Submission Placement Surface Fix** - completed: included half-wall faces in the Submission Checklist target picker, fixed auto-placement onto partition surfaces, and clarified the media-management workflow order.
+55. **v9.36.0 Model Placement and Curator Controls** - add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
+56. **v9.37.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
+57. **v9.38.0 Model Viewer and Fallbacks** - add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
+58. **v9.39.0 Model Performance and Publishing Pipeline** - add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
 
 
 ## Future design notes
