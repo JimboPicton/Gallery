@@ -1,8 +1,8 @@
-# 3D Student Gallery v9.36.0
+# 3D Student Gallery v9.36.3
 
 A static, GitHub Pages-friendly virtual exhibition platform for CQUniversity Creative Media student work. The project includes a main gallery, an immersive Three.js walkthrough, an artwork/media admin page, an artwork placement editor, and a visual layout editor for rooms, half walls, hallways, lighting, wall colours, artwork placement, and teleport points. Created by Jim Picton, Head of Course Digital Media CQUniversity Australia.
 
-## Current Version: v9.36.0 - Draft Media Preview Fallbacks
+## Current Version: v9.36.3 - Echo360 Public Embed Support
 
 - Expanded Media Dashboard surface discovery so room target lists include top-level, nested, and legacy half-wall records.
 - Added a safe fallback that shows half-wall faces even when older layouts do not record an exact room relationship.
@@ -68,11 +68,12 @@ The next feature set should roll out as small, testable builds:
 53. **v9.35.7 Portable Relative Media Paths** - completed: kept local uploaded gallery media portable by storing relative paths instead of GitHub Pages URLs, while retaining public preview guidance.
 54. **v9.35.8 Submission Placement Surface Fix** - completed: included half-wall faces in the Submission Checklist target picker, fixed auto-placement onto partition surfaces, and clarified the media-management workflow order.
 55. **v9.35.9 Submission Surface Discovery Fix** - completed: expanded surface discovery to include nested/legacy half-wall records and fallback display for ambiguous room relationships.
-56. **v9.36.0 Draft Media Preview Fallbacks** - completed: added local image draft thumbnails, resilient relative-path preview fallbacks, and clear missing-file messaging in the placement editor.
-57. **v9.37.0 Model Placement and Curator Controls** - planned: add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
-58. **v9.38.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
-59. **v9.39.0 Model Viewer and Fallbacks** - planned: add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
-60. **v9.40.0 Model Performance and Publishing Pipeline** - planned: add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
+56. **v9.36.2 Echo360 External Link Handling** - completed: retains draft preview repair, detects Echo360 URLs even when media type is Link, stops treating protected external launch links as missing repository files, and opens Echo360 media in a new tab instead of forcing an iframe embed.
+57. **v9.36.3 Echo360 Public Embed Support** - completed: accepts pasted Echo360 iframe snippets, stores the clean public iframe src, previews public embeds in the placement editor, and renders public Echo360 media inline in the 3D media viewer.
+58. **v9.37.0 Model Placement and Curator Controls** - planned: add rotation, height, floor/plinth/wall anchor, and drag/position controls for 3D models in the Layout Editor and 3D Curator workflow.
+59. **v9.38.0 Open Brush / Tilt Brush Import Profile** - document a recommended GLB export/optimisation path, add Open Brush-specific material handling notes, and provide size/performance warnings for large stroke-heavy exports.
+60. **v9.39.0 Model Viewer and Fallbacks** - planned: add inspect/orbit viewing for models, preview thumbnails/posters, and image/video fallback records for slower devices.
+61. **v9.40.0 Model Performance and Publishing Pipeline** - planned: add lazy loading near the viewer, bounding-box checks, compression guidance, and repository `models/` asset-folder conventions for GitHub Pages.
 
 
 ## Future design notes
